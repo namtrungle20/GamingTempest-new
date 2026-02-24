@@ -3,7 +3,7 @@ export const NAV_ITEMS = {
   
   PRODUCTS: [
     {
-      id: 'consoles',
+      id: 'Console',
       title: 'Máy Chơi Game',
       items: ['PS5 Pro', 'Xbox Series X', 'Nintendo Switch']
     },
