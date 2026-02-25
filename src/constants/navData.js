@@ -5,6 +5,11 @@ export const NAV_ITEMS = {
     {
       id: 'Console',
       title: 'Máy Chơi Game',
+      items: ['PS5 Pro', 'Xbox Series X', 'Nintendo Switch ','Xbox Series X', 'Nintendo Switch ']
+    },
+    {
+      id: 'Console',
+      title: 'Máy Chơi Game',
       items: ['PS5 Pro', 'Xbox Series X', 'Nintendo Switch']
     },
     // Thêm các nhóm khác ở đây...

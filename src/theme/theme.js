@@ -1,6 +1,7 @@
 import { extendTheme } from '@mui/material/styles'
 
 export const theme = extendTheme({
+    colorSchemeSelector: 'class',
     colorSchemes: {
         light: {
             palette: {
