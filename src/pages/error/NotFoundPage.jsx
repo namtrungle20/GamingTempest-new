@@ -2,7 +2,7 @@ import React from 'react';
 import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { UI_SETTING } from '../../constants/theme/uiSetting';
+import { UI_SETTING } from '../../theme/uiSetting';
 import ErrorImage from '../../asset/404.png';
 
 const NotFoundPage = () => {

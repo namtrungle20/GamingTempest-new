@@ -63,3 +63,30 @@
 - [class]-[{value}]    : Ví dụ: w-[432px], bg-[#123456], top-[13px]
 
 ===========================================================
+
+
+
+===========================================================
+                        CẤU TRÚC THƯ MỤC
+===========================================================
+
+src/
+├── api/              # Cấu hình axios, interceptors (gắn JWT)
+│   └── axiosClient.js
+├── assets/           # Hình ảnh, logo, fonts (tĩnh)
+├── components/       # Các component dùng chung cho toàn dự án
+│   ├── common/       # Button, Input, Modal (LoginModal, RegisterModal)
+│   └── layout/       # Navbar, Footer, Sidebar
+├── constants/        # Lưu biến môi trường, dữ liệu tĩnh (navData, theme)
+├── hooks/            # Custom hooks xử lý logic (useAuth, useRegister)
+├── models/           # Định nghĩa các Class hoặc kiểu dữ liệu (User model)
+├── pages/            # Các trang chính (Home, ProductDetail, Admin)
+├── routes/           # Cấu hình định tuyến (PublicRoute, PrivateRoute)
+├── services/         # Gọi API trực tiếp (authService)
+├── store/            # Quản lý State tập trung (Zustand/Redux)
+├── utils/            # Các hàm bổ trợ (format tiền tệ, validate)
+├── App.jsx           # Component gốc
+└── main.jsx          # Điểm vào ứng dụng
+.env.development      # VITE_BACKEND_URL cho local
+.env.production       # VITE_BACKEND_URL cho server thật
+===========================================================

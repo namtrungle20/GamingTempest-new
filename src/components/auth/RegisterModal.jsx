@@ -1,7 +1,7 @@
 import React from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
-import { UI_SETTING } from '../../constants/theme/uiSetting'
+import { UI_SETTING } from '../../theme/uiSetting'
 
 const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
   return (

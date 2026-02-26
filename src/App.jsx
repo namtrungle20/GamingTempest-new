@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navigation from './layout/Header/Navigation'
+import Navigation from './layout/HomeLayout'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/error/NotFoundPage'
 

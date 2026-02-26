@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import * as Mui from '@mui/material'
-import * as MuiStyles from '@mui/material/styles' 
+import * as MuiStyles from '@mui/material/styles'
 import * as Icon from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 
@@ -9,19 +9,20 @@ import logoWhite from '../../asset/TempestGaming_White_Fine.png'
 import logoBlack from '../../asset/TempestGaming_Black_Fine.png'
 
 import { NAV_ITEMS } from './../../constants/navData'
-import { UI_SETTING } from '../../constants/theme/uiSetting'
+import { UI_SETTING } from '../../theme/uiSetting'
 import LoginModal from './../auth/LoginModal'
 import RegisterModal from '../auth/RegisterModal'
+import useAuth from '../../hook/useAuth'
 
 const Navbar = () => {
     // Sửa lỗi: Phải có dấu () sau useColorScheme
-    const { mode, setMode } = MuiStyles.useColorScheme() 
-    
+    const { mode, setMode } = MuiStyles.useColorScheme()
+    const { user, login, logout, loading, error } = useAuth();
+
     const [activeMenu, setActiveMenu] = useState(null);
     const [openLogin, setOpenLogin] = useState(false);
     const [openRegister, setOpenRegister] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const tempIsLogin = false;
 
     const handleSwitchToRegister = () => {
         setOpenLogin(false);
@@ -31,6 +32,11 @@ const Navbar = () => {
     const handleSwitchToLogin = () => {
         setOpenRegister(false);
         setTimeout(() => { setOpenLogin(true); }, 200);
+    };
+
+    const handleLogout = () => {
+        setAnchorEl(null);
+        logout();
     };
 
     const toggleMode = () => {
@@ -108,7 +114,7 @@ const Navbar = () => {
                             </Mui.Badge>
                         </Mui.IconButton>
 
-                        {!tempIsLogin ? (
+                        {!user ? (
                             <Mui.IconButton color='inherit' onClick={() => setOpenLogin(true)}>
                                 <Icon.PersonOutlineOutlined />
                             </Mui.IconButton>
@@ -128,7 +134,9 @@ const Navbar = () => {
                                     <Mui.MenuItem onClick={() => setAnchorEl(null)}><Icon.Person sx={{ mr: 2, fontSize: 20 }} /> Hồ sơ</Mui.MenuItem>
                                     <Mui.MenuItem onClick={() => setAnchorEl(null)}><Icon.Settings sx={{ mr: 2, fontSize: 20 }} /> Cài đặt</Mui.MenuItem>
                                     <Mui.Divider />
-                                    <Mui.MenuItem onClick={() => setAnchorEl(null)} sx={{ color: 'error.main' }}><Icon.Logout sx={{ mr: 2, fontSize: 20 }} /> Đăng xuất</Mui.MenuItem>
+                                    <Mui.MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+                                        <Icon.Logout sx={{ mr: 2, fontSize: 20 }} /> Đăng xuất
+                                    </Mui.MenuItem>
                                 </Mui.Menu>
                             </>
                         )}
@@ -205,7 +213,14 @@ const Navbar = () => {
                 </Mui.Fade>
             </Mui.AppBar>
 
-            <LoginModal open={openLogin} handleClose={() => setOpenLogin(false)} onSwitchRegister={handleSwitchToRegister} />
+            <LoginModal
+                open={openLogin}
+                handleClose={() => setOpenLogin(false)}
+                onSwitchRegister={handleSwitchToRegister}
+                login={login}
+                loading={loading}
+                error={error}
+            />
             <RegisterModal open={openRegister} handleClose={() => setOpenRegister(false)} onSwitchLogin={handleSwitchToLogin} />
         </Mui.Box>
     )

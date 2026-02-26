@@ -5,14 +5,17 @@ import App from './App.jsx'
 import CssBaseline from '@mui/material/CssBaseline'
 // import { ThemeProvider } from '@mui/material/styles'
 import { theme } from './theme/theme.js'
-import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
+import { AuthProvider } from '../src/hook/useAuth'
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CssVarsProvider theme={theme} >
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />
-    </CssVarsProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>
 )
