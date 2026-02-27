@@ -133,6 +133,20 @@ const Navbar = () => {
                                 >
                                     <Mui.MenuItem onClick={() => setAnchorEl(null)}><Icon.Person sx={{ mr: 2, fontSize: 20 }} /> Hồ sơ</Mui.MenuItem>
                                     <Mui.MenuItem onClick={() => setAnchorEl(null)}><Icon.Settings sx={{ mr: 2, fontSize: 20 }} /> Cài đặt</Mui.MenuItem>
+                                    {user?.isAdmin && (
+                                        <>
+                                            <Mui.Divider />
+                                            <Mui.MenuItem
+                                                component={Link}
+                                                to="/admin/users"
+                                                onClick={() => setAnchorEl(null)}
+                                                sx={{ color: 'primary.main', fontWeight: 700 }}
+                                            >
+                                                <Icon.AdminPanelSettingsOutlined sx={{ mr: 2, fontSize: 20 }} />
+                                                Trang quản trị
+                                            </Mui.MenuItem>
+                                        </>
+                                    )}
                                     <Mui.Divider />
                                     <Mui.MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
                                         <Icon.Logout sx={{ mr: 2, fontSize: 20 }} /> Đăng xuất

@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 // import { ThemeProvider } from '@mui/material/styles'
 import { theme } from './theme/theme.js'
 import { ThemeProvider } from '@mui/material/styles'
-import { AuthProvider } from '../src/hook/useAuth'
+import { AuthProvider } from '../src/hook/provider/AuthProvider'
 
 
 createRoot(document.getElementById('root')).render(
