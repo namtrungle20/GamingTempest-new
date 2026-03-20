@@ -1,34 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomeLayout from '@/layout/HomeLayout'
+import AdminRoute from '@/components/commom/AdminRoute'
+import AdminLayout from '@/pages/admin/layout/AdminLayout'
+import PageLoader from '@/pages/loader/PageLoader'
+
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const NotFoundPage = lazy(() => import('@/pages/error/NotFoundPage'))
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashBoard'))
+const UserManagePage = lazy(() => import('@/pages/admin/UserManagePage'))
+const SanPhamManagePage = lazy(() => import('@/pages/admin/SanPhamManagerPage'))
+const ProductListPage = lazy(() => import('@/pages/ProductListPage'))
+
+// ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
+const Page = ({ component: Component }) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+)
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<HomeLayout />}>
+          <Route index element={<Page component={HomePage} />} />
+          <Route path='/products' element={<Page component={ProductListPage} />} />
+        </Route>
+
+        <Route path='/admin' element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }>
+          <Route index element={<Page component={AdminDashboard} />} />
+          <Route path='users' element={<Page component={UserManagePage} />} />
+          <Route path='products' element={<Page component={SanPhamManagePage} />} />
+        </Route>
+
+        <Route path='*' element={<Page component={NotFoundPage} />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

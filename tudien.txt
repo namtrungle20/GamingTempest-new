@@ -1,0 +1,92 @@
+===========================================================
+        TỪ ĐIỂN TRA CỨU NHANH TAILWIND CSS CHO DEV
+===========================================================
+
+1. BỐ CỤC (LAYOUT & FLEXBOX/GRID)
+-----------------------------------------------------------
+- flex / grid          : Kích hoạt bộ khung (display: flex/grid)
+- flex-row / flex-col  : Sắp xếp theo hàng / cột
+- justify-center       : Căn giữa theo trục chính (ngang nếu là row)
+- items-center         : Căn giữa theo trục phụ (dọc nếu là row)
+- justify-between      : Đẩy các phần tử ra xa nhau (space-between)
+- grid-cols-{n}        : Chia lưới thành n cột (ví dụ: grid-cols-3)
+- gap-{n}              : Khoảng cách giữa các phần tử con (gap-4 = 16px)
+- z-{n}                : Thứ tự hiển thị lớp chồng (z-index)
+
+2. KHOẢNG CÁCH (SPACING) - [1 đơn vị = 4px]
+-----------------------------------------------------------
+- m-{n}                : Margin (tất cả các phía)
+- mt-, mb-, ml-, mr-   : Margin Top, Bottom, Left, Right
+- mx-{n} / my-{n}      : Margin theo trục ngang (x) / dọc (y)
+- p-{n}                : Padding (tất cả các phía)
+- px-{n} / py-{n}      : Padding ngang / dọc
+- m-auto               : Căn giữa phần tử (margin: auto)
+
+3. KÍCH THƯỚC (SIZING)
+-----------------------------------------------------------
+- w-{n} / h-{n}        : Chiều rộng / Chiều cao (w-10 = 40px)
+- w-full / h-full      : Rộng / Cao 100%
+- w-screen / h-screen  : Rộng / Cao toàn màn hình (100vw/100vh)
+- max-w-{size}         : Chiều rộng tối đa (max-w-md, max-w-7xl...)
+- min-h-screen         : Chiều cao tối thiểu bằng màn hình
+
+4. CHỮ VIẾT (TYPOGRAPHY)
+-----------------------------------------------------------
+- text-{size}          : Kích thước chữ (xs, sm, base, lg, xl, 2xl...)
+- font-{weight}        : Độ đậm (light, normal, medium, bold, black)
+- text-{color}-{grade} : Màu chữ (text-blue-500, text-gray-800)
+- leading-{size}       : Khoảng cách dòng (line-height)
+- tracking-{size}      : Khoảng cách chữ (letter-spacing)
+- uppercase/lowercase  : Viết hoa / viết thường
+
+5. TRANG TRÍ (DECORATION)
+-----------------------------------------------------------
+- bg-{color}-{grade}   : Màu nền (bg-white, bg-red-600)
+- border / border-{n}  : Hiện viền / Độ dày viền (border-2)
+- border-{color}       : Màu viền
+- rounded-{size}       : Bo góc (sm, md, lg, xl, full)
+- shadow-{size}        : Đổ bóng (sm, md, lg, xl, inner)
+- opacity-{n}          : Độ trong suốt (0, 25, 50, 75, 100)
+
+6. TRẠNG THÁI & RESPONSIVE
+-----------------------------------------------------------
+- hover:{class}        : Hiệu ứng khi di chuột (hover:bg-blue-700)
+- focus:{class}        : Hiệu ứng khi nhấn vào (focus:outline-none)
+- sm: (640px)          : Mobile ngang
+- md: (768px)          : Tablet
+- lg: (1024px)         : Laptop/PC
+- xl: (1280px)         : Màn hình lớn
+
+7. MẸO CÚ PHÁP TỰ DO (ARBITRARY VALUES)
+-----------------------------------------------------------
+- Nếu cần giá trị lẻ không có trong bảng màu/thước đo:
+- [class]-[{value}]    : Ví dụ: w-[432px], bg-[#123456], top-[13px]
+
+===========================================================
+
+
+
+===========================================================
+                        CẤU TRÚC THƯ MỤC
+===========================================================
+
+src/
+├── api/              # Cấu hình axios, interceptors (gắn JWT)
+│   └── axiosClient.js
+├── assets/           # Hình ảnh, logo, fonts (tĩnh)
+├── components/       # Các component dùng chung cho toàn dự án
+│   ├── common/       # Button, Input, Modal (LoginModal, RegisterModal)
+│   └── layout/       # Navbar, Footer, Sidebar
+├── constants/        # Lưu biến môi trường, dữ liệu tĩnh (navData, theme)
+├── hooks/            # Custom hooks xử lý logic (useAuth, useRegister)
+├── models/           # Định nghĩa các Class hoặc kiểu dữ liệu (User model)
+├── pages/            # Các trang chính (Home, ProductDetail, Admin)
+├── routes/           # Cấu hình định tuyến (PublicRoute, PrivateRoute)
+├── services/         # Gọi API trực tiếp (authService)
+├── store/            # Quản lý State tập trung (Zustand/Redux)
+├── utils/            # Các hàm bổ trợ (format tiền tệ, validate)
+├── App.jsx           # Component gốc
+└── main.jsx          # Điểm vào ứng dụng
+.env.development      # VITE_BACKEND_URL cho local
+.env.production       # VITE_BACKEND_URL cho server thật
+===========================================================
