@@ -3,7 +3,7 @@ import apiConfig from '@/config/apiConfig'
 import User from '@/models/User'
 import { API } from '@/constants/apiConstants'
 
-const useUserAdmin = () => {
+const useUserManager = () => {
     // ══════════════════════════════════════════════════════════
     // STATE
     // ══════════════════════════════════════════════════════════
@@ -60,7 +60,7 @@ const useUserAdmin = () => {
         try {
             const filter = {}
             if (roleFilter) filter.vaitro = parseInt(roleFilter)
-            if (lockFilter !== '') filter.is_lock = parseInt(lockFilter)
+            if (lockFilter !== '') filter.trangthai = parseInt(lockFilter)
 
             const res = await apiConfig.post(API.USERS.LIST, {
                 pagination: { page, perPage: rowsPerPage },
@@ -222,4 +222,4 @@ const useUserAdmin = () => {
     }
 }
 
-export default useUserAdmin
+export default useUserManager

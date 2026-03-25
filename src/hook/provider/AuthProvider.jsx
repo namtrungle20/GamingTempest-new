@@ -52,9 +52,10 @@ export const AuthProvider = ({ children }) => {
 
             setUser(new User(nguoidung))
             return { success: true }
-        } catch {
-            setError('Đã có lỗi xảy ra')
-            return { success: false }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Không thể kết nối đến máy chủ';
+            setError(errorMessage);
+            return { success: false, message: errorMessage }
         } finally {
             setLoading(false)
         }

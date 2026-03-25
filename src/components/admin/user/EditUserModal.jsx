@@ -10,7 +10,7 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
         email: '',
         sdt: '',
         vaitro: 2,
-        isLock: false,
+        trangthai: 0,
     })
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
                 email: user.email || '',
                 sdt: user.sdt || '',
                 vaitro: user.vaitro,
-                isLock: user.isLock,
+                trangthai: user.trangthai,
             })
         }
     }, [user])
@@ -35,7 +35,7 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
             email: formData.email,
             sdt: formData.sdt,
             vaitro: formData.vaitro,
-            is_lock: formData.isLock ? 1 : 0,
+            trangthai: formData.trangthai,
         })
     }
 
@@ -101,9 +101,9 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
                     <Mui.FormControl fullWidth>
                         <Mui.InputLabel>Trạng thái</Mui.InputLabel>
                         <Mui.Select
-                            value={formData.isLock ? 1 : 0}
+                            value={formData.trangthai}
                             label="Trạng thái"
-                            onChange={(e) => handleChange('isLock', e.target.value === 1)}
+                            onChange={(e) => handleChange('trangthai', e.target.value)}
                         >
                             {LOCK_OPTIONS.map(opt => (
                                 <Mui.MenuItem key={opt.value} value={opt.value}>

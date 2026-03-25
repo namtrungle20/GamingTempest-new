@@ -1,7 +1,7 @@
 import { memo, useState, useEffect, useRef } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
-import useUserAdmin from '@/hook/admin/useUserAdmin'
+import useUserManager from '@/hook/admin/useUserManager'
 import EditUserModal from '@/components/admin/user/EditUserModal'
 import ConfirmDeleteDialog from '@/components/admin/user/ConfirmDeleteDialog'
 import { ROLE_LABEL, ROLE_COLOR, LOCK_LABEL, LOCK_COLOR, LOCK_STATUS, ROLE_OPTIONS, LOCK_OPTIONS } from '@/constants/UserConstants'
@@ -39,8 +39,8 @@ const UserTableRow = memo(({ user, onEdit, onDelete }) => (
         </Mui.TableCell>
         <Mui.TableCell>
             <Mui.Chip
-                label={user.isLock ? LOCK_LABEL[LOCK_STATUS.LOCKED] : LOCK_LABEL[LOCK_STATUS.ACTIVE]}
-                color={user.isLock ? LOCK_COLOR[LOCK_STATUS.LOCKED] : LOCK_COLOR[LOCK_STATUS.ACTIVE]}
+                label={LOCK_LABEL[user.trangthai] ?? 'Không xác định'}
+                color={LOCK_COLOR[user.trangthai] ?? 'default'}
                 size="small"
                 sx={{ fontWeight: 700, fontSize: '0.7rem' }}
             />
@@ -162,7 +162,7 @@ const UserManagePage = () => {
         editModalOpen, editingUser, handleCloseEditModal,
         confirmOpen, handleConfirmDelete, handleCancelDelete,
         snackbar, closeSnackbar,
-    } = useUserAdmin()
+    } = useUserManager()
 
     return (
         <Mui.Box>

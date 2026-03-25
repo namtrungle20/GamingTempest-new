@@ -86,7 +86,11 @@ const useSanPhamManage = () => {
     const handleSubmit = useCallback(async () => {
         const formData = new FormData()
         Object.entries(form).forEach(([key, value]) => {
-            if (value !== null && value !== '') formData.append(key, value)
+            if (['gia', 'soluong', 'loai_id', 'thuonghieu_id'].includes(key)) {
+                formData.append(key, Number(value))
+            } else {
+                formData.append(key, value)
+            }
         })
 
         const result = editTarget
