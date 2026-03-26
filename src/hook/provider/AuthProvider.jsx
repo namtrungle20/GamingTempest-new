@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react'
-import { authService } from '@/services/authService'
+import { authService } from '@/services/auth.service.js'
 import { AuthContext } from '@/hook/provider/AuthContext'
 import User from '@/models/User'
 

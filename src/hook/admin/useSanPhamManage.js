@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { productService } from '@/services/productService'
+import { productService } from '@/services/product.service.js'
 import Product from '@/models/Product'
+import { uploadService } from '@/services/upload.service';
 
 const INITIAL_FORM = {
     name: '', mota: '', gia: '', soluong: '',
@@ -82,20 +83,64 @@ const useSanPhamManage = () => {
     const handleFormChange = useCallback((field, value) => {
         setForm(prev => ({ ...prev, [field]: value }))
     }, [])
+    // const handleSubmit = useCallback(async () => {
+    //     const formData = new FormData()
+    //     Object.entries(form).forEach(([key, value]) => {
+    //         if (['gia', 'soluong', 'loai_id', 'thuonghieu_id'].includes(key)) {
+    //             formData.append(key, Number(value))
+    //         } else {
+    //             formData.append(key, value)
+    //         }
+    //     })
+
+    //     const result = editTarget
+    //         ? await productService.update(editTarget.sanpham_id, formData)
+    //         : await productService.create(formData)
+
+    //     if (result.success) {
+    //         notify(editTarget ? 'Cập nhật thành công' : 'Thêm sản phẩm thành công')
+    //         closeModal()
+    //         fetchSanPhams()
+    //     } else {
+    //         notify(result.message, 'error')
+    //     }
+    // }, [form, editTarget, notify, closeModal, fetchSanPhams])
 
     const handleSubmit = useCallback(async () => {
-        const formData = new FormData()
-        Object.entries(form).forEach(([key, value]) => {
-            if (['gia', 'soluong', 'loai_id', 'thuonghieu_id'].includes(key)) {
-                formData.append(key, Number(value))
-            } else {
-                formData.append(key, value)
-            }
-        })
+        // 1. Xử lý upload ảnh nếu có file mới
+        let imageUrl = editTarget?.image // Giữ ảnh cũ nếu không thay đổi
 
+        if (form.image && form.image instanceof File) {
+            const uploadResult = await uploadService.uploadImage(form.image)
+            if (!uploadResult.success) {
+                notify(uploadResult.message, 'error')
+                return
+            }
+            imageUrl = uploadResult.url
+        }
+
+        // 2. Tạo payload cho API sản phẩm (không gửi file ảnh trực tiếp)
+        const payload = {
+            name: form.name,
+            mota: form.mota,
+            gia: Number(form.gia),
+            soluong: Number(form.soluong),
+            loai_id: Number(form.loai_id),
+            thuonghieu_id: Number(form.thuonghieu_id),
+            image: imageUrl // Gửi URL ảnh
+        }
+
+        const productId = editTarget?.sanpham_id || editTarget?.id
+
+        if (!productId && editTarget) {
+            notify('Không tìm thấy ID sản phẩm', 'error')
+            return
+        }
+
+        // 3. Gọi API sản phẩm
         const result = editTarget
-            ? await productService.update(editTarget.sanpham_id, formData)
-            : await productService.create(formData)
+            ? await productService.update(productId, payload)  // ← dùng productId, không dùng editTarget.sanpham_id
+            : await productService.create(payload)
 
         if (result.success) {
             notify(editTarget ? 'Cập nhật thành công' : 'Thêm sản phẩm thành công')

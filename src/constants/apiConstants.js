@@ -27,4 +27,7 @@ export const API = {
     CATEGORIES: {
         LIST: '/loaisanpham',
     },
+    IMAGES: {
+        UPLOAD: '/images/cloudinary/upload',
+    },
 }

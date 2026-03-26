@@ -18,20 +18,20 @@ export const productService = {
             return { success: false, message: error.response?.data?.message || 'Lỗi server' }
         }
     },
-    create: async (formData) => {
+    create: async (data) => {
         try {
-            const response = await apiConfig.post(API.PRODUCTS.LIST, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await apiConfig.post(API.PRODUCTS.LIST, data, {
+                headers: { 'Content-Type': 'application/json' }
             })
             return { success: true, raw: response.data }
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Lỗi server' }
         }
     },
-    update: async (id, formData) => {
+    update: async (id, data) => {
         try {
-            const response = await apiConfig.put(`${API.PRODUCTS.LIST}/${id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await apiConfig.put(`${API.PRODUCTS.LIST}/${id}`, data, {
+                headers: { 'Content-Type': 'application/json' }
             })
             return { success: true, raw: response.data }
         } catch (error) {
