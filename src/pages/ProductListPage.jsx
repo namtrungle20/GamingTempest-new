@@ -3,6 +3,8 @@ import * as Icon from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import useProductList from '@/hook/useProductList'
 import { UI_SETTING } from '@/theme/uiSetting'
+import PageBuilder from '@/layout/PageBuilder'
+import ProductShelf from '@/components/sections/ProductSheft'
 
 const SORT_OPTIONS = [
     { label: 'Mới nhất', sort_by: 'createdAt', sort_order: 'DESC' },
@@ -12,8 +14,10 @@ const SORT_OPTIONS = [
     { label: 'Tên A-Z', sort_by: 'name', sort_order: 'ASC' },
 ]
 
+
 // ── ProductCard ───────────────────────────────────────────────────────────
 const ProductCard = ({ product }) => (
+
     <Mui.Card
         elevation={0}
         component={Link}
@@ -154,9 +158,19 @@ const ProductListPage = () => {
     const pageSize = 10
     const totalPages = Math.ceil(total / pageSize)
 
-    const currentSort = SORT_OPTIONS.find(
-        o => o.sort_by === filters.sort_by && o.sort_order === filters.sort_order
-    ) || SORT_OPTIONS[0]
+    const productShelfPayload = products.length > 0 ? {
+    title: 'Sản Phẩm',
+    items: products.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.gia,
+        image: p.imageUrl,
+    })),
+} : null;
+
+    // const currentSort = SORT_OPTIONS.find(
+    //     o => o.sort_by === filters.sort_by && o.sort_order === filters.sort_order
+    // ) || SORT_OPTIONS[0]
 
     return (
         <Mui.Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -221,44 +235,48 @@ const ProductListPage = () => {
                     </Mui.Paper>
 
                     {/* Product grid */}
-                    <Mui.Box flex={1}>
-                        {loading ? (
-                            <Mui.Grid container spacing={2}>
-                                {[...Array(10)].map((_, i) => (
-                                    <Mui.Grid item xs={6} sm={4} lg={3} key={i}>
-                                        <Mui.Skeleton variant="rounded" height={280} />
-                                    </Mui.Grid>
-                                ))}
-                            </Mui.Grid>
-                        ) : products.length === 0 ? (
-                            <Mui.Box textAlign="center" py={10}>
-                                <Icon.SearchOff sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
-                                <Mui.Typography color="text.secondary">Không tìm thấy sản phẩm nào</Mui.Typography>
-                                <Mui.Button onClick={resetFilters} sx={{ mt: 2, fontWeight: 700 }}>
-                                    Xoá bộ lọc
-                                </Mui.Button>
-                            </Mui.Box>
-                        ) : (
-                            <Mui.Grid container spacing={2}>
-                                {products.map(p => (
-                                    <Mui.Grid item xs={6} sm={4} lg={3} key={p.id}>
-                                        <ProductCard product={p} />
-                                    </Mui.Grid>
-                                ))}
-                            </Mui.Grid>
-                        )}
+                    <Mui.Card elevation={3} sx={{ p: 2 }}>
+                        <Mui.Box flex={1}>
+                            {loading ? (
+                                <Mui.Grid container spacing={2}>
+                                    {[...Array(10)].map((_, i) => (
+                                        <Mui.Grid item xs={6} sm={4} lg={3} key={i}>
+                                            <Mui.Skeleton variant="rounded" height={280} />
+                                        </Mui.Grid>
+                                    ))}
+                                </Mui.Grid>
+                            ) : products.length === 0 ? (
+                                <Mui.Box textAlign="center" py={10}>
+                                    <Icon.SearchOff sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
+                                    <Mui.Typography color="text.secondary">Không tìm thấy sản phẩm nào</Mui.Typography>
+                                    <Mui.Button onClick={resetFilters} sx={{ mt: 2, fontWeight: 700 }}>
+                                        Xoá bộ lọc
+                                    </Mui.Button>
+                                </Mui.Box>
+                            ) : (
+                                // <Mui.Grid container spacing={2}>
+                                //     {products.map(p => (
+                                //         <Mui.Grid item xs={6} sm={4} lg={3} key={p.id}>
+                                //             <ProductCard product={p} />
+                                //         </Mui.Grid>
+                                //     ))}
+                                // </Mui.Grid>
+                                <ProductShelf payload={productShelfPayload} hideViewAll = {true} />
+                            )
+                            }
 
-                        {totalPages > 1 && (
-                            <Mui.Box display="flex" justifyContent="center" mt={4}>
-                                <Mui.Pagination
-                                    count={totalPages}
-                                    page={page}
-                                    onChange={(_, val) => setPage(val)}
-                                    color="primary"
-                                />
-                            </Mui.Box>
-                        )}
-                    </Mui.Box>
+                            {totalPages > 1 && (
+                                <Mui.Box display="flex" justifyContent="center" mt={4}>
+                                    <Mui.Pagination
+                                        count={totalPages}
+                                        page={page}
+                                        onChange={(_, val) => setPage(val)}
+                                        color="primary"
+                                    />
+                                </Mui.Box>
+                            )}
+                        </Mui.Box>
+                    </Mui.Card>
                 </Mui.Box>
             </Mui.Container>
         </Mui.Box>

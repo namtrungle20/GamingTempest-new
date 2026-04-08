@@ -42,8 +42,8 @@ const HomePage = () => {
             const res = await apiConfig.get(API.PRODUCTS.LIST)
             const products = (res.data?.data || []).map(p => new Product(p))
             setDbProducts(products)
-        } catch {
-            // fallback — ẩn section nếu lỗi
+        } catch (err) {
+            return {success: true, message: "Không có sản phẩm"}
         }
     }, [])
 
