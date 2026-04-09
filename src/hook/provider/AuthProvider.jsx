@@ -23,12 +23,11 @@ export const AuthProvider = ({ children }) => {
                     setUser(new User(result.raw.data))
                 } else {
                     // token invalid hoặc user không còn tồn tại
-                    localStorage.clear()
+                    localStorage.removeItem('accessToken');
                     setUser(null)
                 }
             } catch {
-                localStorage.clear()
-                setUser(null)
+                localStorage.removeItem('accessToken');
             } finally {
                 setLoading(false)
             }

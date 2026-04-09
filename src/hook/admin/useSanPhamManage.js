@@ -54,13 +54,15 @@ const useSanPhamManage = () => {
     useEffect(() => { fetchSanPhams() }, [fetchSanPhams])
     useEffect(() => { fetchMeta() }, [fetchMeta])
 
-    const openCreate = useCallback(() => {
+    const openCreate = useCallback(async () => {
+        await fetchMeta()
         setEditTarget(null)
         setForm(INITIAL_FORM)
         setModalOpen(true)
-    }, [])
+    }, [fetchMeta])
 
-    const openEdit = useCallback((sanpham) => {
+    const openEdit = useCallback(async (sanpham) => {
+        await fetchMeta()
         setEditTarget(sanpham)
         setForm({
             name: sanpham.name || '',
@@ -72,7 +74,7 @@ const useSanPhamManage = () => {
             image: null,
         })
         setModalOpen(true)
-    }, [])
+    }, [fetchMeta])
 
     const closeModal = useCallback(() => {
         setModalOpen(false)
@@ -172,7 +174,7 @@ const useSanPhamManage = () => {
 
     return {
         sanPhams, brands, categories, loading, total, page, search,
-        modalOpen, editTarget, form, deleteDialog, snackbar,
+        fetchMeta, modalOpen, editTarget, form, deleteDialog, snackbar,
         setPage, setSearch, notify, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,

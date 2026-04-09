@@ -16,53 +16,53 @@ const SORT_OPTIONS = [
 
 
 // ── ProductCard ───────────────────────────────────────────────────────────
-const ProductCard = ({ product }) => (
+// const ProductCard = ({ product }) => (
 
-    <Mui.Card
-        elevation={0}
-        component={Link}
-        to={`/products/${product.id}`}
-        sx={{
-            border: '1px solid', borderColor: 'divider',
-            borderRadius: 2, textDecoration: 'none',
-            transition: '0.2s',
-            '&:hover': {
-                borderColor: 'primary.main',
-                transform: 'translateY(-4px)',
-                boxShadow: '0 8px 24px rgba(255,137,6,0.15)'
-            }
-        }}
-    >
-        <Mui.Box sx={{ position: 'relative', aspectRatio: '4/3', bgcolor: 'background.default', borderRadius: '8px 8px 0 0', overflow: 'hidden' }}>
-            <Mui.Box
-                component="img"
-                src={product.imageUrl || 'https://placehold.co/300x225?text=No+Image'}
-                onError={(e) => { e.target.src = 'https://placehold.co/300x225?text=No+Image' }}
-                sx={{ width: '100%', height: '100%', objectFit: 'contain', p: 1 }}
-            />
-            {!product.inStock && (
-                <Mui.Chip
-                    label="Hết hàng" size="small" color="error"
-                    sx={{ position: 'absolute', top: 8, right: 8, fontWeight: 700, fontSize: '0.7rem' }}
-                />
-            )}
-        </Mui.Box>
-        <Mui.CardContent sx={{ p: 2 }}>
-            <Mui.Typography variant="caption" color="text.secondary" fontWeight={600}>
-                {product.thuonghieu || product.loai}
-            </Mui.Typography>
-            <Mui.Typography
-                variant="body2" fontWeight={700} color="text.primary"
-                sx={{ mt: 0.5, mb: 1, height: '2.8em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
-            >
-                {product.name}
-            </Mui.Typography>
-            <Mui.Typography variant="subtitle1" fontWeight={900} color="primary.main">
-                {product.price}
-            </Mui.Typography>
-        </Mui.CardContent>
-    </Mui.Card>
-)
+//     <Mui.Card
+//         elevation={0}
+//         component={Link}
+//         to={`/products/${product.id}`}
+//         sx={{
+//             border: '1px solid', borderColor: 'divider',
+//             borderRadius: 2, textDecoration: 'none',
+//             transition: '0.2s',
+//             '&:hover': {
+//                 borderColor: 'primary.main',
+//                 transform: 'translateY(-4px)',
+//                 boxShadow: '0 8px 24px rgba(255,137,6,0.15)'
+//             }
+//         }}
+//     >
+//         <Mui.Box sx={{ position: 'relative', aspectRatio: '4/3', bgcolor: 'background.default', borderRadius: '8px 8px 0 0', overflow: 'hidden' }}>
+//             <Mui.Box
+//                 component="img"
+//                 src={product.imageUrl || 'https://placehold.co/300x225?text=No+Image'}
+//                 onError={(e) => { e.target.src = 'https://placehold.co/300x225?text=No+Image' }}
+//                 sx={{ width: '100%', height: '100%', objectFit: 'contain', p: 1 }}
+//             />
+//             {!product.inStock && (
+//                 <Mui.Chip
+//                     label="Hết hàng" size="small" color="error"
+//                     sx={{ position: 'absolute', top: 8, right: 8, fontWeight: 700, fontSize: '0.7rem' }}
+//                 />
+//             )}
+//         </Mui.Box>
+//         <Mui.CardContent sx={{ p: 2 }}>
+//             <Mui.Typography variant="caption" color="text.secondary" fontWeight={600}>
+//                 {product.thuonghieu || product.loai}
+//             </Mui.Typography>
+//             <Mui.Typography
+//                 variant="body2" fontWeight={700} color="text.primary"
+//                 sx={{ mt: 0.5, mb: 1, height: '2.8em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
+//             >
+//                 {product.name}
+//             </Mui.Typography>
+//             <Mui.Typography variant="subtitle1" fontWeight={900} color="primary.main">
+//                 {product.price}
+//             </Mui.Typography>
+//         </Mui.CardContent>
+//     </Mui.Card>
+// )
 
 // ── FilterPanel ───────────────────────────────────────────────────────────
 const FilterPanel = ({ filters, brands, categories, updateFilter, resetFilters }) => (

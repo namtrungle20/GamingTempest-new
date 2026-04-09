@@ -22,6 +22,7 @@ const CatalogManageTab = ({ label, hook }) => {
             {/* Header */}
             <Mui.Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Mui.Typography variant="body1" color="text.secondary">
+                    // toLowerCase() ??
                     Tổng cộng {total} {label.toLowerCase()}
                 </Mui.Typography>
                 <Mui.Button
