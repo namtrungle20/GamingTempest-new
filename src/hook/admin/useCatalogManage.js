@@ -1,9 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 
-
-const INITIAL_FORM = { name: '', image: null }
-
-const useCatalogManage = (service, ModelClass) => {
+const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: null }) => {
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(false)
     const [total, setTotal] = useState(0)
@@ -11,22 +8,20 @@ const useCatalogManage = (service, ModelClass) => {
     const [search, setSearch] = useState('')
     const [modalOpen, setModalOpen] = useState(false)
     const [editTarget, setEditTarget] = useState(null)
-    const [form, setForm] = useState(INITIAL_FORM)
+    const [form, setForm] = useState(initialForm)
     const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null, name: '' })
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
 
     const notify = useCallback((message, severity = 'success') =>
         setSnackbar({ open: true, message, severity }), [])
-
-    const closeSnackbar = useCallback(() =>
-        setSnackbar(prev => ({ ...prev, open: false })), [])
+    const closeSnackbar = useCallback(() => setSnackbar(prev => ({ ...prev, open: false })), [])
 
     const fetchItems = useCallback(async () => {
         setLoading(true)
         const result = await service.getAll({ page, search })
         if (result.success) {
             const data = result.raw.data || []
-            setItems(ModelClass ? data.map(d => new ModelClass(d)) : data) // ✅ map qua model
+            setItems(ModelClass ? data.map(d => new ModelClass(d)) : data)
             setTotal(result.raw.total || 0)
         } else {
             notify(result.message, 'error')
@@ -38,21 +33,29 @@ const useCatalogManage = (service, ModelClass) => {
 
     const openCreate = useCallback(() => {
         setEditTarget(null)
-        setForm(INITIAL_FORM)
+        setForm(initialForm)
         setModalOpen(true)
-    }, [])
+    }, [initialForm])
 
     const openEdit = useCallback((item) => {
         setEditTarget(item)
-        setForm({ name: item.name || '', image: null })
+        const newForm = { ...initialForm }
+        Object.keys(initialForm).forEach(key => {
+            if (key === 'image') {
+                newForm[key] = null
+            } else {
+                newForm[key] = item[key] !== undefined ? item[key] : initialForm[key]
+            }
+        })
+        setForm(newForm)
         setModalOpen(true)
-    }, [])
+    }, [initialForm])
 
     const closeModal = useCallback(() => {
         setModalOpen(false)
         setEditTarget(null)
-        setForm(INITIAL_FORM)
-    }, [])
+        setForm(initialForm)
+    }, [initialForm])
 
     const handleFormChange = useCallback((field, value) => {
         setForm(prev => ({ ...prev, [field]: value }))
@@ -61,11 +64,13 @@ const useCatalogManage = (service, ModelClass) => {
     const handleSubmit = useCallback(async () => {
         const formData = new FormData()
         Object.entries(form).forEach(([key, value]) => {
-            if (value !== null && value !== '') formData.append(key, value)
+            if (value !== null && value !== '' && value !== undefined) {
+                formData.append(key, value)
+            }
         })
 
         const result = editTarget
-            ? await service.update(editTarget.id, formData) // ✅ dùng .id từ model
+            ? await service.update(editTarget.id, formData)
             : await service.create(formData)
 
         if (result.success) {
@@ -80,11 +85,7 @@ const useCatalogManage = (service, ModelClass) => {
     const openDeleteDialog = useCallback((id, name) => {
         setDeleteDialog({ open: true, id, name })
     }, [])
-
-    const closeDeleteDialog = useCallback(() => {
-        setDeleteDialog({ open: false, id: null, name: '' })
-    }, [])
-
+    const closeDeleteDialog = useCallback(() => setDeleteDialog({ open: false, id: null, name: '' }), [])
     const handleDelete = useCallback(async () => {
         const result = await service.remove(deleteDialog.id)
         if (result.success) {
@@ -103,6 +104,7 @@ const useCatalogManage = (service, ModelClass) => {
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
         openDeleteDialog, closeDeleteDialog, handleDelete,
+        initialForm, // để CatalogManageTab có thể biết nameField
     }
 }
 

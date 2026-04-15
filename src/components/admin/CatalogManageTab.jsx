@@ -3,7 +3,7 @@ import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '@/theme/uiSetting'
 
-const CatalogManageTab = ({ label, hook }) => {
+const CatalogManageTab = ({ label, hook, nameField = 'name' }) => {
     const {
         items, loading, total, page, search,
         modalOpen, editTarget, form, deleteDialog, snackbar,
@@ -22,7 +22,6 @@ const CatalogManageTab = ({ label, hook }) => {
             {/* Header */}
             <Mui.Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Mui.Typography variant="body1" color="text.secondary">
-                    // toLowerCase() ??
                     Tổng cộng {total} {label.toLowerCase()}
                 </Mui.Typography>
                 <Mui.Button
@@ -86,13 +85,15 @@ const CatalogManageTab = ({ label, hook }) => {
                                             </Mui.Avatar>
                                         </Mui.TableCell>
                                         <Mui.TableCell>
-                                            <Mui.Typography variant="body2" fontWeight={600}>{item.name}</Mui.Typography>
+                                            <Mui.Typography variant="body2" fontWeight={600}>
+                                                {item[nameField]}
+                                            </Mui.Typography>
                                         </Mui.TableCell>
                                         <Mui.TableCell align="right">
                                             <Mui.IconButton size="small" onClick={() => openEdit(item)} color="primary">
                                                 <Icon.EditOutlined fontSize="small" />
                                             </Mui.IconButton>
-                                            <Mui.IconButton size="small" onClick={() => openDeleteDialog(id, item.name)} color="error">
+                                            <Mui.IconButton size="small" onClick={() => openDeleteDialog(id, item[nameField])} color="error">
                                                 <Icon.DeleteOutlined fontSize="small" />
                                             </Mui.IconButton>
                                         </Mui.TableCell>
@@ -133,9 +134,11 @@ const CatalogManageTab = ({ label, hook }) => {
 
                     <Mui.Stack spacing={2.5}>
                         <Mui.TextField
-                            fullWidth label={`Tên ${label.toLowerCase()}`} required
-                            value={form.name}
-                            onChange={(e) => handleFormChange('name', e.target.value)}
+                            fullWidth
+                            label={`Tên ${label.toLowerCase()}`}
+                            required
+                            value={hook.form[nameField] || ''}
+                            onChange={(e) => handleFormChange(nameField, e.target.value)}
                         />
 
                         {/* Upload ảnh */}

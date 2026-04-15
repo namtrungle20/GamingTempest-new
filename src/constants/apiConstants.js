@@ -30,4 +30,11 @@ export const API = {
     IMAGES: {
         UPLOAD: '/images/cloudinary/upload',
     },
+    DANHMUC: {
+        LIST: '/danhmuc',
+    },
+    HINHANH: {
+        LIST: '/hinhanhsanpham',
+        DETAIL: (id) => `/hinhanhsanpham/${id}`,
+    }
 }
