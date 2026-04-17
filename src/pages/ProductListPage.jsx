@@ -1,7 +1,7 @@
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { Link } from 'react-router-dom'
-import useProductList from '@/hook/useProductList'
+import useProductList from '@/hook/product/useProductList'
 import { UI_SETTING } from '@/theme/uiSetting'
 import PageBuilder from '@/layout/PageBuilder'
 import ProductShelf from '@/components/sections/ProductSheft'
@@ -159,14 +159,14 @@ const ProductListPage = () => {
     const totalPages = Math.ceil(total / pageSize)
 
     const productShelfPayload = products.length > 0 ? {
-    title: 'Sản Phẩm',
-    items: products.map(p => ({
-        id: p.id,
-        name: p.name,
-        price: p.gia,
-        image: p.imageUrl,
-    })),
-} : null;
+        title: 'Sản Phẩm',
+        items: products.map(p => ({
+            id: p.id,
+            name: p.name,
+            price: p.gia,
+            image: p.imageUrl,
+        })),
+    } : null;
 
     // const currentSort = SORT_OPTIONS.find(
     //     o => o.sort_by === filters.sort_by && o.sort_order === filters.sort_order
@@ -261,7 +261,7 @@ const ProductListPage = () => {
                                 //         </Mui.Grid>
                                 //     ))}
                                 // </Mui.Grid>
-                                <ProductShelf payload={productShelfPayload} hideViewAll = {true} />
+                                <ProductShelf payload={productShelfPayload} hideViewAll={true} />
                             )
                             }
 

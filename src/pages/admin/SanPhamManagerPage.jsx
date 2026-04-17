@@ -115,7 +115,7 @@ const SanPhamManagePage = () => {
                                                 <Mui.TableCell><Mui.Chip label={sp.thuonghieu || '—'} size="small" variant="outlined" /></Mui.TableCell>
                                                 <Mui.TableCell><Mui.Typography variant="body2" fontWeight={700} color="primary.main">{sp.price}</Mui.Typography></Mui.TableCell>
                                                 <Mui.TableCell><Mui.Chip label={sp.soluong} size="small" color={sp.stockStatus} /></Mui.TableCell>
-                                                <Mui.TableCell align="center">
+                                                <Mui.TableCell align="left">
                                                     <ProductImageManagerModal sanpham_id={sp.id} productName={sp.name} />
                                                 </Mui.TableCell>
                                                 <Mui.TableCell align="right">

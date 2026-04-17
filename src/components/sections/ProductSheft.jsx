@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Mui from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'; // Icon mũi tên nhỏ
@@ -6,6 +7,7 @@ import ProductCard from '@/components/common/ProductCard';
 
 
 const ProductShelf = ({ payload, hideViewAll = false }) => {
+  const navigate = useNavigate();
   const scrollRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -58,10 +60,7 @@ const ProductShelf = ({ payload, hideViewAll = false }) => {
             textTransform: 'none',
             '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
           }}
-          onClick={() => {
-            // Link điều hướng ở đây, ví dụ: window.location.href = payload.link
-            console.log("Redirect to:", payload.link || "/products");
-          }}
+          onClick={() => navigate(payload.link || '/products')}
         >
           Xem tất cả
         </Mui.Button>

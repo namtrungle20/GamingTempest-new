@@ -9,6 +9,9 @@ import ImageGallery from '@/components/product/ImageGallery'
 import ProductInfoPanel from '@/components/product/ProductInfoPanel'
 import ProductTabs from '@/components/product/ProductTabs'
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton'
+import { hinhAnhService } from '@/services/productImage.service'
+import HinhAnh from '@/models/HinhAnh'
+
 
 const ProductDetailPage = () => {
     const { id } = useParams()
@@ -17,6 +20,19 @@ const ProductDetailPage = () => {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [productImages, setProductImages] = useState([])
+    useEffect(() => {
+        if (!id) return
+        hinhAnhService.getAll({ sanpham_id: id }).then(res => {
+            if (res.success) {
+                const imgs = (res.raw?.data || res.raw || [])
+                    .map(h => new HinhAnh(h))
+                    .filter(h => h.isValid)
+                    .map(h => h.url)
+                setProductImages(imgs)
+            }
+        })
+    }, [id])
 
     useEffect(() => {
         if (!id) return
@@ -79,7 +95,7 @@ const ProductDetailPage = () => {
         </Mui.Box>
     )
 
-    const productImages = product.imageUrl ? [product.imageUrl] : []
+    // const productImages = product.imageUrl ? [product.imageUrl] : []
 
     // ── Render ────────────────────────────────────────────────────────────
     return (
