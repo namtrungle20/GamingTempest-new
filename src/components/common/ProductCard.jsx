@@ -1,4 +1,5 @@
 import { useProductCoverImage } from '@/hook/product/useProductCoverImage';
+import { useCart } from '@/hook/provider/CartProvider';
 import * as Mui from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ const ProductCard = ({ product }) => {
     const navigate = useNavigate();
     const toDetail = () => navigate(`/products/${product.id}`);
     const coverUrl = useProductCoverImage(product.id)
+    const { addToCart, setIsCartOpen } = useCart();
 
     return (
         <Mui.Card
@@ -63,7 +65,15 @@ const ProductCard = ({ product }) => {
                     variant="contained"
                     size="small"
                     disableElevation
-                    onClick={e => { e.stopPropagation(); toDetail(); }}
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        const res = await addToCart(product, 1);
+                        if (res && res.success === false) {
+                            alert(res.message);
+                        } else {
+                            setIsCartOpen(true);
+                        }
+                    }}
                     sx={{
                         mt: 2,
                         borderRadius: '4px',

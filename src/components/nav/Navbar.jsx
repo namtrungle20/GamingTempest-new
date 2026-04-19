@@ -3,6 +3,8 @@ import * as Mui from '@mui/material'
 import * as MuiStyles from '@mui/material/styles'
 import * as Icon from '@mui/icons-material'
 import { Link } from 'react-router-dom'
+import { useCart } from '../../hook/provider/CartProvider'
+
 
 import logoWhite from '../../asset/TempestGaming_White_Fine.png'
 import logoBlack from '../../asset/TempestGaming_Black_Fine.png'
@@ -141,6 +143,7 @@ const Navbar = () => {
     const [openLogin, setOpenLogin] = useState(false)
     const [openRegister, setOpenRegister] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
+    const { totalItems, setIsCartOpen } = useCart()
 
     const handleSwitchToRegister = () => {
         setOpenLogin(false)
@@ -203,8 +206,8 @@ const Navbar = () => {
                             {mode === 'dark' ? <Icon.LightModeOutlined fontSize="medium" /> : <Icon.DarkModeOutlined fontSize="medium" />}
                         </Mui.IconButton>
 
-                        <Mui.IconButton size="medium" color='inherit' component={Link} to='/cart'>
-                            <Mui.Badge badgeContent={2} color='primary' sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', minWidth: 16, height: 16 } }}>
+                        <Mui.IconButton size="medium" color='inherit' onClick={() => setIsCartOpen(true)} >
+                            <Mui.Badge badgeContent={totalItems} color='primary' sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', minWidth: 16, height: 16 } }}>
                                 <Icon.ShoppingBagOutlined fontSize="medium" />
                             </Mui.Badge>
                         </Mui.IconButton>

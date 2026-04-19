@@ -2,6 +2,8 @@ import { useState } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '@/theme/uiSetting'
+import { useCart } from '@/hook/provider/CartProvider'
+
 
 const InfoRow = ({ icon, label, value }) => (
     <Mui.Box display="flex" alignItems="center" gap={1.5}>
@@ -23,6 +25,16 @@ const InfoRow = ({ icon, label, value }) => (
 
 const ProductInfoPanel = ({ product }) => {
     const [quantity, setQuantity] = useState(1)
+    const { addToCart, setIsCartOpen } = useCart()
+
+    const handleAddToCart = async () => {
+        const res = await addToCart(product, quantity)
+        if (res && res.success === false) {
+            alert(res.message)
+        } else {
+            setIsCartOpen(true)
+        }
+    }
 
     return (
         <Mui.Paper elevation={0} sx={{
@@ -120,6 +132,7 @@ const ProductInfoPanel = ({ product }) => {
                     variant="contained" size="large" fullWidth
                     startIcon={<Icon.ShoppingCart />}
                     disabled={!product.inStock}
+                    onClick={handleAddToCart}
                     sx={{
                         py: 1.6, fontWeight: 800,
                         borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,

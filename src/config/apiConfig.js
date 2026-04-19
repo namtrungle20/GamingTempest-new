@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'sonner'
 
 const apiConfig = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -25,6 +26,10 @@ apiConfig.interceptors.response.use(
             if (status === 401 || (status === 404 && isAuthMe)) {
                 localStorage.clear()
             }
+        }
+        const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra với máy chủ'
+        if (status !== 401 && !(status === 404 && isAuthMe)) {
+            toast.error(errorMessage)
         }
 
         return Promise.reject(error)

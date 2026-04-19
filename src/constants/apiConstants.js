@@ -36,5 +36,11 @@ export const API = {
     HINHANH: {
         LIST: '/hinhanhsanpham',
         DETAIL: (id) => `/hinhanhsanpham/${id}`,
+    },
+    GIOHANG: {
+        ME: '/giohang/me',
+        ADD: '/giohang/me/them',
+        UPDATE: '/giohang/me/capnhat',
+        DELETE: (sanpham_id) => `/giohang/me/xoa/${sanpham_id}`,
     }
 }

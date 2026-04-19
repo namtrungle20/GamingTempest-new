@@ -7,7 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from './theme/theme.js'
 import { CssVarsProvider } from '@mui/material/styles'
 import { AuthProvider } from '../src/hook/provider/AuthProvider'
-import { CartProvider } from './hook/provider/CardProvider'
+import { CartProvider } from './hook/provider/CartProvider'
 
 
 createRoot(document.getElementById('root')).render(
