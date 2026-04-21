@@ -143,7 +143,7 @@ const useSanPhamManage = () => {
             thuonghieu_id: Number(form.thuonghieu_id),
         };
         const result = editTarget
-            ? await productService.update(editTarget.sanpham_id, payload)
+            ? await productService.update(editTarget.id, payload)
             : await productService.create(payload);
 
         if (result.success) {

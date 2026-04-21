@@ -13,7 +13,7 @@ export default defineConfig({
   },
 
   server: {
-    port: 3000,
+    port: 5671,
     open: true,
     compress: true,
     historyApiFallback: true,
@@ -30,17 +30,17 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('@mui/icons-material'))  return 'vendor-mui-icons'
+            if (id.includes('@mui/icons-material')) return 'vendor-mui-icons'
             if (id.includes('@mui/material') ||
-                id.includes('@mui/system') ||
-                id.includes('@mui/base'))             return 'vendor-mui'
-            if (id.includes('@emotion'))              return 'vendor-emotion'
+              id.includes('@mui/system') ||
+              id.includes('@mui/base')) return 'vendor-mui'
+            if (id.includes('@emotion')) return 'vendor-emotion'
 
             // ✅ Tách react và react-dom riêng
-            if (id.includes('react-dom'))             return 'vendor-react-dom'
+            if (id.includes('react-dom')) return 'vendor-react-dom'
             if (id.includes('react/') ||
-                id.includes('react-is') ||
-                id.includes('scheduler'))             return 'vendor-react'
+              id.includes('react-is') ||
+              id.includes('scheduler')) return 'vendor-react'
 
             return 'vendor-misc'
           }
