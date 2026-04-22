@@ -42,5 +42,11 @@ export const API = {
         ADD: '/giohang/me/them',
         UPDATE: '/giohang/me/capnhat',
         DELETE: (sanpham_id) => `/giohang/me/xoa/${sanpham_id}`,
-    }
+        CHECKOUT: '/giohang/me/thanhtoan',
+    },
+    THANGTHOAN: {
+        CREATE: '/thanhtoan/create',
+        RETURN: '/thanhtoan/return',
+        // DETAIL: (id) => `/thanhtoan/${id}`,
+    },
 }

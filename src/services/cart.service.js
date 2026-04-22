@@ -34,12 +34,20 @@ export const cartService = {
             return { success: false, message: error.response?.data?.message || 'Lỗi xóa sản phẩm' };
         }
     },
-    // checkout: async (data) => {
+    checkout: async (giohang_id, diachi, sdt) => {
+        try {
+            const response = await apiConfig.post(API.GIOHANG.CHECKOUT, { giohang_id, diachi, sdt });
+            return { success: true, raw: response.data };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Lỗi thanh toán' };
+        }
+    },
+    // getPaymentDetail: async (id) => {
     //     try {
-    //         const response = await apiConfig.post(API.GIOHANG.CHECKOUT, data);
-    //         return { success: true, raw: response.data };
+    //         const response = await apiConfig.get(API.PAYMENT.DETAIL(id))
+    //         return { success: true, raw: response.data }
     //     } catch (error) {
-    //         return { success: false, message: error.response?.data?.message || 'Lỗi thanh toán' };
+    //         return { success: false, message: error.response?.data?.message || 'Lỗi lấy chi tiết' }
     //     }
     // }
 };

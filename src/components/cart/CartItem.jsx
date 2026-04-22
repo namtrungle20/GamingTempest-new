@@ -7,6 +7,15 @@ import { useProductCoverImage } from '@/hook/product/useProductCoverImage'
 const CartItem = ({ item, onUpdateQty, onRemove }) => {
     const coverUrl = useProductCoverImage(item.id)
 
+    const handleUpdateQty = (newQty) => {
+        if (newQty < 1) return
+        if (newQty > (item.soluong || 100)) {
+            alert('Số lượng vượt quá tồn kho')
+            return
+        }
+        onUpdateQty(item.id, newQty)
+    }
+
     return (
         <Mui.Box sx={{ display: 'flex', gap: 2, mb: 2, p: 1, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
             <Mui.Box
@@ -47,13 +56,13 @@ const CartItem = ({ item, onUpdateQty, onRemove }) => {
 
                 <Mui.Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 'auto' }}>
                     <Mui.Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                        <Mui.IconButton size="small" onClick={() => onUpdateQty(item.id, item.qty - 1)}>
+                        <Mui.IconButton size="small" onClick={() => handleUpdateQty(item.qty - 1)}>
                             <Icon.Remove sx={{ fontSize: 16 }} />
                         </Mui.IconButton>
                         <Mui.Typography variant="body2" sx={{ width: 24, textAlign: 'center', fontWeight: 600 }}>
                             {item.qty}
                         </Mui.Typography>
-                        <Mui.IconButton size="small" onClick={() => onUpdateQty(item.id, item.qty + 1)}>
+                        <Mui.IconButton size="small" onClick={() => handleUpdateQty(item.qty + 1)}>
                             <Icon.Add sx={{ fontSize: 16 }} />
                         </Mui.IconButton>
                     </Mui.Box>

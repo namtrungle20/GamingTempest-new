@@ -6,12 +6,14 @@ import { Link } from 'react-router-dom'
 import { useCart } from '../../hook/provider/CartProvider'
 
 
+
 import logoWhite from '../../asset/TempestGaming_White_Fine.png'
 import logoBlack from '../../asset/TempestGaming_Black_Fine.png'
 import { UI_SETTING } from '../../theme/uiSetting'
 import LoginModal from '../auth/LoginModal'
 import RegisterModal from '../auth/RegisterModal'
 import useAuth from '../../hook/useAuth'
+import CartDrawer from '../cart/CartDrawer'
 
 const NAV_ITEMS = [
     {
@@ -280,6 +282,7 @@ const Navbar = () => {
                 handleClose={() => setOpenRegister(false)}
                 onSwitchLogin={handleSwitchToLogin}
             />
+            <CartDrawer />
         </Mui.Box>
     )
 }

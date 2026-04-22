@@ -31,6 +31,7 @@ function App() {
           <Route path='/products' element={<Page component={ProductListPage} />} />
           <Route path='/products/:id' element={<Page component={ProductDetailPage} />} />
           <Route path='/checkout' element={<Page component={CheckoutPage} />} />
+          {/* <Route path="/thanhtoan/return" element={<PaymentReturnPage />} /> */}
         </Route>
 
         <Route path='/admin' element={
