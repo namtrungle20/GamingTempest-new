@@ -194,6 +194,26 @@ export const CartProvider = ({ children }) => {
         }
     }, [user, items])
 
+    const refreshCart = useCallback(async () => {
+        if (!user) return;
+        setLoading(true);
+        const res = await cartService.getCart();
+        if (res.success && res.raw.data) {
+            // Cập nhật state items giống như trong useEffect
+            const newItems = res.raw.data.ChiTietGioHang?.map(ct => ({
+                id: ct.sanpham_id,
+                giohang_id: res.raw.data.giohang_id,
+                name: ct.SanPham?.name,
+                price: ct.dongia,
+                image: ct.SanPham?.HinhAnhSanPham?.[0]?.image_url || null,
+                soluong: ct.SanPham?.soluong || 100,
+                qty: ct.soluong
+            })) || [];
+            setItems(newItems);
+        }
+        setLoading(false);
+    }, [user]);
+
     const totalItems = items.length
     const totalPrice = items.reduce((sum, i) => sum + i.price * i.qty, 0)
 
@@ -201,7 +221,7 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={{
             items, totalItems, totalPrice,
             isCartOpen, setIsCartOpen, loading,
-            addToCart, removeFromCart, updateQty, clearCart,
+            addToCart, removeFromCart, updateQty, clearCart, refreshCart
         }}>
             {children}
         </CartContext.Provider>
