@@ -53,6 +53,7 @@ export const CartProvider = ({ children }) => {
                     } else {
                         setItems(res.raw.data.chi_tiet_gio_hangs?.map(ct => ({
                             id: ct.sanpham_id,
+                            giohang_id: res.raw.data.giohang_id,
                             name: ct.SanPham?.name,
                             price: ct.dongia,
                             image: ct.SanPham?.HinhAnhSanPhams?.[0]?.image_url || ct.SanPham?.image || null,

@@ -13,6 +13,7 @@ const SanPhamManagePage = lazy(() => import('@/pages/admin/SanPhamManagerPage'))
 const ProductListPage = lazy(() => import('@/pages/ProductListPage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
 const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
+const PaymentReturn = lazy(() => import('@/pages/PaymentReturnPage'))
 
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
@@ -31,7 +32,7 @@ function App() {
           <Route path='/products' element={<Page component={ProductListPage} />} />
           <Route path='/products/:id' element={<Page component={ProductDetailPage} />} />
           <Route path='/checkout' element={<Page component={CheckoutPage} />} />
-          {/* <Route path="/thanhtoan/return" element={<PaymentReturnPage />} /> */}
+          <Route path="/thanhtoan/return" element={<Page component={PaymentReturn} />} />
         </Route>
 
         <Route path='/admin' element={

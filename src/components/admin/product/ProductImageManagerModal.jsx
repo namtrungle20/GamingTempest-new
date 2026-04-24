@@ -22,7 +22,7 @@ const ProductImageManagerModal = ({ sanpham_id, productName }) => {
                     </Mui.IconButton>
                 </Mui.DialogTitle>
                 <Mui.DialogContent dividers>
-                    <ProductImageManager sanpham_id={sanpham_id} />
+                    <ProductImageManager key={sanpham_id} sanpham_id={sanpham_id} />
                 </Mui.DialogContent>
             </Mui.Dialog>
         </>

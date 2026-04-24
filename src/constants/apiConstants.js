@@ -44,7 +44,7 @@ export const API = {
         DELETE: (sanpham_id) => `/giohang/me/xoa/${sanpham_id}`,
         CHECKOUT: '/giohang/me/thanhtoan',
     },
-    THANGTHOAN: {
+    THANHTOAN: {
         CREATE: '/thanhtoan/create',
         RETURN: '/thanhtoan/return',
         // DETAIL: (id) => `/thanhtoan/${id}`,

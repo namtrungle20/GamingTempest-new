@@ -5,7 +5,9 @@ const apiConfig = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
     },
+    withCredentials: true,
 })
 
 apiConfig.interceptors.request.use((config) => {

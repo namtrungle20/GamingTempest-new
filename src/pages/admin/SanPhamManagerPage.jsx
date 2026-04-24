@@ -15,7 +15,7 @@ import useDanhMucManage from '@/hook/admin/useDanhMucManager'
 import CatalogManageTab from '@/components/admin/CatalogManageTab'
 import LoaiSPTab from '@/components/admin/category/LoaiSPTab'
 
-import ProductImageManager from '@/components/admin/product/ProductImageManager';
+// import ProductImageManager from '@/components/admin/product/ProductImageManager';
 import ProductImageManagerModal from '@/components/admin/product/ProductImageManagerModal';
 
 const SanPhamManagePage = () => {

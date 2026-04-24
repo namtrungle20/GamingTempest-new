@@ -1,5 +1,5 @@
 // hook/admin/useProductImageManager.js
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { hinhAnhService } from '@/services/productImage.service';
 import { uploadService } from '@/services/upload.service';
 
@@ -7,13 +7,22 @@ const useProductImageManager = (sanpham_id) => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const abortControllerRef = useRef(null);
 
     const fetchImages = useCallback(async () => {
         if (!sanpham_id) return;
+        // Hủy request cũ nếu đang chạy
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
         setLoading(true);
+        setImages([]);
         // Lọc ảnh theo sanpham_id (backend có thể hỗ trợ query params)
-        const res = await hinhAnhService.getAll({ sanpham_id });
-        if (res.success) {
+        const res = await hinhAnhService.getAll({ sanpham_id }, { signal: controller.signal });
+        if (!controller.signal.aborted && res.success) {
             setImages(res.raw.data || []);
         }
         setLoading(false);
