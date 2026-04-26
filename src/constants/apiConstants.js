@@ -19,7 +19,10 @@ export const API = {
     },
     ORDERS: {
         LIST: '/donhang',
+        MY_LIST: '/donhang/me',
+        DETAIL: (id) => `/donhang/${id}`,
         UPDATE: (id) => `/donhang/${id}`,
+        DELETE: (id) => `/donhang/${id}`,
     },
     BRANDS: {
         LIST: '/thuonghieu',

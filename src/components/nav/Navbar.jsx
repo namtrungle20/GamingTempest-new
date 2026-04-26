@@ -14,32 +14,9 @@ import LoginModal from '../auth/LoginModal'
 import RegisterModal from '../auth/RegisterModal'
 import useAuth from '../../hook/useAuth'
 import CartDrawer from '../cart/CartDrawer'
+import useNavCategories from '@/hook/useNavCategories'
 
 const NAV_ITEMS = [
-    {
-        label: 'Console', key: 'console',
-        items: [
-            { label: 'PlayStation 5', to: '/products?loai=ps5' },
-            { label: 'Xbox Series X|S', to: '/products?loai=xbox' },
-            { label: 'Nintendo Switch', to: '/products?loai=switch' },
-        ]
-    },
-    {
-        label: 'Đĩa Game', key: 'game',
-        items: [
-            { label: 'PS5 Games', to: '/products?loai=game-ps5' },
-            { label: 'Xbox Games', to: '/products?loai=game-xbox' },
-            { label: 'Switch Games', to: '/products?loai=game-switch' },
-        ]
-    },
-    {
-        label: 'Phụ kiện', key: 'accessory',
-        items: [
-            { label: 'Controllers', to: '/products?loai=controller' },
-            { label: 'Tai nghe', to: '/products?loai=headset' },
-            { label: 'Sạc & Cáp', to: '/products?loai=cable' },
-        ]
-    },
     {
         label: 'Dịch vụ', key: 'service',
         items: [
@@ -139,6 +116,7 @@ const NavItem = ({ nav, activeMenu, setActiveMenu }) => {
 
 const Navbar = () => {
     const { mode, setMode } = MuiStyles.useColorScheme()
+    const { navItems } = useNavCategories()
     const { user, login, logout, loading, error } = useAuth()
 
     const [activeMenu, setActiveMenu] = useState(null)
@@ -146,6 +124,8 @@ const Navbar = () => {
     const [openRegister, setOpenRegister] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const { totalItems, setIsCartOpen } = useCart()
+
+    const allNavItems = [...navItems, ...NAV_ITEMS]
 
     const handleSwitchToRegister = () => {
         setOpenLogin(false)
@@ -188,7 +168,7 @@ const Navbar = () => {
 
                     {/* Nav */}
                     <Mui.Stack direction="row" spacing={0.5} sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        {NAV_ITEMS.map((nav) => (
+                        {allNavItems.map((nav) => (  // ← đổi NAV_ITEMS thành allNavItems
                             <NavItem
                                 key={nav.key}
                                 nav={nav}
@@ -241,7 +221,7 @@ const Navbar = () => {
                                     <Mui.MenuItem component={Link} to="/profile" onClick={() => setAnchorEl(null)} sx={{ mt: 0.5 }}>
                                         <Icon.Person sx={{ mr: 1.5, fontSize: 18 }} /> Hồ sơ
                                     </Mui.MenuItem>
-                                    <Mui.MenuItem onClick={() => setAnchorEl(null)}>
+                                    <Mui.MenuItem component={Link} to="/donhang" onClick={() => setAnchorEl(null)}>
                                         <Icon.ShoppingBag sx={{ mr: 1.5, fontSize: 18 }} /> Đơn hàng
                                     </Mui.MenuItem>
                                     <Mui.MenuItem onClick={() => setAnchorEl(null)}>

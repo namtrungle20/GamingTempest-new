@@ -14,6 +14,8 @@ const ProductListPage = lazy(() => import('@/pages/ProductListPage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
 const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
 const PaymentReturn = lazy(() => import('@/pages/PaymentReturnPage'))
+const DonHangManagerPage = lazy(() => import('@/pages/admin/DonHangManagerPage'))
+const MyOrdersPage = lazy(() => import('@/pages/MyOrdersPage'))
 
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
@@ -31,6 +33,7 @@ function App() {
           <Route index element={<Page component={HomePage} />} />
           <Route path='/products' element={<Page component={ProductListPage} />} />
           <Route path='/products/:id' element={<Page component={ProductDetailPage} />} />
+          <Route path="/donhang" element={<Page component={MyOrdersPage} />} />
           <Route path='/checkout' element={<Page component={CheckoutPage} />} />
           <Route path="/thanhtoan/return" element={<Page component={PaymentReturn} />} />
         </Route>
@@ -41,6 +44,7 @@ function App() {
           </AdminRoute>
         }>
           <Route index element={<Page component={AdminDashboard} />} />
+          <Route path="orders" element={<Page component={DonHangManagerPage} />} />
           <Route path='users' element={<Page component={UserManagePage} />} />
           <Route path='products' element={<Page component={SanPhamManagePage} />} />
         </Route>

@@ -53,7 +53,7 @@ const AdminDashboard = () => {
     const STAT_CARDS = [
         { title: 'NGƯỜI DÙNG', key: 'users', icon: <Icon.PeopleOutlined />, color: theme.palette.primary.main, path: '/admin/users' },
         { title: 'SẢN PHẨM', key: 'products', icon: <Icon.Inventory2Outlined />, color: theme.palette.success.main, path: '/admin/products' },
-        // { title: 'ĐƠN HÀNG', key: 'orders', icon: <Icon.ShoppingCartOutlined />, color: theme.palette.info.main, path: '/admin/orders' },
+        { title: 'ĐƠN HÀNG', key: 'orders', icon: <Icon.ShoppingCartOutlined />, color: theme.palette.info.main, path: '/admin/orders' },
     ]
 
     return (
