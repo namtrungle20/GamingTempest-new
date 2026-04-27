@@ -5,6 +5,7 @@ import AdminRoute from '@/components/common/AdminRoute'
 import AdminLayout from '@/pages/admin/layout/AdminLayout'
 import PageLoader from '@/pages/loader/PageLoader'
 
+
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const NotFoundPage = lazy(() => import('@/pages/error/NotFoundPage'))
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashBoard'))
@@ -16,6 +17,7 @@ const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
 const PaymentReturn = lazy(() => import('@/pages/PaymentReturnPage'))
 const DonHangManagerPage = lazy(() => import('@/pages/admin/DonHangManagerPage'))
 const MyOrdersPage = lazy(() => import('@/pages/MyOrdersPage'))
+const PaymentResultPage = lazy(() => import('@/pages/PaymentResultPage'))
 
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
@@ -36,6 +38,7 @@ function App() {
           <Route path="/donhang" element={<Page component={MyOrdersPage} />} />
           <Route path='/checkout' element={<Page component={CheckoutPage} />} />
           <Route path="/thanhtoan/return" element={<Page component={PaymentReturn} />} />
+          <Route path='/payment/result' element={<Page component={PaymentResultPage} />} />
         </Route>
 
         <Route path='/admin' element={
