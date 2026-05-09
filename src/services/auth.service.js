@@ -5,10 +5,10 @@ export const authService = {
     login: async (loginKey, password) => {
         if (!loginKey) return { success: false, message: "Thiếu tên đăng nhập" };
 
-        const isEmail = String(loginKey).includes('@');
+        const isName = String(loginKey);
         const payload = {
             password,
-            [isEmail ? 'email' : 'sdt']: loginKey
+            [isName ? 'name' : 'sdt']: loginKey
         };
         try {
             const response = await apiConfig.post('/auth/dangnhap', payload);
@@ -45,5 +45,16 @@ export const authService = {
                 raw: error.response  // ✅ giữ lại response để check status 401/403/404
             }
         }
-    }
+    },
+    loginWithGoogle: async (idToken) => {
+        try {
+            const response = await apiConfig.post('/auth/google', { idToken });
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Đăng nhập Google thất bại'
+            };
+        }
+    },
 };

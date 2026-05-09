@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '../../theme/uiSetting'
-import useAuth from '../../hook/useAuth'
+import { useAuth } from '@/hook/provider/AuthContext'
 
 const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
   const { register, loading, error } = useAuth();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [sdt, setSdt] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +16,7 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
 
   const handleSubmit = async () => {
     if (password !== confirmPassword) return;
-    const result = await register(email, sdt, password);
+    const result = await register(email, name, sdt, password);
     if (result.success) {
       handleClose();
       onSwitchLogin();
@@ -54,10 +55,18 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
 
           <Mui.TextField
             fullWidth
-            label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
+
+          <Mui.TextField
+            fullWidth
+            label="Email (Nếu có)"
+            value={email}
+            onChange={(e) => setName(e.target.value)}
+          />
+
 
           <Mui.TextField
             fullWidth
@@ -114,14 +123,14 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
             {loading ? <Mui.CircularProgress size={24} color="inherit" /> : 'ĐĂNG KÝ NGAY'}
           </Mui.Button>
 
-          <Mui.Divider sx={{ my: 1 }}>
+          {/* <Mui.Divider sx={{ my: 1 }}>
             <Mui.Typography variant="caption" color="text.secondary">HOẶC ĐĂNG KÝ BẰNG</Mui.Typography>
-          </Mui.Divider>
+          </Mui.Divider> */}
 
-          <Mui.Stack direction="row" spacing={2}>
+          {/* <Mui.Stack direction="row" spacing={2}>
             <Mui.Button color="inherit" fullWidth variant="outlined" startIcon={<Icon.Google />}>Google</Mui.Button>
             <Mui.Button color="inherit" fullWidth variant="outlined" startIcon={<Icon.Facebook />}>Facebook</Mui.Button>
-          </Mui.Stack>
+          </Mui.Stack> */}
 
           <Mui.Typography variant="body2" textAlign="center" mt={2}>
             Bạn đã có tài khoản?{' '}

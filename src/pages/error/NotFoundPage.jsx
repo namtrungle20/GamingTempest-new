@@ -2,13 +2,13 @@ import React from 'react';
 import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import useAuth from '@/hook/useAuth'
+import { useAuth } from '@/hook/provider/AuthContext'
 import { UI_SETTING } from '../../theme/uiSetting';
 import ErrorImage from '../../asset/Miku.gif';
 
 const NotFoundPage = () => {
     const { user } = useAuth()
-    
+
     return (
         <Mui.Box sx={{
             bgcolor: 'background.default',

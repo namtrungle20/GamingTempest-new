@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as Mui from '@mui/material'
 import { useCart } from '@/hook/provider/CartProvider'
-import useAuth from '@/hook/useAuth'
+import { useAuth } from '@/hook/provider/AuthContext'
 import LoginModal from '@/components/auth/LoginModal'
 import CheckoutButton from '@/components/payment/CheckoutButton'
 

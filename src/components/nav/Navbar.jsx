@@ -12,7 +12,7 @@ import logoBlack from '../../asset/TempestGaming_Black_Fine.png'
 import { UI_SETTING } from '../../theme/uiSetting'
 import LoginModal from '../auth/LoginModal'
 import RegisterModal from '../auth/RegisterModal'
-import useAuth from '../../hook/useAuth'
+import { useAuth } from '@/hook/provider/AuthContext'
 import CartDrawer from '../cart/CartDrawer'
 import useNavCategories from '@/hook/useNavCategories'
 

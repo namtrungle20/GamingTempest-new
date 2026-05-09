@@ -2,15 +2,23 @@ import React, { useState } from 'react';
 import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { UI_SETTING } from '../../theme/uiSetting';
-import useAuth from '../../hook/useAuth';
+import { useAuth } from '@/hook/provider/AuthProvider';
 
-const LoginModal = ({ open, handleClose, onSwitchRegister, login, loading, error }) => {
+const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
+  const { login, loading, error, loginWithGoogle } = useAuth();
   const [loginKey, setLoginKey] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async () => {
     const result = await login(loginKey, password);
+    if (result.success) {
+      handleClose();
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const result = await loginWithGoogle();
     if (result.success) {
       handleClose();
     }
@@ -80,7 +88,7 @@ const LoginModal = ({ open, handleClose, onSwitchRegister, login, loading, error
 
           <Mui.Button
             fullWidth
-            
+
             variant="contained"
             size="large"
             onClick={handleSubmit}
@@ -95,7 +103,7 @@ const LoginModal = ({ open, handleClose, onSwitchRegister, login, loading, error
           </Mui.Divider>
 
           <Mui.Stack direction="row" spacing={2}>
-            <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Google />}>Google</Mui.Button>
+            <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Google />} onClick={handleGoogleLogin} >Google</Mui.Button>
             <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Facebook />}>Facebook</Mui.Button>
           </Mui.Stack>
 

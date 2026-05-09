@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from 'react'
 import { authService } from '@/services/auth.service.js'
 import { AuthContext } from '@/hook/provider/AuthContext'
+import { signInWithGoogle, logoutFirebase } from '@/services/firebase.service'
 import User from '@/models/User'
 
 export const AuthProvider = ({ children }) => {
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [])
 
-    const register = async (email, sdt, password) => {
+    const register = async (name, email, sdt, password) => {
         setLoading(true)
         setError(null)
         try {
@@ -78,14 +79,50 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const logout = () => {
-        localStorage.clear()
-        setUser(null)
-    }
+    const loginWithGoogle = useCallback(async () => {
+        setLoading(true)
+        setError(null)
+        try {
+            // 1. Lấy idToken từ Firebase
+            const { idToken } = await signInWithGoogle()
+            // 2. Gửi lên backend
+            const result = await authService.loginWithGoogle(idToken)
+            if (!result.success) {
+                setError(result.message)
+                return { success: false, message: result.message }
+            }
+            const { accessToken, refreshToken, nguoidung } = result.data
+            localStorage.setItem('accessToken', accessToken)
+            localStorage.setItem('user', JSON.stringify(nguoidung))
+            if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+            setUser(new User(nguoidung))
+            return { success: true }
+        } catch (err) {
+            const errorMessage = err.message || 'Đăng nhập Google thất bại'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+    const logout = useCallback(async () => {
+        try {
+            await logoutFirebase() // Đăng xuất khỏi Firebase (nếu có)
+        } catch (err) {
+            console.warn('Lỗi khi đăng xuất Firebase:', err)
+        } finally {
+            localStorage.clear()
+            setUser(null)
+        }
+    }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading, error }}>
+        <AuthContext.Provider value={{ user, login, loginWithGoogle, register, logout, loading, error }}>
             {children}
         </AuthContext.Provider>
     )
+
 }
+
+export { useAuth } from './AuthContext';

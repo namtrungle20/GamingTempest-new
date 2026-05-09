@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import * as Mui from '@mui/material';
 import * as MuiStyles from '@mui/material/styles';
 import * as Icon from '@mui/icons-material';
-import useAuth from '../../../hook/useAuth';
+import { useAuth } from '@/hook/provider/AuthContext';
 import logoWhite from '../../../asset/TempestGaming_White_Fine.png';
 import logoBlack from '../../../asset/TempestGaming_Black_Fine.png';
 
