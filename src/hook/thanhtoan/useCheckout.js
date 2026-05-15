@@ -1,6 +1,7 @@
 // hooks/useCheckout.js
 import { useState } from 'react';
-import { thanhToanService } from '@/services/thanhtoan.service';
+import apiConfig from '@/config/apiConfig';
+import { API } from '@/constants/apiConstants';
 
 const useCheckout = () => {
     const [loading, setLoading] = useState(false);
@@ -10,25 +11,23 @@ const useCheckout = () => {
         setLoading(true);
         setError(null);
 
-        const result = await thanhToanService.create(payload);
+        try {
+            // ✅ Gọi đúng endpoint /giohang/me/thanhtoan
+            const response = await apiConfig.post(API.GIOHANG.CHECKOUT, payload);
+            const data = response.data?.data;
 
-        setLoading(false);
+            if (data?.pay_url) {
+                window.location.href = data.pay_url;
+                return data;
+            }
 
-        if (!result.success) {
-            setError(result.message);
-            return null;
-        }
-
-        const data = result.raw?.data;
-
-        // Nếu MoMo: redirect sang cổng thanh toán
-        if (data?.pay_url) {
-            window.location.href = data.pay_url;
             return data;
+        } catch (err) {
+            setError(err.response?.data?.message || 'Lỗi thanh toán');
+            return null;
+        } finally {
+            setLoading(false);
         }
-
-        // Nếu COD: trả data về để page xử lý tiếp
-        return data;
     };
 
     return { checkout, loading, error };
