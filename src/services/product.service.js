@@ -62,4 +62,19 @@ export const productService = {
             return { success: false, message: error.response?.data?.message || 'Lỗi server' }
         }
     },
+    importFull: async (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        try {
+            const response = await apiConfig.post('/sanpham/import/full', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+            return { success: true, raw: response.data }
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Import thất bại'
+            }
+        }
+    }
 }

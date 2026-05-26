@@ -16,6 +16,7 @@ export const API = {
         CREATE: '/sanpham',
         UPDATE: '/sanpham',
         DELETE: '/sanpham',
+        IMPORT: '/sanpham/import/full',
     },
     ORDERS: {
         LIST: '/donhang',

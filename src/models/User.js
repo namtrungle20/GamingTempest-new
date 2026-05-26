@@ -2,6 +2,7 @@ import { LOCK_STATUS, LOCK_LABEL, USER_ROLE } from '@/constants/UserConstants'
 export default class User {
     constructor(data = {}) {
         this.id = data.nguoidung_id; // Khớp với Postman
+        this.name = data.name;
         this.email = data.email || "";
         this.sdt = data.sdt || "";
         this.diachi = data.diachi || "";

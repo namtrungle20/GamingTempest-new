@@ -5,10 +5,10 @@ export const authService = {
     login: async (loginKey, password) => {
         if (!loginKey) return { success: false, message: "Thiếu tên đăng nhập" };
 
-        const isName = String(loginKey);
+        const isSdt = /^[+\d]+$/.test(String(loginKey).trim());
         const payload = {
             password,
-            [isName ? 'name' : 'sdt']: loginKey
+            [isSdt ? 'sdt' : 'name']: loginKey.trim()
         };
         try {
             const response = await apiConfig.post('/auth/dangnhap', payload);

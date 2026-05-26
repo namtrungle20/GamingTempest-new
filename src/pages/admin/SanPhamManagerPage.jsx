@@ -20,6 +20,8 @@ import ProductImageManagerModal from '@/components/admin/product/ProductImageMan
 
 const SanPhamManagePage = () => {
     const [tab, setTab] = useState(0)
+    const fileInputRef = useRef(null)
+    const [importing, setImporting] = useState(false)
 
     // Khởi tạo các hook
     const sanPhamHook = useSanPhamManage()
@@ -34,11 +36,20 @@ const SanPhamManagePage = () => {
         setPage, setSearch, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete,
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
     } = sanPhamHook
 
     // const fileInputRef = useRef(null)
     const totalPages = Math.ceil(total / 10)
+
+    const onFileChange = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+        setImporting(true)
+        await handleImport(file)
+        setImporting(false)
+        e.target.value = ''
+    }
 
     return (
         <Mui.Box>
@@ -58,11 +69,27 @@ const SanPhamManagePage = () => {
             {/* TAB SẢN PHẨM */}
             {tab === 0 && (
                 <Mui.Box>
-                    <Mui.Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                        <Mui.Typography variant="body1" color="text.secondary">
-                            Tổng cộng {total} sản phẩm
-                        </Mui.Typography>
-                        <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate} sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}>
+                    <Mui.Box display="flex" gap={1}>
+                        {/* ✅ Nút import */}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".xlsx,.xls"
+                            style={{ display: 'none' }}
+                            onChange={onFileChange}
+                        />
+                        <Mui.Button
+                            variant="outlined"
+                            startIcon={importing ? <Mui.CircularProgress size={16} /> : <Icon.UploadFileOutlined />}
+                            disabled={importing}
+                            onClick={() => fileInputRef.current?.click()}
+                            sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
+                        >
+                            {importing ? 'Đang import...' : 'Import Excel'}
+                        </Mui.Button>
+
+                        <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate}
+                            sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}>
                             Thêm sản phẩm
                         </Mui.Button>
                     </Mui.Box>
@@ -147,42 +174,7 @@ const SanPhamManagePage = () => {
                                 <Mui.Typography variant="h6" fontWeight={900}>{editTarget ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}</Mui.Typography>
                                 <Mui.IconButton onClick={closeModal}><Icon.Close /></Mui.IconButton>
                             </Mui.Box>
-                            {/* <Mui.Stack spacing={2.5}>
-                                <Mui.TextField fullWidth label="Tên sản phẩm" required value={form.name} onChange={(e) => handleFormChange('name', e.target.value)} />
-                                <Mui.TextField fullWidth label="Mô tả" multiline rows={3} value={form.mota} onChange={(e) => handleFormChange('mota', e.target.value)} />
-                                <Mui.Box display="flex" gap={2}>
-                                    <Mui.TextField fullWidth label="Giá (VNĐ)" type="number" value={form.gia} onChange={(e) => handleFormChange('gia', e.target.value)} />
-                                    <Mui.TextField fullWidth label="Số lượng" type="number" value={form.soluong} onChange={(e) => handleFormChange('soluong', e.target.value)} />
-                                </Mui.Box>
-                                <Mui.FormControl fullWidth>
-                                    <Mui.InputLabel>Loại sản phẩm</Mui.InputLabel>
-                                    <Mui.Select value={form.loai_id} label="Loại sản phẩm" onChange={(e) => handleFormChange('loai_id', e.target.value)}>
-                                        {categories.map(c => (<Mui.MenuItem key={c.loai_id} value={c.loai_id}>{c.name}</Mui.MenuItem>))}
-                                    </Mui.Select>
-                                </Mui.FormControl>
-                                <Mui.FormControl fullWidth>
-                                    <Mui.InputLabel>Thương hiệu</Mui.InputLabel>
-                                    <Mui.Select value={form.thuonghieu_id} label="Thương hiệu" onChange={(e) => handleFormChange('thuonghieu_id', e.target.value)}>
-                                        {brands.map(b => (<Mui.MenuItem key={b.thuonghieu_id} value={b.thuonghieu_id}>{b.name}</Mui.MenuItem>))}
-                                    </Mui.Select>
-                                </Mui.FormControl>
-                                <Mui.Box onClick={() => fileInputRef.current?.click()} sx={{
-                                    border: '2px dashed', borderColor: form.image ? 'primary.main' : 'divider',
-                                    borderRadius: 2, p: 3, textAlign: 'center', cursor: 'pointer',
-                                    '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' }
-                                }}>
-                                    {form.image ? (
-                                        <Mui.Box><Icon.CheckCircle color="primary" /><Mui.Typography variant="body2" color="primary.main" mt={1}>{form.image.name}</Mui.Typography></Mui.Box>
-                                    ) : (
-                                        <Mui.Box><Icon.CloudUpload color="disabled" sx={{ fontSize: 40 }} /><Mui.Typography variant="body2" color="text.secondary" mt={1}>{editTarget ? 'Chọn ảnh mới (tuỳ chọn)' : 'Chọn ảnh sản phẩm'}</Mui.Typography></Mui.Box>
-                                    )}
-                                </Mui.Box>
-                                <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleFormChange('image', e.target.files[0])} />
-                                <Mui.Box display="flex" gap={2} pt={1}>
-                                    <Mui.Button fullWidth variant="outlined" onClick={closeModal} sx={{ fontWeight: 700 }}>Huỷ</Mui.Button>
-                                    <Mui.Button fullWidth variant="contained" onClick={handleSubmit} sx={{ fontWeight: 700 }}>{editTarget ? 'Cập nhật' : 'Thêm mới'}</Mui.Button>
-                                </Mui.Box>
-                            </Mui.Stack> */}
+
                             <Mui.Stack spacing={2.5}>
                                 <Mui.TextField fullWidth label="Tên sản phẩm" required value={form.name} onChange={(e) => handleFormChange('name', e.target.value)} />
                                 <Mui.TextField fullWidth label="Mô tả" multiline rows={3} value={form.mota} onChange={(e) => handleFormChange('mota', e.target.value)} />

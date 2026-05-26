@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { productService } from '@/services/product.service.js'
 import { danhmucService } from '@/services/danhmuc.service.js'
 import Product from '@/models/Product'
@@ -89,50 +89,6 @@ const useSanPhamManage = () => {
         setForm(prev => ({ ...prev, [field]: value }))
     }, [])
 
-    // const handleSubmit = useCallback(async () => {
-    //     // 1. Xử lý upload ảnh nếu có file mới
-    //     let imageUrl = editTarget?.image // Giữ ảnh cũ nếu không thay đổi
-
-    //     if (form.image && form.image instanceof File) {
-    //         const uploadResult = await uploadService.uploadImage(form.image)
-    //         if (!uploadResult.success) {
-    //             notify(uploadResult.message, 'error')
-    //             return
-    //         }
-    //         imageUrl = uploadResult.url
-    //     }
-
-    //     // 2. Tạo payload cho API sản phẩm (không gửi file ảnh trực tiếp)
-    //     const payload = {
-    //         name: form.name,
-    //         mota: form.mota,
-    //         gia: Number(form.gia),
-    //         soluong: Number(form.soluong),
-    //         loai_id: Number(form.loai_id),
-    //         thuonghieu_id: Number(form.thuonghieu_id),
-    //         image: imageUrl // Gửi URL ảnh
-    //     }
-
-    //     const productId = editTarget?.sanpham_id || editTarget?.id
-
-    //     if (!productId && editTarget) {
-    //         notify('Không tìm thấy ID sản phẩm', 'error')
-    //         return
-    //     }
-
-    //     // 3. Gọi API sản phẩm
-    //     const result = editTarget
-    //         ? await productService.update(productId, payload)  // ← dùng productId, không dùng editTarget.sanpham_id
-    //         : await productService.create(payload)
-
-    //     if (result.success) {
-    //         notify(editTarget ? 'Cập nhật thành công' : 'Thêm sản phẩm thành công')
-    //         closeModal()
-    //         fetchSanPhams()
-    //     } else {
-    //         notify(result.message, 'error')
-    //     }
-    // }, [form, editTarget, notify, closeModal, fetchSanPhams])
     const handleSubmit = useCallback(async () => {
         const payload = {
             name: form.name,
@@ -154,6 +110,20 @@ const useSanPhamManage = () => {
             notify(result.message, 'error');
         }
     }, [form, editTarget, notify, closeModal, fetchSanPhams]);
+
+    const handleImport = async (file) => {
+        if (!file) return
+        const result = await productService.importFull(file)
+        if (result.success) {
+            const { data } = result.raw
+            const totalSuccess = Object.values(data).reduce((acc, s) => acc + (s.success?.length || 0), 0)
+            const totalError = Object.values(data).reduce((acc, s) => acc + (s.errors?.length || 0), 0)
+            notify(`Import xong: ${totalSuccess} thành công${totalError > 0 ? `, ${totalError} lỗi` : ''}`)
+            fetchSanPhams()
+        } else {
+            notify(result.message)
+        }
+    }
 
     const openDeleteDialog = useCallback((id, name) => {
         setDeleteDialog({ open: true, id, name })
@@ -180,7 +150,7 @@ const useSanPhamManage = () => {
         setPage, setSearch, notify, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete,
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
     }
 }
 

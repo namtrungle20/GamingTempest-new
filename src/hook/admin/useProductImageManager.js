@@ -7,6 +7,7 @@ const useProductImageManager = (sanpham_id) => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState({ total: 0, done: 0 })
     const abortControllerRef = useRef(null);
 
     const fetchImages = useCallback(async () => {
@@ -32,33 +33,37 @@ const useProductImageManager = (sanpham_id) => {
         fetchImages();
     }, [fetchImages]);
 
-    const uploadImage = async (file) => {
+    const uploadImages = async (files) => {
         if (!sanpham_id) {
-            alert('Chưa có ID sản phẩm, hãy lưu sản phẩm trước khi thêm ảnh');
-            return false;
+            alert('Chưa có ID sản phẩm, hãy lưu sản phẩm trước khi thêm ảnh')
+            return
         }
-        setUploading(true);
-        // Upload lên Cloudinary trước
-        const uploadResult = await uploadService.uploadImage(file);
-        if (!uploadResult.success) {
-            alert(uploadResult.message);
-            setUploading(false);
-            return false;
+        if (!files?.length) return
+
+        setUploading(true)
+        setUploadProgress({ total: files.length, done: 0 })
+
+        for (const file of Array.from(files)) {
+            const uploadResult = await uploadService.uploadImage(file)
+            if (!uploadResult.success) {
+                alert(uploadResult.message)
+                continue  // bỏ qua ảnh lỗi, upload tiếp
+            }
+
+            const createResult = await hinhAnhService.create({
+                sanpham_id,
+                image_url: uploadResult.url,
+            })
+
+            if (createResult.success) {
+                setUploadProgress(prev => ({ ...prev, done: prev.done + 1 }))
+            }
         }
-        // Sau đó gọi API backend để lưu URL vào bảng hinhanhsanpham
-        const createResult = await hinhAnhService.create({
-            sanpham_id: sanpham_id,
-            image_url: uploadResult.url,
-        });
-        setUploading(false);
-        if (createResult.success) {
-            fetchImages(); // refresh danh sách
-            return true;
-        } else {
-            alert(createResult.message);
-            return false;
-        }
-    };
+
+        setUploading(false)
+        setUploadProgress({ total: 0, done: 0 })
+        fetchImages()  // refresh 1 lần sau khi xong hết
+    }
 
     const deleteImage = async (imageId) => {
         if (confirm('Bạn có chắc muốn xóa ảnh này?')) {
@@ -75,7 +80,8 @@ const useProductImageManager = (sanpham_id) => {
         images,
         loading,
         uploading,
-        uploadImage,
+        uploadProgress,
+        uploadImage: uploadImages,
         deleteImage,
         refetch: fetchImages,
     };

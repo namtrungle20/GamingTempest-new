@@ -61,11 +61,11 @@ export const AuthProvider = ({ children }) => {
         }
     }, [])
 
-    const register = async (name, email, sdt, password) => {
+    const register = async (name, sdt, password) => {
         setLoading(true)
         setError(null)
         try {
-            const result = await authService.register({ email, sdt, password })
+            const result = await authService.register({ name, sdt, password })
             if (!result.success) {
                 setError(result.message)
                 return { success: false }

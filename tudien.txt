@@ -83,7 +83,6 @@ src/
 ├── pages/            # Các trang chính (Home, ProductDetail, Admin)
 ├── routes/           # Cấu hình định tuyến (PublicRoute, PrivateRoute)
 ├── services/         # Gọi API trực tiếp (authService)
-├── store/            # Quản lý State tập trung (Zustand/Redux)
 ├── utils/            # Các hàm bổ trợ (format tiền tệ, validate)
 ├── App.jsx           # Component gốc
 └── main.jsx          # Điểm vào ứng dụng

@@ -9,12 +9,9 @@ const ProductImageManager = ({ sanpham_id }) => {
     const { images, loading, uploading, uploadImage, deleteImage } = useProductImageManager(sanpham_id);
 
     const handleFileChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (file) {
-            await uploadImage(file);  // không truyền sanpham_id
-            e.target.value = '';
-        }
+        if (!e.target.files?.length) return
+        await uploadImage(e.target.files)  // ✅ truyền all files
+        e.target.value = ''
     };
 
     return (
@@ -34,6 +31,7 @@ const ProductImageManager = ({ sanpham_id }) => {
                 <input
                     type="file"
                     accept="image/*"
+                    multiple
                     style={{ display: 'none' }}
                     ref={fileInputRef}
                     onChange={handleFileChange}
