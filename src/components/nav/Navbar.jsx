@@ -369,31 +369,33 @@ const Navbar = () => {
                                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                                     elevation={4}
                                 >
-                                    <Mui.Box px={2} py={1.5} borderBottom="1px solid" borderColor="divider">
-                                        <Mui.Typography variant="body2" fontWeight={700}>{user.displayName}</Mui.Typography>
-                                        <Mui.Typography variant="caption" color="text.secondary">{user.email || user.sdt}</Mui.Typography>
-                                    </Mui.Box>
-                                    <Mui.MenuItem component={Link} to="/profile" onClick={() => setAnchorEl(null)} sx={{ mt: 0.5 }}>
-                                        <Icon.Person sx={{ mr: 1.5, fontSize: 18 }} /> Hồ sơ
+                                    {/* Header — click vào profile */}
+                                    <Mui.MenuItem
+                                        component={Link} to="/profile"
+                                        onClick={() => setAnchorEl(null)}
+                                        sx={{ py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}
+                                    >
+                                        <Mui.Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700, mr: 1.5 }}>
+                                            {user.displayName[0].toUpperCase()}
+                                        </Mui.Avatar>
+                                        <Mui.Box>
+                                            <Mui.Typography variant="body2" fontWeight={700}>{user.displayName}</Mui.Typography>
+                                            <Mui.Typography variant="caption" color="text.secondary">{user.email || user.sdt}</Mui.Typography>
+                                        </Mui.Box>
                                     </Mui.MenuItem>
-                                    <Mui.MenuItem component={Link} to="/donhang" onClick={() => setAnchorEl(null)}>
-                                        <Icon.ShoppingBag sx={{ mr: 1.5, fontSize: 18 }} /> Đơn hàng
-                                    </Mui.MenuItem>
-                                    <Mui.MenuItem onClick={() => setAnchorEl(null)}>
-                                        <Icon.Settings sx={{ mr: 1.5, fontSize: 18 }} /> Cài đặt
-                                    </Mui.MenuItem>
-                                    {user?.isAdmin && <Mui.Divider />}
+
                                     {user?.isAdmin && (
                                         <Mui.MenuItem
                                             component={Link} to="/admin"
                                             onClick={() => setAnchorEl(null)}
-                                            sx={{ color: 'primary.main', fontWeight: 700 }}
+                                            sx={{ mt: 0.5, color: 'primary.main', fontWeight: 700 }}
                                         >
                                             <Icon.AdminPanelSettingsOutlined sx={{ mr: 1.5, fontSize: 18 }} />
                                             Trang quản trị
                                         </Mui.MenuItem>
                                     )}
-                                    <Mui.Divider />
+                                    {user?.isAdmin && <Mui.Divider />}
+
                                     <Mui.MenuItem onClick={() => { setAnchorEl(null); logout() }} sx={{ color: 'error.main' }}>
                                         <Icon.Logout sx={{ mr: 1.5, fontSize: 18 }} /> Đăng xuất
                                     </Mui.MenuItem>

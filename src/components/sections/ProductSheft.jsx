@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Mui from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'; // Icon mũi tên nhỏ
-import ProductCard from '@/components/common/ProductCard';
+import ProductCard from '@/components/card/ProductCard';
 
 
 const ProductShelf = ({ payload, hideViewAll = false }) => {

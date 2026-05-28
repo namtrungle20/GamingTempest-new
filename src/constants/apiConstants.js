@@ -10,6 +10,7 @@ export const API = {
         DETAIL: '/nguoidung/chi-tiet',
         UPDATE: '/nguoidung/update',
         DELETE: '/nguoidung/delete',
+        CHANGE_PASSWORD: '/nguoidung/doi-mat-khau',
     },
     PRODUCTS: {
         LIST: '/sanpham',
