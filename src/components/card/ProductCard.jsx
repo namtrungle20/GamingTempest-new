@@ -1,28 +1,35 @@
 import { useProductCoverImage } from '@/hook/product/useProductCoverImage';
 import { useCart } from '@/hook/provider/CartProvider';
 import * as Mui from '@mui/material';
-import React from 'react';
+import { UI_SETTING } from '@/theme/uiSetting';
 import { useNavigate } from 'react-router-dom';
 
-const ProductCard = ({ product }) => {
+// flexible=false → dùng trong horizontal shelf (fixed width)
+// flexible=true  → dùng trong Grid (width 100% theo cột)
+const ProductCard = ({ product, flexible = false }) => {
     const navigate = useNavigate();
-    const toDetail = () => navigate(`/products/${product.id}`);
     const coverUrl = useProductCoverImage(product.id)
     const { addToCart, setIsCartOpen } = useCart();
 
     return (
         <Mui.Card
             elevation={0}
-            onClick={toDetail}
+            onClick={() => navigate(`/products/${product.id}`)}
             sx={{
-                minWidth: { xs: 180, md: 220 },
-                maxWidth: { xs: 180, md: 220 },
-                borderRadius: '8px',
-                border: '1px solid #2d2d2d',
-                bgcolor: '#16161a',
-                mr: 2,
+                ...(flexible
+                    ? { width: '100%' }
+                    : {
+                        minWidth: { xs: 200, md: 220 },
+                        maxWidth: { xs: 200, md: 220 },
+                        mr: 2,
+                        scrollSnapAlign: 'start',
+                    }
+                ),
+                borderRadius: UI_SETTING.SHAPE.CARD_RADIUS,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
                 userSelect: 'none',
-                scrollSnapAlign: 'start',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 '&:hover': {
@@ -32,34 +39,53 @@ const ProductCard = ({ product }) => {
                 }
             }}
         >
+            {/* Ảnh sản phẩm */}
             <Mui.Box sx={{
-                position: 'relative',
                 width: '100%',
                 aspectRatio: '4/3',
                 bgcolor: '#fff',
-                borderRadius: '4px 4px 0 0',
+                borderRadius: `${UI_SETTING.SHAPE.CARD_RADIUS * 4}px ${UI_SETTING.SHAPE.CARD_RADIUS * 4}px 0 0`,
                 p: 1,
+                overflow: 'hidden',
             }}>
                 <Mui.Box
                     component="img"
-                    src={coverUrl || 'https://via.placeholder.com/300x225?text=No+Image'}
+                    src={coverUrl || '/placeholder.png'}
+                    alt={product.name}
                     sx={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
                 />
             </Mui.Box>
 
-            <Mui.CardContent sx={{ p: 2 }}>
+            <Mui.CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                {/* Tên */}
                 <Mui.Typography sx={{
-                    fontSize: '0.85rem', fontWeight: 600, height: '2.8em',
-                    overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                    mb: 1.5, color: '#fffffe',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    height: '2.8em',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    mb: 1,
+                    color: 'text.primary',
                 }}>
                     {product.name}
                 </Mui.Typography>
 
-                <Mui.Typography sx={{ color: 'primary.main', fontWeight: 800, fontSize: '1.15rem' }}>
-                    {product.price?.toLocaleString()}đ
+                {/* Giá */}
+                <Mui.Typography sx={{
+                    color: 'primary.main',
+                    fontWeight: 800,
+                    fontSize: '1.1rem',
+                    mb: 0.5,
+                }}>
+                    {typeof product.price === 'number'
+                        ? product.price.toLocaleString('vi-VN')
+                        : Number(product.gia).toLocaleString('vi-VN')
+                    }đ
                 </Mui.Typography>
 
+                {/* Nút mua */}
                 <Mui.Button
                     fullWidth
                     variant="contained"
@@ -68,21 +94,19 @@ const ProductCard = ({ product }) => {
                     onClick={async (e) => {
                         e.stopPropagation();
                         const res = await addToCart(product, 1);
-                        if (res && res.success === false) {
+                        if (res?.success === false) {
                             alert(res.message);
                         } else {
                             setIsCartOpen(true);
                         }
                     }}
                     sx={{
-                        mt: 2,
-                        borderRadius: '4px',
+                        mt: 1.5,
+                        borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,
                         textTransform: 'uppercase',
                         fontWeight: 800,
                         fontSize: '0.75rem',
                         py: 1,
-                        bgcolor: 'primary.main',
-                        '&:hover': { bgcolor: '#e57a05' },
                     }}
                 >
                     Mua ngay

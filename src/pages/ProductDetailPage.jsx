@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
@@ -12,7 +12,6 @@ import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton'
 import { hinhAnhService } from '@/services/productImage.service'
 import HinhAnh from '@/models/HinhAnh'
 
-
 const ProductDetailPage = () => {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -21,6 +20,13 @@ const ProductDetailPage = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [productImages, setProductImages] = useState([])
+
+    const [mainImage, setMainImage] = useState(null)
+    const [mainImageLoaded, setMainImageLoaded] = useState(false)
+
+    const mainImageRef = useRef(null)
+    const [panelHeight, setPanelHeight] = useState('auto')
+
     useEffect(() => {
         if (!id) return
         hinhAnhService.getAll({ sanpham_id: id }).then(res => {
@@ -30,14 +36,42 @@ const ProductDetailPage = () => {
                     .filter(h => h.isValid)
                     .map(h => h.url)
                 setProductImages(imgs)
+                if (imgs.length > 0) setMainImage(imgs[0])
             }
         })
     }, [id])
 
     useEffect(() => {
+        setMainImageLoaded(false)
+    }, [mainImage])
+
+    const handleMainImageLoad = () => {
+        setMainImageLoaded(true)
+        // Đợi một frame để layout ổn định
+        setTimeout(() => {
+            if (mainImageRef.current) {
+                setPanelHeight(`${mainImageRef.current.clientHeight}px`)
+            }
+        }, 50)
+    }
+
+    useEffect(() => {
+        if (!mainImageLoaded) return
+        if (mainImageRef.current) {
+            const observer = new ResizeObserver(() => {
+                if (mainImageRef.current) {
+                    setPanelHeight(`${mainImageRef.current.clientHeight}px`)
+                }
+            })
+            observer.observe(mainImageRef.current)
+            return () => observer.disconnect()
+        }
+    }, [mainImageLoaded, mainImage])
+
+
+    useEffect(() => {
         if (!id) return
         let cancelled = false
-
         const fetchProduct = async () => {
             setLoading(true)
             setError(null)
@@ -50,13 +84,11 @@ const ProductDetailPage = () => {
             }
             setLoading(false)
         }
-
         fetchProduct()
         window.scrollTo({ top: 0, behavior: 'smooth' })
         return () => { cancelled = true }
     }, [id])
 
-    // ── Loading ───────────────────────────────────────────────────────────
     if (loading) return (
         <Mui.Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
             <Mui.Container maxWidth={UI_SETTING.LAYOUT.CONTAINER_MAX_WIDTH}>
@@ -66,7 +98,6 @@ const ProductDetailPage = () => {
         </Mui.Box>
     )
 
-    // ── Error ─────────────────────────────────────────────────────────────
     if (error || !product) return (
         <Mui.Box sx={{
             bgcolor: 'background.default', minHeight: '100vh',
@@ -95,12 +126,9 @@ const ProductDetailPage = () => {
         </Mui.Box>
     )
 
-    // const productImages = product.imageUrl ? [product.imageUrl] : []
-
-    // ── Render ────────────────────────────────────────────────────────────
     return (
         <Mui.Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
-            <Mui.Container maxWidth={UI_SETTING.LAYOUT.CONTAINER_MAX_WIDTH}>
+            <Mui.Container maxWidth={false} sx={{ maxWidth: '1600px', mx: 'auto', px: { xs: 2, md: 4 } }}>
 
                 {/* Breadcrumb */}
                 <Mui.Breadcrumbs
@@ -124,13 +152,48 @@ const ProductDetailPage = () => {
                     </Mui.Typography>
                 </Mui.Breadcrumbs>
 
-                {/* Main grid */}
-                <Mui.Grid container spacing={3} alignItems="flex-start">
-                    <Mui.Grid item xs={12} md={7}>
-                        <ImageGallery images={productImages} productName={product.name} />
+                <Mui.Grid container spacing={3}>
+                    <Mui.Grid item xs={12} md={4}>
+                        {/* Ảnh lớn */}
+                        <Mui.Box ref={mainImageRef} sx={{ width: '100%', mb: 2 }}>
+                            <Mui.CardMedia
+                                component="img"
+                                image={mainImage || productImages[0] || '/placeholder.jpg'}
+                                alt={product.name}
+                                onLoad={handleMainImageLoad}
+                                sx={{ width: '100%', objectFit: 'cover', borderRadius: 2 }}
+                            />
+                        </Mui.Box>
+                        {/* Thumbnails */}
+                        {productImages.length > 1 && (
+                            <Mui.Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {productImages.map((img, idx) => (
+                                    <Mui.Box
+                                        key={idx}
+                                        component="img"
+                                        src={img}
+                                        alt={`${product.name} ${idx + 1}`}
+                                        onClick={() => setMainImage(img)}
+                                        sx={{
+                                            width: 70,
+                                            height: 70,
+                                            objectFit: 'cover',
+                                            borderRadius: 1,
+                                            cursor: 'pointer',
+                                            border: mainImage === img ? '2px solid' : '1px solid',
+                                            borderColor: mainImage === img ? 'primary.main' : 'divider',
+                                            opacity: mainImage === img ? 1 : 0.7,
+                                            '&:hover': { opacity: 1, borderColor: 'primary.main' }
+                                        }}
+                                    />
+                                ))}
+                            </Mui.Box>
+                        )}
                     </Mui.Grid>
-                    <Mui.Grid item xs={12} md={5}>
-                        <ProductInfoPanel product={product} />
+                    <Mui.Grid item xs={12} md={8}>
+                        <Mui.Box sx={{ height: panelHeight, overflowY: 'auto' }}>
+                            <ProductInfoPanel product={product} />
+                        </Mui.Box>
                     </Mui.Grid>
                 </Mui.Grid>
 

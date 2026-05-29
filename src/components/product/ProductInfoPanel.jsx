@@ -1,9 +1,8 @@
-import { useState } from 'react'
-import * as Mui from '@mui/material'
-import * as Icon from '@mui/icons-material'
-import { UI_SETTING } from '@/theme/uiSetting'
-import { useCart } from '@/hook/provider/CartProvider'
-
+import { useState } from 'react';
+import * as Mui from '@mui/material';
+import * as Icon from '@mui/icons-material';
+import { UI_SETTING } from '@/theme/uiSetting';
+import { useCart } from '@/hook/provider/CartProvider';
 
 const InfoRow = ({ icon, label, value }) => (
     <Mui.Box display="flex" alignItems="center" gap={1.5}>
@@ -21,30 +20,35 @@ const InfoRow = ({ icon, label, value }) => (
             <Mui.Box component="span" fontWeight={700} color="text.primary">{value}</Mui.Box>
         </Mui.Typography>
     </Mui.Box>
-)
+);
 
 const ProductInfoPanel = ({ product }) => {
-    const [quantity, setQuantity] = useState(1)
-    const { addToCart, setIsCartOpen } = useCart()
+    const [quantity, setQuantity] = useState(1);
+    const { addToCart, setIsCartOpen } = useCart();
 
     const handleAddToCart = async () => {
-        const res = await addToCart(product, quantity)
-        if (res && res.success === false) {
-            alert(res.message)
+        const result = await addToCart(product, quantity);
+        if (result && result.success === false) {
+            alert(result.message || 'Không thể thêm vào giỏ hàng');
         } else {
-            setIsCartOpen(true)
+            setIsCartOpen(true);
         }
-    }
+    };
 
     return (
         <Mui.Paper elevation={0} sx={{
-            p: 3, borderRadius: UI_SETTING.SHAPE.CARD_RADIUS,
-            border: '1px solid', borderColor: 'divider',
-            position: { md: 'sticky' }, top: { md: 96 },
+            p: 3,
+            borderRadius: UI_SETTING.SHAPE.CARD_RADIUS,
+            border: '1px solid',
+            borderColor: 'divider',
+            position: { md: 'sticky' },
+            top: { md: 96 },
+            height: '100%',           // chiếm toàn bộ chiều cao do Box cha quyết định
+            display: 'flex',
+            flexDirection: 'column',
         }}>
-            <Mui.Stack spacing={2}>
-
-                {/* Brand chip */}
+            <Mui.Stack spacing={2.5} sx={{ flexGrow: 1 }}>
+                {/* Chip thương hiệu / loại */}
                 {(product.thuonghieu || product.loai) && (
                     <Mui.Chip
                         label={product.thuonghieu || product.loai}
@@ -59,17 +63,25 @@ const ProductInfoPanel = ({ product }) => {
                     />
                 )}
 
-                {/* Name */}
+                {/* Tên sản phẩm */}
                 <Mui.Typography variant="h5" fontWeight={900} lineHeight={1.3}>
                     {product.name}
                 </Mui.Typography>
 
-                {/* Price */}
+                {/* Giá */}
                 <Mui.Typography variant="h4" fontWeight={900} color="primary.main">
                     {product.price}
                 </Mui.Typography>
 
-                {/* Stock */}
+                {/* Đánh giá sao + số đánh giá (có thể lấy từ API sau) */}
+                <Mui.Box display="flex" alignItems="center" gap={1}>
+                    <Mui.Rating value={4.5} precision={0.5} size="small" readOnly />
+                    <Mui.Typography variant="caption" color="text.secondary">(12 đánh giá)</Mui.Typography>
+                    <Mui.Divider orientation="vertical" flexItem />
+                    <Mui.Typography variant="caption" color="text.secondary">Đã bán 36</Mui.Typography>
+                </Mui.Box>
+
+                {/* Tình trạng kho */}
                 <Mui.Chip
                     icon={product.inStock
                         ? <Icon.CheckCircle sx={{ fontSize: '15px !important' }} />
@@ -83,16 +95,18 @@ const ProductInfoPanel = ({ product }) => {
 
                 <Mui.Divider />
 
-                {/* Info rows */}
-                <Mui.Stack spacing={1.25}>
+                {/* Thông tin bổ sung */}
+                <Mui.Stack spacing={1.5}>
                     <InfoRow icon={<Icon.Category sx={{ fontSize: 17 }} />} label="Loại" value={product.loai || '—'} />
                     <InfoRow icon={<Icon.Storefront sx={{ fontSize: 17 }} />} label="Thương hiệu" value={product.thuonghieu || '—'} />
-                    <InfoRow icon={<Icon.LocalShipping sx={{ fontSize: 17 }} />} label="Vận chuyển" value="Miễn phí" />
+                    <InfoRow icon={<Icon.LocalShipping sx={{ fontSize: 17 }} />} label="Vận chuyển" value="Miễn phí toàn quốc" />
+                    <InfoRow icon={<Icon.Replay sx={{ fontSize: 17 }} />} label="Đổi trả" value="30 ngày miễn phí" />
+                    <InfoRow icon={<Icon.Security sx={{ fontSize: 17 }} />} label="Bảo hành" value="12 tháng chính hãng" />
                 </Mui.Stack>
 
                 <Mui.Divider />
 
-                {/* Quantity */}
+                {/* Chọn số lượng */}
                 <Mui.Box>
                     <Mui.Typography variant="caption" fontWeight={700} color="text.secondary"
                         sx={{ mb: 1, display: 'block', textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -127,7 +141,7 @@ const ProductInfoPanel = ({ product }) => {
                     </Mui.Box>
                 </Mui.Box>
 
-                {/* CTA */}
+                {/* Các nút hành động */}
                 <Mui.Button
                     variant="contained" size="large" fullWidth
                     startIcon={<Icon.ShoppingCart />}
@@ -148,9 +162,20 @@ const ProductInfoPanel = ({ product }) => {
                     {product.inStock ? 'Thêm vào giỏ hàng' : 'Tạm hết hàng'}
                 </Mui.Button>
 
+                {/* Nút mua nhanh (tuỳ chọn) */}
+                <Mui.Button
+                    variant="outlined" size="large" fullWidth
+                    sx={{
+                        py: 1.6, fontWeight: 700,
+                        borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,
+                        textTransform: 'none',
+                    }}
+                >
+                    Mua ngay
+                </Mui.Button>
             </Mui.Stack>
         </Mui.Paper>
-    )
-}
+    );
+};
 
-export default ProductInfoPanel
+export default ProductInfoPanel;

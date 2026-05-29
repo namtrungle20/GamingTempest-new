@@ -1,71 +1,110 @@
-import { useState, useEffect, useCallback } from 'react'
-import PageBuilder from '@/layout/PageBuilder'
-import { PRODUCT_DATA } from '@/constants/productData'
-import apiConfig from '@/config/apiConfig'
-import { API } from '@/constants/apiConstants'
-import Product from '@/models/Product'
+import * as Mui from '@mui/material'
+import { UI_SETTING } from '@/theme/uiSetting'
+import useHomePage from '@/hook/useHome'
+import MainBanner from '@/components/sections/MainBanner'
+import ProductShelf from '@/components/sections/ProductSheft'
+import BrandBar from '@/components/sections/BrandBar'
+import FeatureBanner from '@/components/sections/FeatureBanner'
 
-const STATIC_BLOCKS = [
-    { type: 'NAVBAR', payload: {} },
-    {
-        type: 'MAIN_BANNER',
-        payload: {
-            mainBanner: [
-                'https://file.hstatic.net/1000231532/collection/nintendo_switch_2_nshop_chinh_hang_cbf6a04687a84f3eadb6033a78ac825e.jpg',
-                'https://cdn.hstatic.net/themes/1000231532/1001452980/14/slideshow_1.jpg?v=99',
-                'https://cdn.hstatic.net/themes/1000231532/1001452980/14/slideshow_3.jpg?v=99',
-            ],
-        },
-    },
-    // {
-    //     type: 'PRODUCT_SHELF',
-    //     payload: {
-    //         title: '🔥 Hàng mới cập bến',
-    //         limit: 6,
-    //         items: PRODUCT_DATA.NEW_ARRIVALS,
-    //     },
-    // },
-    // {
-    //     type: 'PRODUCT_SHELF',
-    //     payload: {
-    //         title: '❤️ Sản phẩm được yêu thích nhất',
-    //         items: PRODUCT_DATA.FAVORITES,
-    //     },
-    // },
+const BANNER_IMAGES = [
+    'https://file.hstatic.net/1000231532/collection/nintendo_switch_2_nshop_chinh_hang_cbf6a04687a84f3eadb6033a78ac825e.jpg',
+    'https://cdn.hstatic.net/themes/1000231532/1001452980/14/slideshow_1.jpg?v=99',
+    'https://cdn.hstatic.net/themes/1000231532/1001452980/14/slideshow_3.jpg?v=99',
 ]
 
+const Section = ({ children }) => (
+    <Mui.Container
+        maxWidth={UI_SETTING.LAYOUT.CONTAINER_MAX_WIDTH}
+        sx={{ px: UI_SETTING.LAYOUT.PAGE_PADDING_X }}
+    >
+        {children}
+    </Mui.Container>
+)
+
+const ProductSkeleton = () => (
+    <Mui.Box sx={{ display: 'flex', gap: 2, overflow: 'hidden' }}>
+        {[...Array(5)].map((_, i) => (
+            <Mui.Box key={i} sx={{ minWidth: 220, flexShrink: 0 }}>
+                <Mui.Skeleton variant="rectangular" height={165} sx={{ borderRadius: 2, mb: 1 }} />
+                <Mui.Skeleton width="80%" height={20} sx={{ mb: 0.5 }} />
+                <Mui.Skeleton width="50%" height={20} />
+            </Mui.Box>
+        ))}
+    </Mui.Box>
+)
+
 const HomePage = () => {
-    const [dbProducts, setDbProducts] = useState([])
+    const { products, featuredProducts, loading } = useHomePage()
 
-    const fetchProducts = useCallback(async () => {
-        try {
-            const res = await apiConfig.get(API.PRODUCTS.LIST)
-            const products = (res.data?.data || []).map(p => new Product(p))
-            setDbProducts(products)
-        } catch (err) {
-            return {success: true, message: "Không có sản phẩm"}
-        }
-    }, [])
+    return (
+        <Mui.Box>
+            {/* Banner */}
+            <Section>
+                <Mui.Box sx={{ mt: 2 }}>
+                    <MainBanner payload={{ mainBanner: BANNER_IMAGES }} />
+                </Mui.Box>
+            </Section>
 
-    useEffect(() => { fetchProducts() }, [fetchProducts])
+            {/* Feature strip */}
+            <Section>
+                <FeatureBanner />
+            </Section>
 
-    const pageConfig = [
-        ...STATIC_BLOCKS,
-        ...(dbProducts.length > 0 ? [{
-            type: 'PRODUCT_SHELF',
-            payload: {
-                title: '🛒 Sản phẩm trong cửa hàng',
-                items: dbProducts.map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    price: p.gia,       // ✅ số nguyên để ProductCard format
-                    image: p.imageUrl,  // ✅ dùng getter
-                })),
-            },
-        }] : []),
-    ]
+            {/* Thương hiệu */}
+            <Section>
+                <BrandBar />
+            </Section>
 
-    return <PageBuilder pageConfig={pageConfig} />
+            {/* Sản phẩm nổi bật */}
+            <Section>
+                {loading ? (
+                    <Mui.Box sx={{ py: 4 }}>
+                        <Mui.Skeleton width={240} height={32} sx={{ mb: 3 }} />
+                        <ProductSkeleton />
+                    </Mui.Box>
+                ) : featuredProducts.length > 0 && (
+                    <ProductShelf
+                        payload={{
+                            title: '🔥 Sản phẩm nổi bật',
+                            link: '/products',
+                            items: featuredProducts.map(p => ({
+                                id: p.id,
+                                name: p.name,
+                                price: p.gia,
+                                image: p.imageUrl,
+                            })),
+                        }}
+                    />
+                )}
+            </Section>
+
+            {/* Tất cả sản phẩm */}
+            <Section>
+                {loading ? (
+                    <Mui.Box sx={{ py: 4 }}>
+                        <Mui.Skeleton width={280} height={32} sx={{ mb: 3 }} />
+                        <ProductSkeleton />
+                    </Mui.Box>
+                ) : products.length > 0 && (
+                    <ProductShelf
+                        payload={{
+                            title: '🛒 Tất cả sản phẩm',
+                            link: '/products',
+                            items: products.map(p => ({
+                                id: p.id,
+                                name: p.name,
+                                price: p.gia,
+                                image: p.imageUrl,
+                            })),
+                        }}
+                    />
+                )}
+            </Section>
+
+            {/* Bottom spacing */}
+            <Mui.Box sx={{ pb: 6 }} />
+        </Mui.Box>
+    )
 }
 
 export default HomePage

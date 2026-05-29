@@ -12,6 +12,12 @@ const WARRANTY_ITEMS = [
 const ProductTabs = ({ product }) => {
     const [tab, setTab] = useState(0)
 
+    // Tách mô tả thành các đoạn văn theo \n\n
+    const motaParagraphs = (product.mota || '')
+        .split(/\n\n+/)
+        .map(p => p.trim())
+        .filter(Boolean)
+
     return (
         <Mui.Paper elevation={0} sx={{
             mt: 3, borderRadius: UI_SETTING.SHAPE.CARD_RADIUS,
@@ -34,10 +40,30 @@ const ProductTabs = ({ product }) => {
 
             <Mui.Box sx={{ p: { xs: 3, md: 4 }, minHeight: 160 }}>
                 {tab === 0 && (
-                    <Mui.Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line', lineHeight: 1.85 }}>
-                        {product.mota || 'Mô tả sản phẩm đang được cập nhật.'}
-                    </Mui.Typography>
+                    motaParagraphs.length > 0 ? (
+                        <Mui.Stack spacing={2}>
+                            {motaParagraphs.map((para, i) => (
+                                <Mui.Typography
+                                    key={i}
+                                    variant="body1"
+                                    color="text.secondary"
+                                    sx={{ lineHeight: 1.85, whiteSpace: 'pre-line' }}
+                                >
+                                    {para}
+                                </Mui.Typography>
+                            ))}
+                        </Mui.Stack>
+                    ) : (
+                        <Mui.Box display="flex" flexDirection="column" alignItems="center"
+                            justifyContent="center" py={4} gap={1}>
+                            <Icon.InfoOutlined sx={{ fontSize: 36, color: 'text.disabled' }} />
+                            <Mui.Typography variant="body2" color="text.disabled">
+                                Mô tả sản phẩm đang được cập nhật.
+                            </Mui.Typography>
+                        </Mui.Box>
+                    )
                 )}
+
                 {tab === 1 && (
                     <Mui.Stack spacing={2.5}>
                         {WARRANTY_ITEMS.map((item, i) => (

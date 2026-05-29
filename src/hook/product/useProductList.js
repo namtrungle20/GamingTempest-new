@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { productService } from '@/services/product.service.js'
 import Product from '@/models/Product'
 
 const useProductList = () => {
+    const [searchParams] = useSearchParams()
+
     const [products, setProducts] = useState([])
     const [brands, setBrands] = useState([])
     const [categories, setCategories] = useState([])
@@ -12,8 +15,8 @@ const useProductList = () => {
 
     const [filters, setFilters] = useState({
         search: '',
-        loai_id: '',
-        thuonghieu_id: '',
+        loai_id: searchParams.get('loai') || '',
+        thuonghieu_id: searchParams.get('thuonghieu') || '',
         gia_min: '',
         gia_max: '',
         sort_by: 'createdAt',
