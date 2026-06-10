@@ -44,7 +44,7 @@ const useProductImageManager = (sanpham_id) => {
         setUploadProgress({ total: files.length, done: 0 })
 
         for (const file of Array.from(files)) {
-            const uploadResult = await uploadService.uploadImage(file)
+            const uploadResult = await uploadService.uploadImage(file, sanpham_id)
             if (!uploadResult.success) {
                 alert(uploadResult.message)
                 continue  // bỏ qua ảnh lỗi, upload tiếp

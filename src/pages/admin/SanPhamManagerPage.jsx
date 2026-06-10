@@ -23,6 +23,9 @@ const SanPhamManagePage = () => {
     const fileInputRef = useRef(null)
     const [importing, setImporting] = useState(false)
 
+    const bulkUploadRef = useRef(null)
+    const [bulkUploading, setBulkUploading] = useState(false)
+
     // Khởi tạo các hook
     const sanPhamHook = useSanPhamManage()
     const thuongHieuHook = useThuongHieuManage()
@@ -36,7 +39,7 @@ const SanPhamManagePage = () => {
         setPage, setSearch, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport, handleBulkUpload
     } = sanPhamHook
 
     // const fileInputRef = useRef(null)
@@ -48,6 +51,15 @@ const SanPhamManagePage = () => {
         setImporting(true)
         await handleImport(file)
         setImporting(false)
+        e.target.value = ''
+    }
+
+    const onBulkUpload = async (e) => {
+        const files = Array.from(e.target.files)
+        if (!files.length) return
+        setBulkUploading(true)
+        await handleBulkUpload(files)
+        setBulkUploading(false)
         e.target.value = ''
     }
 
@@ -86,6 +98,28 @@ const SanPhamManagePage = () => {
                             sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
                         >
                             {importing ? 'Đang import...' : 'Import Excel'}
+                        </Mui.Button>
+
+                        <input
+                            ref={bulkUploadRef}
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            style={{ display: 'none' }}
+                            onChange={onBulkUpload}
+                        />
+                        <Mui.Button
+                            variant="outlined"
+                            color="secondary"
+                            startIcon={bulkUploading
+                                ? <Mui.CircularProgress size={16} />
+                                : <Icon.CloudUploadOutlined />
+                            }
+                            disabled={bulkUploading}
+                            onClick={() => bulkUploadRef.current?.click()}
+                            sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
+                        >
+                            {bulkUploading ? 'Đang upload...' : 'Bulk Upload Ảnh'}
                         </Mui.Button>
 
                         <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate}

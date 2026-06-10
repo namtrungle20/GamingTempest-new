@@ -20,7 +20,7 @@ export const hinhAnhService = {
     },
     create: async (data) => {
         try {
-            const response = await apiConfig.post(API.HINHANH.LIST, data);
+            const response = await apiConfig.post(API.HINHANH.ADD_URL, data);
             return { success: true, raw: response.data };
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Lỗi thêm ảnh' };

@@ -33,7 +33,8 @@ export const API = {
         LIST: '/loaisanpham',
     },
     IMAGES: {
-        UPLOAD: '/images/cloudinary/upload',
+        UPLOAD: '/hinhanhsanpham',
+        BULK_UPLOAD: '/hinhanhsanpham/bulk-upload',
     },
     DANHMUC: {
         LIST: '/danhmuc',
@@ -41,6 +42,7 @@ export const API = {
     HINHANH: {
         LIST: '/hinhanhsanpham',
         DETAIL: (id) => `/hinhanhsanpham/${id}`,
+        ADD_URL: '/hinhanhsanpham/url',
     },
     GIOHANG: {
         ME: '/giohang/me',
