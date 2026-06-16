@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 const apiConfig = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
     },
     withCredentials: true,
@@ -13,6 +13,11 @@ const apiConfig = axios.create({
 apiConfig.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken')
     if (token) config.headers.Authorization = `Bearer ${token}`
+
+    if (!(config.data instanceof FormData)) {
+        config.headers['Content-Type'] = 'application/json'
+    }
+
     return config
 })
 

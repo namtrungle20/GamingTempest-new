@@ -144,21 +144,21 @@ const useSanPhamManage = () => {
         }
     }, [deleteDialog.id, notify, closeDeleteDialog, fetchSanPhams])
 
-    const handleBulkUpload = async (files) => {
-        if (!files?.length) return
-        const result = await uploadService.bulkUpload(files)
-        if (result.success) {
-            const url = window.URL.createObjectURL(result.blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = 'images.xlsx'
-            a.click()
-            window.URL.revokeObjectURL(url)
-            notify('Export Excel thành công, kiểm tra file đã tải về')
-        } else {
-            notify(result.message, 'error')
-        }
-    }
+    // const handleBulkUpload = async (files) => {
+    //     if (!files?.length) return
+    //     const result = await uploadService.bulkUpload(files)
+    //     if (result.success) {
+    //         const url = window.URL.createObjectURL(result.blob)
+    //         const a = document.createElement('a')
+    //         a.href = url
+    //         a.download = 'images.xlsx'
+    //         a.click()
+    //         window.URL.revokeObjectURL(url)
+    //         notify('Export Excel thành công, kiểm tra file đã tải về')
+    //     } else {
+    //         notify(result.message, 'error')
+    //     }
+    // }
 
     return {
         sanPhams, brands, categories, danhmucs, loading, total, page, search,
@@ -166,7 +166,7 @@ const useSanPhamManage = () => {
         setPage, setSearch, notify, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport, handleBulkUpload
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
     }
 }
 

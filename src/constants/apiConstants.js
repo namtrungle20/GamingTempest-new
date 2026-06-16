@@ -34,7 +34,10 @@ export const API = {
     },
     IMAGES: {
         UPLOAD: '/hinhanhsanpham',
-        BULK_UPLOAD: '/hinhanhsanpham/bulk-upload',
+        UPLOAD_LIBRARY: '/images/cloudinary/upload',
+        ASSIGN: '/images/cloudinary/assign',
+        CLOUDINARY_ALL: '/images/cloudinary/all',
+        DELETE: '/images/delete',
     },
     DANHMUC: {
         LIST: '/danhmuc',

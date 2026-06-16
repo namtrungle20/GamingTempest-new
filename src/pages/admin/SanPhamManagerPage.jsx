@@ -17,14 +17,15 @@ import LoaiSPTab from '@/components/admin/category/LoaiSPTab'
 
 // import ProductImageManager from '@/components/admin/product/ProductImageManager';
 import ProductImageManagerModal from '@/components/admin/product/ProductImageManagerModal';
+import ImageLibrary from '@/components/admin/image/ImageLibrary'
 
 const SanPhamManagePage = () => {
     const [tab, setTab] = useState(0)
     const fileInputRef = useRef(null)
     const [importing, setImporting] = useState(false)
 
-    const bulkUploadRef = useRef(null)
-    const [bulkUploading, setBulkUploading] = useState(false)
+    // const bulkUploadRef = useRef(null)
+    // const [bulkUploading, setBulkUploading] = useState(false)
 
     // Khởi tạo các hook
     const sanPhamHook = useSanPhamManage()
@@ -39,7 +40,7 @@ const SanPhamManagePage = () => {
         setPage, setSearch, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport, handleBulkUpload
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
     } = sanPhamHook
 
     // const fileInputRef = useRef(null)
@@ -54,14 +55,14 @@ const SanPhamManagePage = () => {
         e.target.value = ''
     }
 
-    const onBulkUpload = async (e) => {
-        const files = Array.from(e.target.files)
-        if (!files.length) return
-        setBulkUploading(true)
-        await handleBulkUpload(files)
-        setBulkUploading(false)
-        e.target.value = ''
-    }
+    // const onBulkUpload = async (e) => {
+    //     const files = Array.from(e.target.files)
+    //     if (!files.length) return
+    //     setBulkUploading(true)
+    //     await handleBulkUpload(files)
+    //     setBulkUploading(false)
+    //     e.target.value = ''
+    // }
 
     return (
         <Mui.Box>
@@ -76,6 +77,7 @@ const SanPhamManagePage = () => {
                 <Mui.Tab label="Thương hiệu" sx={{ fontWeight: 700 }} />
                 <Mui.Tab label="Loại sản phẩm" sx={{ fontWeight: 700 }} />
                 <Mui.Tab label="Danh mục" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Thư viện ảnh" icon={<Icon.Collections />} iconPosition="start" sx={{ fontWeight: 700 }} />
             </Mui.Tabs>
 
             {/* TAB SẢN PHẨM */}
@@ -100,15 +102,15 @@ const SanPhamManagePage = () => {
                             {importing ? 'Đang import...' : 'Import Excel'}
                         </Mui.Button>
 
-                        <input
+                        {/* <input
                             ref={bulkUploadRef}
                             type="file"
                             accept="image/*"
                             multiple
                             style={{ display: 'none' }}
                             onChange={onBulkUpload}
-                        />
-                        <Mui.Button
+                        /> */}
+                        {/* <Mui.Button
                             variant="outlined"
                             color="secondary"
                             startIcon={bulkUploading
@@ -120,7 +122,7 @@ const SanPhamManagePage = () => {
                             sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
                         >
                             {bulkUploading ? 'Đang upload...' : 'Bulk Upload Ảnh'}
-                        </Mui.Button>
+                        </Mui.Button> */}
 
                         <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate}
                             sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}>
@@ -262,7 +264,14 @@ const SanPhamManagePage = () => {
             {tab === 2 && <LoaiSPTab label="Loại sản phẩm" hook={loaiSanPhamHook} nameField="name" />}
 
             {/* TAB DANH MỤC */}
-            {tab === 3 && <CatalogManageTab label="Danh mục" hook={danhMucHook} nameField="ten" />}
+            {tab === 3 && <CatalogManageTab label="Danh mục" hook={danhMucHook} nameField="name" />}
+
+            {tab === 4 && (
+                <Mui.Box>
+                    <Mui.Typography variant="h6" fontWeight={700} mb={2}>Thư viện ảnh</Mui.Typography>
+                    <ImageLibrary />
+                </Mui.Box>
+            )}
         </Mui.Box>
     )
 }
