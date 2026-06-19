@@ -4,8 +4,6 @@ class HinhAnh {
         this.sanpham_id = data.sanpham_id;
         this.image_url = data.image_url;
         this.is_primary = data.la_anh_dai_dien === true;
-        this.createdAt = data.created_at;
-        this.updatedAt = data.updated_at;
     }
 
     get url() {

@@ -8,27 +8,61 @@ import { toast } from 'sonner'
 const ImageLibrary = ({ onAssign, sanpham_id }) => {
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(true)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [nextCursor, setNextCursor] = useState(null)
+    const [hasMore, setHasMore] = useState(false)
     const [uploading, setUploading] = useState(false)
     const [assigning, setAssigning] = useState(null)
     const [deleting, setDeleting] = useState(null)
     const [search, setSearch] = useState('')
     const [deleteTarget, setDeleteTarget] = useState(null)
+    const [previewImg, setPreviewImg] = useState(null)
     const fileInputRef = useRef(null)
 
+    // Tải trang đầu (reset toàn bộ danh sách)
     const fetchImages = useCallback(async () => {
         setLoading(true)
         try {
-            const res = await apiConfig.get(API.IMAGES.CLOUDINARY_ALL)
+            const res = await apiConfig.get(API.IMAGES.CLOUDINARY_ALL, { params: { max_results: 24 } })
             setImages(res.data.images || [])
+            setNextCursor(res.data.next_cursor || null)
+            setHasMore(res.data.has_more || false)
         } catch { toast.error('Lỗi tải danh sách ảnh') }
         finally { setLoading(false) }
     }, [])
 
+    // Tải thêm trang tiếp theo (nối vào danh sách hiện có)
+    const fetchMore = useCallback(async () => {
+        if (!nextCursor || loadingMore) return
+        setLoadingMore(true)
+        try {
+            const res = await apiConfig.get(API.IMAGES.CLOUDINARY_ALL, {
+                params: { max_results: 24, next_cursor: nextCursor }
+            })
+            setImages(prev => [...prev, ...(res.data.images || [])])
+            setNextCursor(res.data.next_cursor || null)
+            setHasMore(res.data.has_more || false)
+        } catch {
+            toast.error('Lỗi tải thêm ảnh')
+        } finally {
+            setLoadingMore(false)
+        }
+    }, [nextCursor, loadingMore])
+
     useEffect(() => { fetchImages() }, [fetchImages])
+
+    const MAX_FILES = 20
 
     const handleUpload = async (e) => {
         const files = Array.from(e.target.files || [])
         if (!files.length) return
+
+        if (files.length > MAX_FILES) {
+            toast.error(`Chỉ được chọn tối đa ${MAX_FILES} ảnh mỗi lần`)
+            e.target.value = ''
+            return
+        }
+
         setUploading(true)
         try {
             const formData = new FormData()
@@ -59,9 +93,8 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
         } finally { setAssigning(null) }
     }
 
-    // Mở dialog xác nhận xóa
     const requestDelete = (e, img) => {
-        e.stopPropagation() // không trigger handleAssign khi bấm nút xóa
+        e.stopPropagation()
         setDeleteTarget(img)
     }
 
@@ -80,6 +113,7 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
         }
     }
 
+    // Lọc trên danh sách đã tải — search không gọi API, chỉ lọc client-side
     const filtered = images.filter(img =>
         img.public_id?.toLowerCase().includes(search.toLowerCase())
     )
@@ -89,7 +123,7 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
             {/* Toolbar */}
             <Mui.Stack direction="row" spacing={1} mb={2} alignItems="center">
                 <Mui.TextField
-                    size="small" placeholder="Tìm ảnh..."
+                    size="small" placeholder="Tìm ảnh (trong các ảnh đã tải)..."
                     value={search} onChange={e => setSearch(e.target.value)}
                     InputProps={{ startAdornment: <Mui.InputAdornment position="start"><Icon.Search fontSize="small" /></Mui.InputAdornment> }}
                     sx={{ flex: 1 }}
@@ -122,89 +156,143 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
                     <Mui.Typography color="text.secondary" mt={1}>Chưa có ảnh nào</Mui.Typography>
                 </Mui.Box>
             ) : (
-                <Mui.Box sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-                    gap: 1.5,
-                }}>
-                    {filtered.map((img) => (
-                        <Mui.Box
-                            key={img.public_id}
-                            onClick={() => sanpham_id && handleAssign(img)}
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 0.5,
-                                p: 0.75,
-                                borderRadius: 1.5,
-                                cursor: sanpham_id ? 'pointer' : 'default',
-                                border: '2px solid transparent',
-                                transition: 'all 0.15s',
-                                position: 'relative',
-                                '&:hover': {
-                                    bgcolor: 'action.hover',
-                                    borderColor: sanpham_id ? 'primary.main' : 'transparent',
-                                },
-                                '&:hover .delete-btn': { opacity: 1 },
-                            }}
-                        >
-                            <Mui.Box sx={{
-                                width: '100%',
-                                aspectRatio: '1',
-                                borderRadius: 1,
-                                overflow: 'hidden',
-                                bgcolor: 'background.default',
-                                position: 'relative',
-                            }}>
-                                <Mui.Box
-                                    component="img"
-                                    src={img.url}
-                                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                                {assigning === img.public_id && (
-                                    <Mui.Box sx={{
-                                        position: 'absolute', inset: 0,
-                                        bgcolor: 'rgba(0,0,0,0.5)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    }}>
-                                        <Mui.CircularProgress size={20} sx={{ color: 'white' }} />
-                                    </Mui.Box>
-                                )}
+                <>
+                    <Mui.Box sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                        gap: 1.5,
+                    }}>
+                        {filtered.map((img) => (
+                            <Mui.Box
+                                key={img.public_id}
+                                onClick={() => sanpham_id ? handleAssign(img) : setPreviewImg(img)}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: 0.5,
+                                    p: 0.75,
+                                    borderRadius: 1.5,
+                                    cursor: 'pointer',
+                                    border: '2px solid transparent',
+                                    transition: 'all 0.15s',
+                                    position: 'relative',
+                                    '&:hover': {
+                                        bgcolor: 'action.hover',
+                                        borderColor: sanpham_id ? 'primary.main' : 'transparent',
+                                    },
+                                    '&:hover .delete-btn': { opacity: 1 },
+                                }}
+                            >
+                                <Mui.Box sx={{
+                                    width: '100%',
+                                    aspectRatio: '1',
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.default',
+                                    position: 'relative',
+                                }}>
+                                    <Mui.Box
+                                        component="img"
+                                        src={img.url}
+                                        sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                    {assigning === img.public_id && (
+                                        <Mui.Box sx={{
+                                            position: 'absolute', inset: 0,
+                                            bgcolor: 'rgba(0,0,0,0.5)',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        }}>
+                                            <Mui.CircularProgress size={20} sx={{ color: 'white' }} />
+                                        </Mui.Box>
+                                    )}
 
-                                {/* Nút xóa — hiện khi hover */}
-                                <Mui.IconButton
-                                    className="delete-btn"
-                                    size="small"
-                                    onClick={(e) => requestDelete(e, img)}
-                                    disabled={deleting === img.public_id}
-                                    sx={{
-                                        position: 'absolute', top: 4, right: 4,
-                                        bgcolor: 'rgba(0,0,0,0.6)',
-                                        color: 'white',
-                                        opacity: 0,
-                                        transition: 'opacity 0.15s',
-                                        p: 0.4,
-                                        '&:hover': { bgcolor: 'error.main' },
-                                    }}
-                                >
-                                    {deleting === img.public_id
-                                        ? <Mui.CircularProgress size={14} sx={{ color: 'white' }} />
-                                        : <Icon.Close sx={{ fontSize: 14 }} />
-                                    }
-                                </Mui.IconButton>
+                                    <Mui.IconButton
+                                        className="delete-btn"
+                                        size="small"
+                                        onClick={(e) => requestDelete(e, img)}
+                                        disabled={deleting === img.public_id}
+                                        sx={{
+                                            position: 'absolute', top: 4, right: 4,
+                                            bgcolor: 'rgba(0,0,0,0.6)',
+                                            color: 'white',
+                                            opacity: 0,
+                                            transition: 'opacity 0.15s',
+                                            p: 0.4,
+                                            '&:hover': { bgcolor: 'error.main' },
+                                        }}
+                                    >
+                                        {deleting === img.public_id
+                                            ? <Mui.CircularProgress size={14} sx={{ color: 'white' }} />
+                                            : <Icon.Close sx={{ fontSize: 14 }} />
+                                        }
+                                    </Mui.IconButton>
+                                </Mui.Box>
+                                <Mui.Typography variant="caption" textAlign="center" sx={{
+                                    fontSize: '0.65rem', color: 'text.secondary',
+                                    overflow: 'hidden', textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap', width: '100%', display: 'block',
+                                }}>
+                                    {img.public_id?.split('/').pop()}
+                                </Mui.Typography>
                             </Mui.Box>
-                            <Mui.Typography variant="caption" textAlign="center" sx={{
-                                fontSize: '0.65rem', color: 'text.secondary',
-                                overflow: 'hidden', textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap', width: '100%', display: 'block',
-                            }}>
-                                {img.public_id?.split('/').pop()}
-                            </Mui.Typography>
+                        ))}
+                    </Mui.Box>
+
+                    {/* Nút tải thêm — chỉ hiện khi không search (search là lọc local) */}
+                    {hasMore && !search && (
+                        <Mui.Box display="flex" justifyContent="center" mt={3}>
+                            <Mui.Button
+                                variant="outlined"
+                                onClick={fetchMore}
+                                disabled={loadingMore}
+                                startIcon={loadingMore ? <Mui.CircularProgress size={16} /> : <Icon.ExpandMore />}
+                                sx={{ fontWeight: 700 }}
+                            >
+                                {loadingMore ? 'Đang tải...' : 'Tải thêm ảnh'}
+                            </Mui.Button>
                         </Mui.Box>
-                    ))}
-                </Mui.Box>
+                    )}
+                </>
             )}
+
+            {/* Lightbox xem ảnh full-size */}
+            <Mui.Modal
+                open={!!previewImg}
+                onClose={() => setPreviewImg(null)}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+                <Mui.Box
+                    onClick={() => setPreviewImg(null)}
+                    sx={{
+                        position: 'relative',
+                        maxWidth: '85vw', maxHeight: '85vh',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        outline: 'none',
+                    }}
+                >
+                    <Mui.Box
+                        component="img"
+                        src={previewImg?.url}
+                        onClick={e => e.stopPropagation()}
+                        sx={{
+                            maxWidth: '100%', maxHeight: '85vh',
+                            objectFit: 'contain', borderRadius: 2,
+                            boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+                        }}
+                    />
+                    <Mui.IconButton
+                        onClick={() => setPreviewImg(null)}
+                        sx={{
+                            position: 'absolute', top: -16, right: -16,
+                            bgcolor: 'rgba(0,0,0,0.6)', color: '#fff',
+                            '&:hover': { bgcolor: 'rgba(0,0,0,0.85)' },
+                        }}
+                    >
+                        <Icon.Close />
+                    </Mui.IconButton>
+                </Mui.Box>
+            </Mui.Modal>
 
             {/* Dialog xác nhận xóa */}
             <Mui.Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>

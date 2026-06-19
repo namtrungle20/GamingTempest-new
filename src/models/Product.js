@@ -4,9 +4,9 @@ export default class Product {
         this.id = data.sanpham_id
         this.name = data.name || ''
         this.mota = data.mota || ''
+        this.thongSo = data.thong_so || {}
         this.gia = Number(data.gia) || 0
         this.soluong = data.soluong || 0
-        this.image = data.image || null
         this.loai_id = data.loai_id
         this.thuonghieu_id = data.thuonghieu_id
         this.loai = data.LoaiSanPham?.name || ''

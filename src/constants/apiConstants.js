@@ -19,6 +19,14 @@ export const API = {
         DELETE: '/sanpham',
         IMPORT: '/sanpham/import/full',
     },
+    CHITIETSANPHAM: {
+        LIST: (sanpham_id) => `/chitiet?sanpham_id=${sanpham_id}`,
+        CREATE: '/chitiet',
+        BULK: '/chitiet/bulk',
+        UPDATE: (id) => `/chitiet/${id}`,
+        DELETE: (id) => `/chitiet/${id}`,
+        DELETE_ALL: (sanpham_id) => `/chitiet/all?sanpham_id=${sanpham_id}`,
+    },
     ORDERS: {
         LIST: '/donhang',
         MY_LIST: '/donhang/me',
