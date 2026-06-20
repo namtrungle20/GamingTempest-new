@@ -3,6 +3,7 @@ import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { UI_SETTING } from '@/theme/uiSetting';
 import { useCart } from '@/hook/provider/CartProvider';
+import { useNavigate } from 'react-router-dom';
 
 const InfoRow = ({ icon, label, value }) => (
     <Mui.Box display="flex" alignItems="center" gap={1.5}>
@@ -24,6 +25,8 @@ const InfoRow = ({ icon, label, value }) => (
 
 const ProductInfoPanel = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
+    const [buying, setBuying] = useState(false);
+    const navigate = useNavigate();
     const { addToCart, setIsCartOpen } = useCart();
 
     const handleAddToCart = async () => {
@@ -33,6 +36,18 @@ const ProductInfoPanel = ({ product }) => {
         } else {
             setIsCartOpen(true);
         }
+    };
+
+    const handleBuyNow = async () => {
+        setBuying(true);
+        const result = await addToCart(product, quantity);
+        setBuying(false);
+
+        if (result && result.success === false) {
+            alert(result.message || 'Không thể mua sản phẩm này');
+            return;
+        }
+        navigate('/checkout');
     };
 
     return (
@@ -165,13 +180,16 @@ const ProductInfoPanel = ({ product }) => {
                 {/* Nút mua nhanh (tuỳ chọn) */}
                 <Mui.Button
                     variant="outlined" size="large" fullWidth
+                    disabled={!product.inStock || buying}
+                    onClick={handleBuyNow}
+                    startIcon={buying ? <Mui.CircularProgress size={16} /> : null}
                     sx={{
                         py: 1.6, fontWeight: 700,
                         borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,
                         textTransform: 'none',
                     }}
                 >
-                    Mua ngay
+                    {buying ? 'Đang xử lý...' : 'Mua ngay'}
                 </Mui.Button>
             </Mui.Stack>
         </Mui.Paper>

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '@/theme/uiSetting'
@@ -14,6 +14,7 @@ import useDanhMucManage from '@/hook/admin/useDanhMucManager'
 // Component hiển thị tab CRUD chung
 import CatalogManageTab from '@/components/admin/CatalogManageTab'
 import LoaiSPTab from '@/components/admin/category/LoaiSPTab'
+import ChiTietSanPhamPanel from '@/components/admin/product/ChiTietSanPhamPanel'
 
 // import ProductImageManager from '@/components/admin/product/ProductImageManager';
 import ProductImageManagerModal from '@/components/admin/product/ProductImageManagerModal';
@@ -23,6 +24,8 @@ const SanPhamManagePage = () => {
     const [tab, setTab] = useState(0)
     const fileInputRef = useRef(null)
     const [importing, setImporting] = useState(false)
+    const [selectedSP, setSelectedSP] = useState(null)
+    const [chiTietSearch, setChiTietSearch] = useState('')
 
     // const bulkUploadRef = useRef(null)
     // const [bulkUploading, setBulkUploading] = useState(false)
@@ -40,7 +43,9 @@ const SanPhamManagePage = () => {
         setPage, setSearch, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport,
+        allSanPhams, allLoading, allPage, allTotal, allSearch,
+        setAllPage, setAllSearch, fetchAllSanPhams,
     } = sanPhamHook
 
     // const fileInputRef = useRef(null)
@@ -54,6 +59,10 @@ const SanPhamManagePage = () => {
         setImporting(false)
         e.target.value = ''
     }
+
+    useEffect(() => {
+        if (tab === 5) fetchAllSanPhams('', 1)
+    }, [tab])
 
     // const onBulkUpload = async (e) => {
     //     const files = Array.from(e.target.files)
@@ -73,11 +82,12 @@ const SanPhamManagePage = () => {
             </Mui.Box>
 
             <Mui.Tabs value={tab} onChange={(_, val) => setTab(val)} sx={{ mb: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Mui.Tab label="Sản phẩm" sx={{ fontWeight: 700 }} />
-                <Mui.Tab label="Thương hiệu" sx={{ fontWeight: 700 }} />
-                <Mui.Tab label="Loại sản phẩm" sx={{ fontWeight: 700 }} />
-                <Mui.Tab label="Danh mục" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Sản phẩm" icon={<Icon.VideogameAssetOutlined />} iconPosition="start" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Thương hiệu" icon={<Icon.Label />} iconPosition="start" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Loại sản phẩm" icon={<Icon.Category />} iconPosition="start" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Danh mục" icon={<Icon.Category />} iconPosition="start" sx={{ fontWeight: 700 }} />
                 <Mui.Tab label="Thư viện ảnh" icon={<Icon.Collections />} iconPosition="start" sx={{ fontWeight: 700 }} />
+                <Mui.Tab label="Chi tiết sản phẩm" icon={<Icon.Settings />} iconPosition="start" sx={{ fontWeight: 700 }} />
             </Mui.Tabs>
 
             {/* TAB SẢN PHẨM */}
@@ -102,27 +112,6 @@ const SanPhamManagePage = () => {
                             {importing ? 'Đang import...' : 'Import Excel'}
                         </Mui.Button>
 
-                        {/* <input
-                            ref={bulkUploadRef}
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            style={{ display: 'none' }}
-                            onChange={onBulkUpload}
-                        /> */}
-                        {/* <Mui.Button
-                            variant="outlined"
-                            color="secondary"
-                            startIcon={bulkUploading
-                                ? <Mui.CircularProgress size={16} />
-                                : <Icon.CloudUploadOutlined />
-                            }
-                            disabled={bulkUploading}
-                            onClick={() => bulkUploadRef.current?.click()}
-                            sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
-                        >
-                            {bulkUploading ? 'Đang upload...' : 'Bulk Upload Ảnh'}
-                        </Mui.Button> */}
 
                         <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate}
                             sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}>
@@ -231,10 +220,15 @@ const SanPhamManagePage = () => {
                                     </Mui.Select>
                                 </Mui.FormControl>
 
-                                {/* Chỉ hiển thị quản lý ảnh khi sửa sản phẩm (đã có ID) */}
-                                {/* {editTarget && editTarget.id && (
-                                    <ProductImageManager sanpham_id={editTarget.id} />
-                                )} */}
+                                {editTarget && editTarget.id && (
+                                    <Mui.Box>
+                                        <Mui.Divider sx={{ my: 1 }} />
+                                        <Mui.Typography variant="subtitle2" fontWeight={700} mb={1}>
+                                            Thông số kỹ thuật
+                                        </Mui.Typography>
+                                        <ChiTietSanPhamPanel sanpham_id={editTarget.id} />
+                                    </Mui.Box>
+                                )}
 
                                 <Mui.Box display="flex" gap={2} pt={1}>
                                     <Mui.Button fullWidth variant="outlined" onClick={closeModal} sx={{ fontWeight: 700 }}>Huỷ</Mui.Button>
@@ -270,6 +264,98 @@ const SanPhamManagePage = () => {
                 <Mui.Box>
                     <Mui.Typography variant="h6" fontWeight={700} mb={2}>Thư viện ảnh</Mui.Typography>
                     <ImageLibrary />
+                </Mui.Box>
+            )}
+            {tab === 5 && (
+                <Mui.Box display="flex" gap={2} height="70vh">
+                    <Mui.Paper elevation={0} sx={{
+                        width: 300, flexShrink: 0,
+                        border: '1px solid', borderColor: 'divider',
+                        borderRadius: 2, overflow: 'hidden',
+                        display: 'flex', flexDirection: 'column'
+                    }}>
+                        {/* Search — gọi API */}
+                        <Mui.Box p={2} borderBottom="1px solid" borderColor="divider">
+                            <Mui.TextField
+                                fullWidth size="small" placeholder="Tìm sản phẩm..."
+                                value={allSearch}
+                                onChange={(e) => setAllSearch(e.target.value)}
+                                InputProps={{ startAdornment: <Mui.InputAdornment position="start"><Icon.Search /></Mui.InputAdornment> }}
+                            />
+                        </Mui.Box>
+
+                        {/* Danh sách */}
+                        <Mui.List dense sx={{ overflow: 'auto', flex: 1, p: 0 }}>
+                            {allLoading ? (
+                                [...Array(5)].map((_, i) => (
+                                    <Mui.ListItem key={i}><Mui.Skeleton width="100%" /></Mui.ListItem>
+                                ))
+                            ) : allSanPhams.map(sp => (
+                                <Mui.ListItemButton
+                                    key={sp.id}
+                                    selected={selectedSP?.id === sp.id}
+                                    onClick={() => setSelectedSP(sp)}
+                                    sx={{
+                                        borderBottom: '1px solid', borderColor: 'divider',
+                                        '&.Mui-selected': {
+                                            bgcolor: 'primary.main', color: 'white',
+                                            '&:hover': { bgcolor: 'primary.dark' }
+                                        }
+                                    }}
+                                >
+                                    <Mui.ListItemAvatar>
+                                        <Mui.Avatar src={sp.imageUrl} variant="rounded" sx={{ width: 36, height: 36 }}>
+                                            <Icon.Inventory2 fontSize="small" />
+                                        </Mui.Avatar>
+                                    </Mui.ListItemAvatar>
+                                    <Mui.ListItemText
+                                        primary={<Mui.Typography variant="body2" fontWeight={600} noWrap>{sp.name}</Mui.Typography>}
+                                        secondary={<Mui.Typography variant="caption" sx={{ color: selectedSP?.id === sp.id ? 'rgba(255,255,255,0.7)' : 'text.secondary' }}>{sp.id}</Mui.Typography>}
+                                    />
+                                </Mui.ListItemButton>
+                            ))}
+                        </Mui.List>
+
+                        {/* Pagination */}
+                        {Math.ceil(allTotal / 10) > 1 && (
+                            <Mui.Box p={1} borderTop="1px solid" borderColor="divider" display="flex" justifyContent="center">
+                                <Mui.Pagination
+                                    count={Math.ceil(allTotal / 10)}
+                                    page={allPage}
+                                    onChange={(_, val) => setAllPage(val)}
+                                    size="small"
+                                    color="primary"
+                                />
+                            </Mui.Box>
+                        )}
+                    </Mui.Paper>
+
+                    {/* Cột phải — chi tiết */}
+                    <Mui.Paper elevation={0} sx={{
+                        flex: 1, border: '1px solid', borderColor: 'divider',
+                        borderRadius: 2, overflow: 'auto', p: 2
+                    }}>
+                        {selectedSP ? (
+                            <Mui.Box>
+                                <Mui.Box display="flex" alignItems="center" gap={2} mb={2}>
+                                    <Mui.Avatar src={selectedSP.imageUrl} variant="rounded" sx={{ width: 48, height: 48 }}>
+                                        <Icon.Inventory2 />
+                                    </Mui.Avatar>
+                                    <Mui.Box>
+                                        <Mui.Typography variant="h6" fontWeight={700}>{selectedSP.name}</Mui.Typography>
+                                        <Mui.Typography variant="caption" color="text.secondary">{selectedSP.id}</Mui.Typography>
+                                    </Mui.Box>
+                                </Mui.Box>
+                                <Mui.Divider sx={{ mb: 2 }} />
+                                <ChiTietSanPhamPanel sanpham_id={selectedSP.id} />
+                            </Mui.Box>
+                        ) : (
+                            <Mui.Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100%" color="text.secondary">
+                                <Icon.TouchApp sx={{ fontSize: 48, mb: 1, opacity: 0.3 }} />
+                                <Mui.Typography>Chọn sản phẩm để xem thông số kỹ thuật</Mui.Typography>
+                            </Mui.Box>
+                        )}
+                    </Mui.Paper>
                 </Mui.Box>
             )}
         </Mui.Box>

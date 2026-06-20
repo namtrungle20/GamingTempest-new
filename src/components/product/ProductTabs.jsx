@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '@/theme/uiSetting'
+import { chitietsanphamService } from '@/services/chitietsanpham.service'
 
 const WARRANTY_ITEMS = [
     { icon: <Icon.Autorenew />, title: 'Đổi trả trong 7 ngày', desc: 'Sản phẩm lỗi do nhà sản xuất được đổi trả miễn phí trong 7 ngày.' },
@@ -11,8 +12,19 @@ const WARRANTY_ITEMS = [
 
 const ProductTabs = ({ product }) => {
     const [tab, setTab] = useState(0)
+    const [chiTiets, setChiTiets] = useState([])
 
-    // Tách mô tả thành các đoạn văn theo \n\n
+    useEffect(() => {
+        if (!product?.id) return
+        let cancelled = false
+        chitietsanphamService.getAll(product.id).then(res => {
+            if (!cancelled && res.success) setChiTiets(res.data || [])
+        })
+        return () => { cancelled = true }
+    }, [product?.id])
+
+    useEffect(() => { setTab(0) }, [product?.id])
+
     const motaParagraphs = (product.mota || '')
         .split(/\n\n+/)
         .map(p => p.trim())
@@ -39,31 +51,68 @@ const ProductTabs = ({ product }) => {
             </Mui.Tabs>
 
             <Mui.Box sx={{ p: { xs: 3, md: 4 }, minHeight: 160 }}>
+
+                {/* Tab 0 — Thông số kỹ thuật (nếu có) + Mô tả */}
                 {tab === 0 && (
-                    motaParagraphs.length > 0 ? (
-                        <Mui.Stack spacing={2}>
-                            {motaParagraphs.map((para, i) => (
-                                <Mui.Typography
-                                    key={i}
-                                    variant="body1"
-                                    color="text.secondary"
-                                    sx={{ lineHeight: 1.85, whiteSpace: 'pre-line' }}
-                                >
-                                    {para}
+                    <Mui.Stack spacing={3}>
+                        {chiTiets.length > 0 && (
+                            <Mui.Box>
+                                <Mui.Typography variant="subtitle1" fontWeight={800} mb={1.5}>
+                                    Thông số kỹ thuật
                                 </Mui.Typography>
-                            ))}
-                        </Mui.Stack>
-                    ) : (
-                        <Mui.Box display="flex" flexDirection="column" alignItems="center"
-                            justifyContent="center" py={4} gap={1}>
-                            <Icon.InfoOutlined sx={{ fontSize: 36, color: 'text.disabled' }} />
-                            <Mui.Typography variant="body2" color="text.disabled">
-                                Mô tả sản phẩm đang được cập nhật.
-                            </Mui.Typography>
+                                <Mui.Table size="small">
+                                    <Mui.TableBody>
+                                        {chiTiets.map((ct, i) => (
+                                            <Mui.TableRow key={ct.id} sx={{
+                                                bgcolor: i % 2 === 0 ? 'action.hover' : 'transparent',
+                                                '&:last-child td': { border: 0 }
+                                            }}>
+                                                <Mui.TableCell sx={{ fontWeight: 700, width: '35%', color: 'text.secondary', border: 0 }}>
+                                                    {ct.name}
+                                                </Mui.TableCell>
+                                                <Mui.TableCell sx={{ fontWeight: 500, border: 0 }}>
+                                                    {ct.gia_tri}
+                                                </Mui.TableCell>
+                                            </Mui.TableRow>
+                                        ))}
+                                    </Mui.TableBody>
+                                </Mui.Table>
+                            </Mui.Box>
+                        )}
+
+                        <Mui.Box>
+                            {chiTiets.length > 0 && (
+                                <Mui.Typography variant="subtitle1" fontWeight={800} mb={1.5}>
+                                    Mô tả sản phẩm
+                                </Mui.Typography>
+                            )}
+                            {motaParagraphs.length > 0 ? (
+                                <Mui.Stack spacing={2}>
+                                    {motaParagraphs.map((para, i) => (
+                                        <Mui.Typography
+                                            key={i}
+                                            variant="body1"
+                                            color="text.secondary"
+                                            sx={{ lineHeight: 1.85, whiteSpace: 'pre-line' }}
+                                        >
+                                            {para}
+                                        </Mui.Typography>
+                                    ))}
+                                </Mui.Stack>
+                            ) : (
+                                <Mui.Box display="flex" flexDirection="column" alignItems="center"
+                                    justifyContent="center" py={4} gap={1}>
+                                    <Icon.InfoOutlined sx={{ fontSize: 36, color: 'text.disabled' }} />
+                                    <Mui.Typography variant="body2" color="text.disabled">
+                                        Mô tả sản phẩm đang được cập nhật.
+                                    </Mui.Typography>
+                                </Mui.Box>
+                            )}
                         </Mui.Box>
-                    )
+                    </Mui.Stack>
                 )}
 
+                {/* Tab 1 — Bảo hành */}
                 {tab === 1 && (
                     <Mui.Stack spacing={2.5}>
                         {WARRANTY_ITEMS.map((item, i) => (

@@ -23,6 +23,11 @@ const useSanPhamManage = () => {
     const [editTarget, setEditTarget] = useState(null)
     const [form, setForm] = useState(INITIAL_FORM)
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
+    const [allSanPhams, setAllSanPhams] = useState([])
+    const [allLoading, setAllLoading] = useState(false)
+    const [allPage, setAllPage] = useState(1)
+    const [allTotal, setAllTotal] = useState(0)
+    const [allSearch, setAllSearch] = useState('')
 
     const notify = useCallback((message, severity = 'success') =>
         setSnackbar({ open: true, message, severity }), [])
@@ -42,6 +47,16 @@ const useSanPhamManage = () => {
         setLoading(false)
     }, [page, search, notify])
 
+    const fetchAllSanPhams = useCallback(async (search = '', page = 1) => {
+        setAllLoading(true)
+        const result = await productService.getAll({ page, search })
+        if (result.success) {
+            setAllSanPhams((result.raw.data || []).map(p => new Product(p)))
+            setAllTotal(result.raw.total || 0)
+        }
+        setAllLoading(false)
+    }, [])
+
     const fetchMeta = useCallback(async () => {
         const [brandResult, categoryResult, danhMucResult] = await Promise.allSettled([
             productService.getBrands(),
@@ -57,6 +72,18 @@ const useSanPhamManage = () => {
 
     useEffect(() => { fetchSanPhams() }, [fetchSanPhams])
     useEffect(() => { fetchMeta() }, [fetchMeta])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchAllSanPhams(allSearch, 1)
+            setAllPage(1)
+        }, 400)
+        return () => clearTimeout(timer)
+    }, [allSearch])
+
+    useEffect(() => {
+        fetchAllSanPhams(allSearch, allPage)
+    }, [allPage])
 
     const openCreate = useCallback(async () => {
         await fetchMeta()
@@ -166,7 +193,10 @@ const useSanPhamManage = () => {
         setPage, setSearch, notify, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport,
+        allSanPhams, allLoading, allPage, allTotal, allSearch,
+        setAllPage, setAllSearch, fetchAllSanPhams,
+
     }
 }
 
