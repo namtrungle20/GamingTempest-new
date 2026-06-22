@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
+import DOMPurify from 'dompurify'
 import { UI_SETTING } from '@/theme/uiSetting'
 import { chitietsanphamService } from '@/services/chitietsanpham.service'
+import { marked } from 'marked'
 
 const WARRANTY_ITEMS = [
     { icon: <Icon.Autorenew />, title: 'Đổi trả trong 7 ngày', desc: 'Sản phẩm lỗi do nhà sản xuất được đổi trả miễn phí trong 7 ngày.' },
@@ -25,10 +27,10 @@ const ProductTabs = ({ product }) => {
 
     useEffect(() => { setTab(0) }, [product?.id])
 
-    const motaParagraphs = (product.mota || '')
-        .split(/\n\n+/)
-        .map(p => p.trim())
-        .filter(Boolean)
+    // const motaParagraphs = (product.mota || '')
+    //     .split(/\n\n+/)
+    //     .map(p => p.trim())
+    //     .filter(Boolean)
 
     return (
         <Mui.Paper elevation={0} sx={{
@@ -86,19 +88,42 @@ const ProductTabs = ({ product }) => {
                                     Mô tả sản phẩm
                                 </Mui.Typography>
                             )}
-                            {motaParagraphs.length > 0 ? (
-                                <Mui.Stack spacing={2}>
-                                    {motaParagraphs.map((para, i) => (
-                                        <Mui.Typography
-                                            key={i}
-                                            variant="body1"
-                                            color="text.secondary"
-                                            sx={{ lineHeight: 1.85, whiteSpace: 'pre-line' }}
-                                        >
-                                            {para}
-                                        </Mui.Typography>
-                                    ))}
-                                </Mui.Stack>
+                            {product.mota ? (
+                                <Mui.Box
+                                    dangerouslySetInnerHTML={{
+                                        __html: DOMPurify.sanitize(marked.parse(product.mota), {
+                                            ADD_TAGS: ['img'],
+                                            ADD_ATTR: ['src', 'alt', 'width', 'height', 'loading', 'style'],
+                                        })
+                                    }}
+                                    sx={{
+                                        color: 'text.secondary',
+                                        lineHeight: 1.85,
+                                        '& h1, & h2, & h3, & h4': {
+                                            color: 'text.primary',
+                                            fontWeight: 800,
+                                            mt: 2.5, mb: 1,
+                                        },
+                                        '& p': { mb: 1.5 },
+                                        '& ul, & ol': { pl: 3, mb: 1.5 },
+                                        '& li': { mb: 0.5 },
+                                        '& img': {
+                                            maxWidth: '100%',
+                                            borderRadius: 2,
+                                            my: 1.5,
+                                            display: 'block',
+                                        },
+                                        '& strong': { color: 'text.primary', fontWeight: 700 },
+                                        '& a': { color: 'primary.main' },
+                                        '& blockquote': {
+                                            borderLeft: '3px solid',
+                                            borderColor: 'divider',
+                                            pl: 2, ml: 0,
+                                            color: 'text.disabled',
+                                            fontStyle: 'italic',
+                                        },
+                                    }}
+                                />
                             ) : (
                                 <Mui.Box display="flex" flexDirection="column" alignItems="center"
                                     justifyContent="center" py={4} gap={1}>

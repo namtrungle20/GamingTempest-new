@@ -19,6 +19,7 @@ import ChiTietSanPhamPanel from '@/components/admin/product/ChiTietSanPhamPanel'
 // import ProductImageManager from '@/components/admin/product/ProductImageManager';
 import ProductImageManagerModal from '@/components/admin/product/ProductImageManagerModal';
 import ImageLibrary from '@/components/admin/image/ImageLibrary'
+import MotaEditor from '@/components/admin/product/MotaEditor'
 
 const SanPhamManagePage = () => {
     const [tab, setTab] = useState(0)
@@ -202,7 +203,11 @@ const SanPhamManagePage = () => {
 
                             <Mui.Stack spacing={2.5}>
                                 <Mui.TextField fullWidth label="Tên sản phẩm" required value={form.name} onChange={(e) => handleFormChange('name', e.target.value)} />
-                                <Mui.TextField fullWidth label="Mô tả" multiline rows={3} value={form.mota} onChange={(e) => handleFormChange('mota', e.target.value)} />
+                                <MotaEditor
+                                    value={form.mota}
+                                    onChange={(val) => handleFormChange('mota', val)}
+                                    rows={5}
+                                />
                                 <Mui.Box display="flex" gap={2}>
                                     <Mui.TextField fullWidth label="Giá (VNĐ)" type="number" value={form.gia} onChange={(e) => handleFormChange('gia', e.target.value)} />
                                     <Mui.TextField fullWidth label="Số lượng" type="number" value={form.soluong} onChange={(e) => handleFormChange('soluong', e.target.value)} />

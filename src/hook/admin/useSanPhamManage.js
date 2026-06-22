@@ -3,6 +3,7 @@ import { productService } from '@/services/product.service.js'
 import { danhmucService } from '@/services/danhmuc.service.js'
 import Product from '@/models/Product'
 import { uploadService } from '@/services/upload.service.js';
+import { marked } from 'marked';
 
 const INITIAL_FORM = {
     name: '', mota: '', gia: '', soluong: '',
@@ -119,7 +120,7 @@ const useSanPhamManage = () => {
     const handleSubmit = useCallback(async () => {
         const payload = {
             name: form.name,
-            mota: form.mota,
+            mota: form.mota ? marked.parse(form.mota) : '',
             gia: Number(form.gia),
             soluong: Number(form.soluong),
             loai_id: Number(form.loai_id),
@@ -171,21 +172,6 @@ const useSanPhamManage = () => {
         }
     }, [deleteDialog.id, notify, closeDeleteDialog, fetchSanPhams])
 
-    // const handleBulkUpload = async (files) => {
-    //     if (!files?.length) return
-    //     const result = await uploadService.bulkUpload(files)
-    //     if (result.success) {
-    //         const url = window.URL.createObjectURL(result.blob)
-    //         const a = document.createElement('a')
-    //         a.href = url
-    //         a.download = 'images.xlsx'
-    //         a.click()
-    //         window.URL.revokeObjectURL(url)
-    //         notify('Export Excel thành công, kiểm tra file đã tải về')
-    //     } else {
-    //         notify(result.message, 'error')
-    //     }
-    // }
 
     return {
         sanPhams, brands, categories, danhmucs, loading, total, page, search,

@@ -5,7 +5,7 @@ import apiConfig from '@/config/apiConfig'
 import { API } from '@/constants/apiConstants'
 import { toast } from 'sonner'
 
-const ImageLibrary = ({ onAssign, sanpham_id }) => {
+const ImageLibrary = ({ onAssign, sanpham_id, onSelectForMota }) => {
     const [images, setImages] = useState([])
     const [loading, setLoading] = useState(true)
     const [loadingMore, setLoadingMore] = useState(false)
@@ -93,6 +93,18 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
         } finally { setAssigning(null) }
     }
 
+    const handleImageClick = (img) => {
+        if (onSelectForMota) {
+            onSelectForMota(img.url)
+            return
+        }
+        if (sanpham_id) {
+            handleAssign(img)
+            return
+        }
+        setPreviewImg(img)
+    }
+
     const requestDelete = (e, img) => {
         e.stopPropagation()
         setDeleteTarget(img)
@@ -165,7 +177,7 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
                         {filtered.map((img) => (
                             <Mui.Box
                                 key={img.public_id}
-                                onClick={() => sanpham_id ? handleAssign(img) : setPreviewImg(img)}
+                                onClick={() => handleImageClick(img)}
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -182,6 +194,22 @@ const ImageLibrary = ({ onAssign, sanpham_id }) => {
                                         borderColor: sanpham_id ? 'primary.main' : 'transparent',
                                     },
                                     '&:hover .delete-btn': { opacity: 1 },
+                                    ...(onSelectForMota && {
+                                        '&:hover::after': {
+                                            content: '"Chèn"',
+                                            position: 'absolute',
+                                            bottom: 24,
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                            bgcolor: 'primary.main',
+                                            color: 'white',
+                                            fontSize: '0.65rem',
+                                            fontWeight: 700,
+                                            px: 1, py: 0.25,
+                                            borderRadius: 1,
+                                            whiteSpace: 'nowrap',
+                                        }
+                                    })
                                 }}
                             >
                                 <Mui.Box sx={{

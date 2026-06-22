@@ -66,7 +66,7 @@ export const productService = {
         const formData = new FormData()
         formData.append('file', file)
         try {
-            const response = await apiConfig.post('/sanpham/import/full', formData, {
+            const response = await apiConfig.post(API.PRODUCTS.IMPORT, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
             return { success: true, raw: response.data }
