@@ -76,5 +76,18 @@ export const productService = {
                 message: error.response?.data?.message || 'Import thất bại'
             }
         }
+    },
+    exportExcel: async () => {
+        try {
+            const response = await apiConfig.get(API.PRODUCTS.EXPORT, {
+                responseType: 'blob'
+            });
+            return { success: true, raw: response.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Export thất bại'
+            };
+        }
     }
 }

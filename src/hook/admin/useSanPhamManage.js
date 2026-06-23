@@ -153,6 +153,23 @@ const useSanPhamManage = () => {
         }
     }
 
+    const handleExport = async () => {
+        const result = await productService.exportExcel()
+        if (result.success) {
+            const url = window.URL.createObjectURL(new Blob([result.raw]))
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `TempestGaming_Sanpham${Date.now()}.xlsx`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            window.URL.revokeObjectURL(url)
+            notify('Xuất file Excel thành công')
+        } else {
+            notify(result.message, 'error')
+        }
+    }
+
     const openDeleteDialog = useCallback((id, name) => {
         setDeleteDialog({ open: true, id, name })
     }, [])
@@ -179,7 +196,7 @@ const useSanPhamManage = () => {
         setPage, setSearch, notify, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport,
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport, handleExport,
         allSanPhams, allLoading, allPage, allTotal, allSearch,
         setAllPage, setAllSearch, fetchAllSanPhams,
 

@@ -18,6 +18,7 @@ export const API = {
         UPDATE: '/sanpham',
         DELETE: '/sanpham',
         IMPORT: '/sanpham/import/full',
+        EXPORT: '/sanpham/export'
     },
     CHITIETSANPHAM: {
         LIST: (sanpham_id) => `/chitiet?sanpham_id=${sanpham_id}`,

@@ -44,7 +44,7 @@ const SanPhamManagePage = () => {
         setPage, setSearch, closeSnackbar,
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
-        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport,
+        openDeleteDialog, closeDeleteDialog, handleDelete, handleImport, handleExport,
         allSanPhams, allLoading, allPage, allTotal, allSearch,
         setAllPage, setAllSearch, fetchAllSanPhams,
     } = sanPhamHook
@@ -113,6 +113,15 @@ const SanPhamManagePage = () => {
                             {importing ? 'Đang import...' : 'Import Excel'}
                         </Mui.Button>
 
+                        <Mui.Button
+                            variant="outlined"
+                            startIcon={<Icon.FileDownloadOutlined />}
+                            onClick={handleExport}
+                            sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
+                        >
+                            {importing ? 'Đang export...' : 'Export Excel'}
+                        </Mui.Button>
+
 
                         <Mui.Button variant="contained" startIcon={<Icon.Add />} onClick={openCreate}
                             sx={{ fontWeight: 700, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}>
@@ -160,7 +169,7 @@ const SanPhamManagePage = () => {
                                                         <Mui.Avatar src={sp.imageUrl} variant="rounded" sx={{ width: 48, height: 48 }}><Icon.Inventory2 /></Mui.Avatar>
                                                         <Mui.Box>
                                                             <Mui.Typography variant="body2" fontWeight={600}>{sp.name}</Mui.Typography>
-                                                            <Mui.Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200 }}>{sp.mota || '—'}</Mui.Typography>
+                                                            <Mui.Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200, display: 'block' }}>{sp.mota || '—'}</Mui.Typography>
                                                         </Mui.Box>
                                                     </Mui.Box>
                                                 </Mui.TableCell>
