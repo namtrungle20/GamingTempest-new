@@ -6,11 +6,12 @@ const ProductGrid = ({ products }) => {
         <Mui.Box sx={{
             display: 'grid',
             gridTemplateColumns: {
-                xs: 'repeat(2, minmax(150px, 1fr))',
-                sm: 'repeat(3, minmax(160px, 1fr))',
-                md: 'repeat(6, minmax(180px, 1fr))',
+                xs: 'repeat(2, minmax(140px, 1fr))', // Mobile giữ 2 cột
+                sm: 'repeat(3, minmax(160px, 1fr))', // Máy tính bảng 3 cột
+                md: 'repeat(3, minmax(180px, 1fr))', // Desktop trung bình + có sidebar lọc: 3 cột
+                lg: 'repeat(4, minmax(200px, 1fr))', // 💡 Màn hình lớn 1440px: 4 cột là tỷ lệ vàng bề thế nhất
             },
-            gap: 2,
+            gap: 3, // Tăng gap lên 3 (24px) cho thoáng đãng, không bị ngột ngạt
         }}>
             {products.map(p => (
                 <Mui.Box
@@ -25,7 +26,8 @@ const ProductGrid = ({ products }) => {
                         }
                     }}
                 >
-                    <ProductCard product={p} />
+                    {/* 💡 CHỐT HẠ 1: Bắt buộc phải truyền flexible={true} để card tự bung lụa theo Grid */}
+                    <ProductCard product={p} flexible={true} />
                 </Mui.Box>
             ))}
         </Mui.Box>

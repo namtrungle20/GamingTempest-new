@@ -4,8 +4,6 @@ import * as Mui from '@mui/material';
 import { UI_SETTING } from '@/theme/uiSetting';
 import { useNavigate } from 'react-router-dom';
 
-// flexible=false → dùng trong horizontal shelf (fixed width)
-// flexible=true  → dùng trong Grid (width 100% theo cột)
 const ProductCard = ({ product, flexible = false }) => {
     const navigate = useNavigate();
     const coverUrl = useProductCoverImage(product.id)
@@ -35,17 +33,17 @@ const ProductCard = ({ product, flexible = false }) => {
                 '&:hover': {
                     borderColor: 'primary.main',
                     transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 20px rgba(255, 137, 6, 0.2)',
+                    boxShadow: '0 10px 20px rgba(255, 137, 6, 0.15)',
                 }
             }}
         >
             {/* Ảnh sản phẩm */}
             <Mui.Box sx={{
                 width: '100%',
-                aspectRatio: '4/3',
+                aspectRatio: '1/1', // 💡 CHỐT HẠ 2: Đổi từ 4/3 sang 1/1 giúp khối card vuông vắn, khỏe khoắn, không bị thon dài
                 bgcolor: '#fff',
                 borderRadius: `${UI_SETTING.SHAPE.CARD_RADIUS * 4}px ${UI_SETTING.SHAPE.CARD_RADIUS * 4}px 0 0`,
-                p: 1,
+                p: 2, // Tăng padding một chút để ảnh sản phẩm co gọn đẹp trong khung
                 overflow: 'hidden',
             }}>
                 <Mui.Box
@@ -59,7 +57,7 @@ const ProductCard = ({ product, flexible = false }) => {
             <Mui.CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                 {/* Tên */}
                 <Mui.Typography sx={{
-                    fontSize: '0.85rem',
+                    fontSize: '0.88rem', // Tăng nhẹ font chữ cho tương xứng layout rộng
                     fontWeight: 600,
                     height: '2.8em',
                     overflow: 'hidden',
@@ -76,7 +74,7 @@ const ProductCard = ({ product, flexible = false }) => {
                 <Mui.Typography sx={{
                     color: 'primary.main',
                     fontWeight: 800,
-                    fontSize: '1.1rem',
+                    fontSize: '1.15rem',
                     mb: 0.5,
                 }}>
                     {typeof product.price === 'number'

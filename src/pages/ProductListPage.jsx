@@ -95,14 +95,15 @@ const ProductListPage = () => {
 
     return (
         <Mui.Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-            <Mui.Container maxWidth={UI_SETTING.LAYOUT.CONTAINER_MAX_WIDTH} sx={{ py: 4 }}>
+            {/* 💡 CHỐT HẠ: Tắt maxWidth cũ và ép layout giãn rộng ra 1440px theo chuẩn rạp phim */}
+            <Mui.Container maxWidth={false} sx={{ maxWidth: '1440px !important', py: 4 }}>
 
                 <Mui.Box mb={3}>
                     <Mui.Typography variant="h5" fontWeight={900} color="text.primary">Sản phẩm</Mui.Typography>
                     <Mui.Typography variant="body2" color="text.secondary">{total} sản phẩm</Mui.Typography>
                 </Mui.Box>
 
-                <Mui.Paper elevation={0} sx={{ p: 2, mb: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+                <Mui.Paper elevation={0} sx={{ p: 2, mb: 4, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                     <Mui.Box display="flex" gap={2} flexWrap="wrap">
                         <Mui.TextField
                             size="small" placeholder="Tìm kiếm sản phẩm..."
@@ -138,14 +139,16 @@ const ProductListPage = () => {
                     </Mui.Box>
                 </Mui.Paper>
 
-                <Mui.Box display="flex" gap={3} alignItems="flex-start">
+                {/* Tăng khoảng gap từ 3 lên 4 cho thoáng đạt cấu trúc tổng thể */}
+                <Mui.Box display="flex" gap={4} alignItems="flex-start">
 
+                    {/* Bộ lọc bên trái - tăng width từ 220 lên 260 cho bớt thon, chữ dễ đọc hơn */}
                     <Mui.Paper
                         elevation={0}
                         sx={{
-                            width: 220, flexShrink: 0,
+                            width: 260, flexShrink: 0,
                             border: '1px solid', borderColor: 'divider',
-                            borderRadius: 2, p: 2,
+                            borderRadius: 2, p: 2.5,
                             display: { xs: 'none', md: 'block' }
                         }}
                     >
@@ -155,12 +158,15 @@ const ProductListPage = () => {
                         />
                     </Mui.Paper>
 
+                    {/* Danh sách sản phẩm bên phải */}
                     <Mui.Box flex={1} minWidth={0}>
                         {loading ? (
-                            <Mui.Grid container spacing={2}>
-                                {[...Array(30)].map((_, i) => (
-                                    <Mui.Grid item xs={6} sm={4} md={2} key={i}>
-                                        <Mui.Skeleton variant="rounded" height={280} />
+                            <Mui.Grid container spacing={3}> {/* Tăng khoảng cách card lên 3 */}
+                                {[...Array(12)].map((_, i) => (
+                                    // 💡 Đổi từ md={2} (6 card/hàng rất bé và thon) sang md={4} hoặc md={3} (3 hoặc 4 card/hàng) 
+                                    // Giúp card to hơn, vuông vắn hình chữ nhật tỷ lệ cân đối
+                                    <Mui.Grid item xs={6} sm={4} md={4} lg={3} key={i}>
+                                        <Mui.Skeleton variant="rounded" sx={{ width: '100%', aspectRatio: '3/4', borderRadius: 2 }} />
                                     </Mui.Grid>
                                 ))}
                             </Mui.Grid>
@@ -175,7 +181,7 @@ const ProductListPage = () => {
                         )}
 
                         {totalPages > 1 && (
-                            <Mui.Box display="flex" justifyContent="center" mt={4}>
+                            <Mui.Box display="flex" justifyContent="center" mt={5}>
                                 <Mui.Pagination
                                     count={totalPages} page={page}
                                     onChange={(_, val) => setPage(val)}

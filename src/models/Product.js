@@ -3,6 +3,7 @@ export default class Product {
     constructor(data = {}) {
         this.id = data.sanpham_id
         this.name = data.name || ''
+        this.image_url = data.HinhAnhSanPham?.[0]?.image_url || null
         this.mota = data.mota || ''
         this.thongSo = data.thong_so || {}
         this.gia = Number(data.gia) || 0

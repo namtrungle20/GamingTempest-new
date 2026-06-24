@@ -166,7 +166,7 @@ const SanPhamManagePage = () => {
                                             <Mui.TableRow key={sp.id} hover>
                                                 <Mui.TableCell>
                                                     <Mui.Box display="flex" alignItems="center" gap={2}>
-                                                        <Mui.Avatar src={sp.imageUrl} variant="rounded" sx={{ width: 48, height: 48 }}><Icon.Inventory2 /></Mui.Avatar>
+                                                        <Mui.Avatar src={sp.image_url} variant="rounded" sx={{ width: 48, height: 48 }}><Icon.Inventory2 /></Mui.Avatar>
                                                         <Mui.Box>
                                                             <Mui.Typography variant="body2" fontWeight={600}>{sp.name}</Mui.Typography>
                                                             <Mui.Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: 200, display: 'block' }}>{sp.mota || '—'}</Mui.Typography>
@@ -180,7 +180,7 @@ const SanPhamManagePage = () => {
                                                 <Mui.TableCell align="left">
                                                     <ProductImageManagerModal sanpham_id={sp.id} productName={sp.name} />
                                                 </Mui.TableCell>
-                                                <Mui.TableCell align="right">
+                                                <Mui.TableCell align="right" >
                                                     <Mui.IconButton size="small" onClick={() => openEdit(sp)} color="primary"><Icon.EditOutlined fontSize="small" /></Mui.IconButton>
                                                     <Mui.IconButton size="small" onClick={() => openDeleteDialog(sp.id, sp.name)} color="error"><Icon.DeleteOutlined fontSize="small" /></Mui.IconButton>
                                                 </Mui.TableCell>
@@ -201,7 +201,7 @@ const SanPhamManagePage = () => {
                     <Mui.Modal open={modalOpen} onClose={closeModal} closeAfterTransition>
                         <Mui.Box sx={{
                             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                            width: { xs: '90%', sm: 560 }, bgcolor: 'background.paper', boxShadow: 24,
+                            width: { xs: '90%', sm: 900 }, bgcolor: 'background.paper', boxShadow: 24,
                             p: UI_SETTING.MODAL.PADDING, borderRadius: UI_SETTING.SHAPE.CARD_RADIUS, outline: 'none',
                             borderTop: '5px solid', borderColor: 'primary.main', maxHeight: '90vh', overflowY: 'auto',
                         }}>
@@ -215,7 +215,7 @@ const SanPhamManagePage = () => {
                                 <MotaEditor
                                     value={form.mota}
                                     onChange={(val) => handleFormChange('mota', val)}
-                                    rows={5}
+                                    rows={15}
                                 />
                                 <Mui.Box display="flex" gap={2}>
                                     <Mui.TextField fullWidth label="Giá (VNĐ)" type="number" value={form.gia} onChange={(e) => handleFormChange('gia', e.target.value)} />

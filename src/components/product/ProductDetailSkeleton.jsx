@@ -1,11 +1,21 @@
 import * as Mui from '@mui/material'
 
 const ProductDetailSkeleton = () => (
-    <Mui.Grid container spacing={3}>
-        <Mui.Grid item xs={12} md={7}>
-            <Mui.Skeleton variant="rounded" sx={{ width: '100%', aspectRatio: '1/1', borderRadius: 2 }} />
+    <Mui.Grid container spacing={4}>
+
+        <Mui.Grid item xs={12} md={7.2}>
+            <Mui.Skeleton
+                variant="rounded"
+                sx={{
+                    width: '100%',
+                    aspectRatio: '16/9',
+                    borderRadius: 3
+                }}
+            />
         </Mui.Grid>
-        <Mui.Grid item xs={12} md={5}>
+
+        {/* Cột phải: Panel thông tin */}
+        <Mui.Grid item xs={12} md={4.8}> {/* 4.8/12 tương đương đúng 40% còn lại */}
             <Mui.Stack spacing={2}>
                 <Mui.Skeleton variant="rounded" width={80} height={24} />
                 <Mui.Skeleton variant="text" width="90%" height={40} />

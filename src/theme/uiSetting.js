@@ -36,7 +36,6 @@ export const UI_SETTING = {
   MODAL: {
     WIDTH: 450,
     RADIUS: 3,
-    PADDING: 4,
-
+    PADDING: 4
   },
 }

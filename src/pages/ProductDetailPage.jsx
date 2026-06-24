@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
+import YouTube from 'react-youtube'
 import { productService } from '@/services/product.service.js'
 import Product from '@/models/Product'
 import { UI_SETTING } from '@/theme/uiSetting'
@@ -10,6 +11,11 @@ import ProductTabs from '@/components/product/ProductTabs'
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton'
 import { hinhAnhService } from '@/services/productImage.service'
 import HinhAnh from '@/models/HinhAnh'
+
+const getYoutubeId = (url) => {
+    const match = url?.match(/embed\/([^?]+)/)
+    return match ? match[1] : null
+}
 
 const ProductDetailPage = () => {
     const { id } = useParams()
@@ -20,6 +26,33 @@ const ProductDetailPage = () => {
     const [error, setError] = useState(null)
     const [mediaList, setMediaList] = useState([])
     const [mainMedia, setMainMedia] = useState(null)
+
+    const goToNext = useCallback(() => {
+        setMainMedia(prev => {
+            if (!prev || mediaList.length === 0) return prev
+            const idx = mediaList.indexOf(prev)
+            const nextIdx = idx === mediaList.length - 1 ? 0 : idx + 1
+            return mediaList[nextIdx]
+        })
+    }, [mediaList])
+
+    const goToPrev = useCallback(() => {
+        setMainMedia(prev => {
+            if (!prev || mediaList.length === 0) return prev
+            const idx = mediaList.indexOf(prev)
+            const prevIdx = idx === 0 ? mediaList.length - 1 : idx - 1
+            return mediaList[prevIdx]
+        })
+    }, [mediaList])
+
+    // ✅ Auto-play ảnh — dừng khi đang là video
+    useEffect(() => {
+        if (mediaList.length <= 1) return
+        if (mainMedia?.isVideo) return
+
+        const timer = setTimeout(goToNext, 4000)
+        return () => clearTimeout(timer)
+    }, [mainMedia, mediaList, goToNext])
 
     useEffect(() => {
         if (!id) return
@@ -57,7 +90,7 @@ const ProductDetailPage = () => {
 
     if (loading) return (
         <Mui.Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>
-            <Mui.Container maxWidth={UI_SETTING.LAYOUT.CONTAINER_MAX_WIDTH}>
+            <Mui.Container maxWidth={false} sx={{ maxWidth: '1440px !important' }}>
                 <Mui.Skeleton variant="text" width={220} height={24} sx={{ mb: 3 }} />
                 <ProductDetailSkeleton />
             </Mui.Container>
@@ -99,100 +132,118 @@ const ProductDetailPage = () => {
                     </Mui.Typography>
                 </Mui.Breadcrumbs>
 
-                {/* Layout 2 cột: flexbox thay Grid để tránh negative margin */}
+                {/* Khung Layout chính chứa cả 2 phần */}
                 <Mui.Box sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
-                    gap: 3,
+                    gap: 4, // Tăng khoảng cách giữa 2 cột cho thoáng
                     width: '100%',
-                    alignItems: 'stretch',
+                    alignItems: 'flex-start',
                 }}>
-                    {/* Cột trái: ảnh/video – 70% */}
-                    <Mui.Box sx={{
-                        flex: '0 0 70%',
-                        width: { xs: '100%', md: '70%' },
-                        minWidth: 0,
-                        boxSizing: 'border-box',
-                    }}>
-                        <Mui.Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                            {/* Main media – aspect ratio 4:3 */}
-                            <Mui.Box sx={{
-                                width: '100%',
-                                position: 'relative',
-                                paddingTop: '75%',
-                                borderRadius: 3,
-                                overflow: 'hidden',
-                                border: '1px solid',
-                                borderColor: 'divider',
-                            }}>
-                                {mainMedia?.isVideo ? (
-                                    <iframe
-                                        src={mainMedia.url}
-                                        title={product.name}
-                                        allowFullScreen
-                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                                    />
-                                ) : (
-                                    <img
-                                        src={mainMedia?.url || '/placeholder.jpg'}
-                                        alt={product.name}
-                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-                                    />
-                                )}
-                            </Mui.Box>
 
-                            {/* Thumbnails */}
-                            {mediaList.length > 1 && (
-                                <Mui.Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Mui.Box sx={{
+                        flex: { md: '0 0 70%' },
+                        width: { xs: '100%', md: '70%' },
+                        position: 'relative',
+                        paddingTop: { xs: '56.25%', md: '56.25%' },
+                        borderRadius: 3,
+                        overflow: 'hidden',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        bgcolor: '#0d0d0d',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+                    }}>
+                        {mainMedia?.isVideo ? (
+                            <YouTube
+                                videoId={getYoutubeId(mainMedia.url)}
+                                opts={{
+                                    width: '100%',
+                                    height: '100%',
+                                    playerVars: { autoplay: 1, rel: 0 },
+                                }}
+                                onEnd={goToNext}
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                            />
+                        ) : (
+                            <img
+                                src={mainMedia?.url || '/placeholder.jpg'}
+                                alt={product.name}
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                        )}
+
+                        {/* Nút điều hướng */}
+                        {mediaList.length > 1 && (
+                            <>
+                                <Mui.IconButton
+                                    onClick={goToPrev}
+                                    sx={{
+                                        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+                                        width: 36, height: 36,
+                                        bgcolor: 'rgba(0,0,0,0.5)', color: 'white',
+                                        '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+                                    }}
+                                >
+                                    <Icon.ChevronLeft />
+                                </Mui.IconButton>
+                                <Mui.IconButton
+                                    onClick={goToNext}
+                                    sx={{
+                                        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                                        width: 36, height: 36,
+                                        bgcolor: 'rgba(0,0,0,0.5)', color: 'white',
+                                        '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+                                    }}
+                                >
+                                    <Icon.ChevronRight />
+                                </Mui.IconButton>
+
+                                {/* Số trang */}
+                                <Mui.Box sx={{
+                                    position: 'absolute', top: 12, right: 12,
+                                    bgcolor: 'rgba(0,0,0,0.6)', color: 'white',
+                                    fontSize: '0.75rem', px: 1.2, py: 0.4, borderRadius: 1, fontWeight: 600
+                                }}>
+                                    {mediaList.indexOf(mainMedia) + 1} / {mediaList.length}
+                                </Mui.Box>
+
+                                {/* Dots lướt ảnh */}
+                                <Mui.Box sx={{
+                                    position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)',
+                                    display: 'flex', gap: 0.8,
+                                }}>
                                     {mediaList.map((media, idx) => (
                                         <Mui.Box
                                             key={idx}
-                                            sx={{
-                                                position: 'relative', width: 72, height: 72, flexShrink: 0,
-                                                borderRadius: 2, overflow: 'hidden',
-                                                border: '2px solid',
-                                                borderColor: mainMedia === media ? 'primary.main' : 'divider',
-                                                cursor: 'pointer',
-                                                opacity: mainMedia === media ? 1 : 0.65,
-                                                transition: 'all 0.18s ease',
-                                                '&:hover': { opacity: 1, borderColor: 'primary.light' },
-                                            }}
                                             onClick={() => setMainMedia(media)}
-                                        >
-                                            <img
-                                                src={media.thumbnail}
-                                                alt={`${product.name} ${idx + 1}`}
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                                            />
-                                            {media.isVideo && (
-                                                <Mui.Box sx={{
-                                                    position: 'absolute', inset: 0,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                }}>
-                                                    <Icon.PlayCircleFilled sx={{ color: 'white', fontSize: 26, filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.6))' }} />
-                                                </Mui.Box>
-                                            )}
-                                        </Mui.Box>
+                                            sx={{
+                                                width: mainMedia === media ? 18 : 6,
+                                                height: 6,
+                                                borderRadius: 3,
+                                                bgcolor: mainMedia === media ? 'white' : 'rgba(255,255,255,0.4)',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease',
+                                            }}
+                                        />
                                     ))}
                                 </Mui.Box>
-                            )}
-                        </Mui.Box>
+                            </>
+                        )}
                     </Mui.Box>
 
-                    {/* Cột phải: panel thông tin – phần còn lại */}
+                    {/* Cột phải — Panel thông tin sản phẩm */}
                     <Mui.Box sx={{
                         flex: 1,
                         minWidth: 0,
                         width: { xs: '100%', md: 'auto' },
                         boxSizing: 'border-box',
-                        display: 'flex',
-                        flexDirection: 'column',
                     }}>
                         <ProductInfoPanel product={product} />
                     </Mui.Box>
                 </Mui.Box>
 
-                <Mui.Box sx={{ mt: 4 }}>
+                {/* Phần Tabs chi tiết ở dưới cùng */}
+                <Mui.Box sx={{ mt: 5 }}>
                     <ProductTabs product={product} />
                 </Mui.Box>
             </Mui.Container>

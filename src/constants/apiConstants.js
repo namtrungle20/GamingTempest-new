@@ -1,9 +1,11 @@
 export const API = {
     AUTH: {
+        LIST: '/auth/me',
         LOGIN: '/auth/dangnhap',
         REGISTER: '/auth/dangky',
         REFRESH: '/auth/refresh',
         LOGOUT: '/auth/logout',
+        GOOGLE: '/auth/google'
     },
     USERS: {
         LIST: '/nguoidung/danh-sach',
