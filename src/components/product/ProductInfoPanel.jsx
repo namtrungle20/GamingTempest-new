@@ -3,6 +3,9 @@ import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { UI_SETTING } from '@/theme/uiSetting';
 import { useCart } from '@/hook/provider/CartProvider';
+import useDanhGia from '@/hook/product/useDanhGia';
+import DanhGiaModal from '@/components/admin/product/DanhGiaModal';
+
 
 const InfoRow = ({ icon, label, value }) => (
     <Mui.Box display="flex" alignItems="center" gap={1.5}>
@@ -20,9 +23,18 @@ const InfoRow = ({ icon, label, value }) => (
     </Mui.Box>
 );
 
+
+
+
 const ProductInfoPanel = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
+    const [modalOpen, setModalOpen] = useState(false);
     const { addToCart, setIsCartOpen } = useCart();
+    const {
+        stats, daMua, daReview, checkingMua,
+        submitting, submitError, setSubmitError,
+        submitReview, fetchReviews,
+    } = useDanhGia(product?.id);
 
     const handleAddToCart = async () => {
         const result = await addToCart(product, quantity);
@@ -33,16 +45,19 @@ const ProductInfoPanel = ({ product }) => {
         }
     };
 
+    const handleSubmitReview = async ({ sosao, binhluan }) => {
+        const ok = await submitReview({ sosao, binhluan })
+        if (ok) fetchReviews()
+        return ok
+    }
+
     return (
         <Mui.Paper elevation={0} sx={{
             p: { xs: 3, md: 4 },
             borderRadius: UI_SETTING.SHAPE.CARD_RADIUS,
-            border: '1px solid',
-            borderColor: 'divider',
-            height: '100%',
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
+            border: '1px solid', borderColor: 'divider',
+            height: '100%', flexGrow: 1,
+            display: 'flex', flexDirection: 'column',
         }}>
             <Mui.Stack spacing={2.5} sx={{ flexGrow: 1 }}>
                 {/* Chip thương hiệu */}
@@ -70,19 +85,60 @@ const ProductInfoPanel = ({ product }) => {
                     {product.price}
                 </Mui.Typography>
 
-                {/* Đánh giá + đã bán */}
+                {/* Rating thật */}
                 <Mui.Box display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
-                    <Mui.Box display="flex" alignItems="center" gap={0.5}>
-                        <Mui.Rating value={4.5} precision={0.5} size="small" readOnly />
-                        <Mui.Typography variant="caption" color="text.secondary">(12 đánh giá)</Mui.Typography>
-                    </Mui.Box>
-                    <Mui.Divider orientation="vertical" flexItem />
-                    <Mui.Typography variant="caption" color="text.secondary">Đã bán 36</Mui.Typography>
+                    {stats.tong_danh_gia > 0 ? (
+                        <Mui.Box display="flex" alignItems="center" gap={0.5}>
+                            <Mui.Rating value={stats.trung_binh_sao} precision={0.1} size="small" readOnly />
+                            <Mui.Typography variant="caption" color="text.secondary">
+                                {stats.trung_binh_sao.toFixed(1)} ({stats.tong_danh_gia} đánh giá)
+                            </Mui.Typography>
+                        </Mui.Box>
+                    ) : (
+                        <Mui.Typography variant="caption" color="text.disabled">
+                            Chưa có đánh giá
+                        </Mui.Typography>
+                    )}
+
+                    {/* Nút đánh giá — chỉ hiện khi đã mua + chưa review */}
+                    {!checkingMua && daMua && !daReview && (
+                        <>
+                            <Mui.Divider orientation="vertical" flexItem />
+                            <Mui.Button
+                                size="small"
+                                startIcon={<Icon.RateReview sx={{ fontSize: 15 }} />}
+                                onClick={() => setModalOpen(true)}
+                                sx={{
+                                    fontWeight: 700, textTransform: 'none',
+                                    fontSize: '0.75rem', color: 'primary.main', p: 0,
+                                    '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+                                }}
+                            >
+                                Viết đánh giá
+                            </Mui.Button>
+                        </>
+                    )}
+
+                    {/* Đã đánh giá */}
+                    {!checkingMua && daReview && (
+                        <>
+                            <Mui.Divider orientation="vertical" flexItem />
+                            <Mui.Box display="flex" alignItems="center" gap={0.5}>
+                                <Icon.CheckCircle sx={{ fontSize: 14, color: 'success.main' }} />
+                                <Mui.Typography variant="caption" color="success.main" fontWeight={600}>
+                                    Đã đánh giá
+                                </Mui.Typography>
+                            </Mui.Box>
+                        </>
+                    )}
                 </Mui.Box>
 
                 {/* Tình trạng kho */}
                 <Mui.Chip
-                    icon={product.inStock ? <Icon.CheckCircle sx={{ fontSize: '15px !important' }} /> : <Icon.Block sx={{ fontSize: '15px !important' }} />}
+                    icon={product.inStock
+                        ? <Icon.CheckCircle sx={{ fontSize: '15px !important' }} />
+                        : <Icon.Block sx={{ fontSize: '15px !important' }} />
+                    }
                     label={product.inStock ? `Còn ${product.soluong} sản phẩm` : 'Hết hàng'}
                     color={product.stockStatus}
                     size="small" variant="outlined"
@@ -120,7 +176,10 @@ const ProductInfoPanel = ({ product }) => {
                         >
                             <Icon.Remove fontSize="small" />
                         </Mui.IconButton>
-                        <Mui.Typography sx={{ px: 2.5, fontWeight: 800, fontSize: '0.95rem', userSelect: 'none', minWidth: 36, textAlign: 'center' }}>
+                        <Mui.Typography sx={{
+                            px: 2.5, fontWeight: 800, fontSize: '0.95rem',
+                            userSelect: 'none', minWidth: 36, textAlign: 'center'
+                        }}>
                             {quantity}
                         </Mui.Typography>
                         <Mui.IconButton
@@ -167,6 +226,16 @@ const ProductInfoPanel = ({ product }) => {
                     </Mui.Button>
                 </Mui.Stack>
             </Mui.Stack>
+
+            {/* Modal đánh giá */}
+            <DanhGiaModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onSubmit={handleSubmitReview}
+                submitting={submitting}
+                submitError={submitError}
+                setSubmitError={setSubmitError}
+            />
         </Mui.Paper>
     );
 };

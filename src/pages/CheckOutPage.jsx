@@ -6,6 +6,7 @@ import { useCart } from '@/hook/provider/CartProvider'
 import { useAuth } from '@/hook/provider/AuthContext'
 import LoginModal from '@/components/auth/LoginModal'
 import CheckoutButton from '@/components/payment/CheckoutButton'
+import useDanhGia from '@/hook/product/useDanhGia'
 
 const CheckOutPage = () => {
     const navigate = useNavigate()
@@ -17,6 +18,12 @@ const CheckOutPage = () => {
         sdt: '',
         phuongthucthanhtoan: 0 // 0: COD, 1: MoMo
     })
+    const [reviewQueue, setReviewQueue] = useState([])
+    const [reviewIndex, setReviewIndex] = useState(0)
+    const [reviewOpen, setReviewOpen] = useState(false)
+
+    const currentReviewProduct = reviewQueue[reviewIndex] || null
+    const { submitReview, submitting, submitError, setSubmitError } = useDanhGia(currentReviewProduct?.id)
 
     useEffect(() => {
         if (!user && !authLoading) setLoginModalOpen(true)
@@ -43,9 +50,30 @@ const CheckOutPage = () => {
     }
 
     const handleCODSuccess = async () => {
+        // Lưu danh sách sản phẩm trước khi clear giỏ
+        const boughtItems = [...items]
         await clearCart()
-        alert('Đặt hàng thành công!')
-        navigate('/')
+
+        // Mở modal đánh giá cho sản phẩm đầu tiên
+        setReviewQueue(boughtItems)
+        setReviewIndex(0)
+        setReviewOpen(true)
+    }
+
+    const handleReviewClose = () => {
+        // Chuyển sang sản phẩm tiếp theo hoặc đóng hẳn
+        if (reviewIndex < reviewQueue.length - 1) {
+            setReviewIndex(i => i + 1)
+        } else {
+            setReviewOpen(false)
+            navigate('/')
+        }
+    }
+
+    const handleReviewSubmit = async ({ sosao, binhluan }) => {
+        const ok = await submitReview({ sosao, binhluan })
+        if (ok) handleReviewClose()
+        return ok
     }
 
     if (items.length === 0) {
@@ -155,6 +183,46 @@ const CheckOutPage = () => {
                 loading={authLoading}
                 error={authError}
             />
+            {currentReviewProduct && (
+                <Mui.Dialog open={reviewOpen} onClose={handleReviewClose} maxWidth="sm" fullWidth>
+                    <Mui.DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Mui.Box>
+                            <Mui.Typography fontWeight={800}>Đánh giá sản phẩm</Mui.Typography>
+                            {reviewQueue.length > 1 && (
+                                <Mui.Typography variant="caption" color="text.secondary">
+                                    {reviewIndex + 1} / {reviewQueue.length} sản phẩm
+                                </Mui.Typography>
+                            )}
+                        </Mui.Box>
+                        <Mui.IconButton onClick={handleReviewClose}>
+                            <Mui.Icon>close</Mui.Icon>
+                        </Mui.IconButton>
+                    </Mui.DialogTitle>
+                    <Mui.DialogContent>
+                        <Mui.Box display="flex" alignItems="center" gap={1.5} mb={2}
+                            sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1.5 }}>
+                            {currentReviewProduct.image && (
+                                <Mui.Avatar
+                                    src={currentReviewProduct.image}
+                                    variant="rounded"
+                                    sx={{ width: 48, height: 48 }}
+                                />
+                            )}
+                            <Mui.Typography variant="body2" fontWeight={600}>
+                                {currentReviewProduct.name}
+                            </Mui.Typography>
+                        </Mui.Box>
+                    </Mui.DialogContent>
+                    <DanhGiaModal
+                        open={reviewOpen}
+                        onClose={handleReviewClose}
+                        onSubmit={handleReviewSubmit}
+                        submitting={submitting}
+                        submitError={submitError}
+                        setSubmitError={setSubmitError}
+                    />
+                </Mui.Dialog>
+            )}
         </>
     )
 }

@@ -28,6 +28,7 @@ export default class DonHang {
         this.trangthai = data.trangthai
         this.diachi = data.diachi
         this.sdt = data.sdt
+        this.created_at = data.created_at
 
         this.nguoiDung = data.NguoiDung || null
         this.chiTiet = (data.ChiTietDonHangs || []).map(ct => new ChiTietDonHangModel(ct))

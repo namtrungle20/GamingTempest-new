@@ -22,6 +22,12 @@ export const API = {
         IMPORT: '/sanpham/import/full',
         EXPORT: '/sanpham/export'
     },
+    DANHGIA: {
+        LIST: '/danhgia',
+        CREATE: '/danhgia',
+        DELETE: (id) => `/danhgia/${id}`,
+        CHECK_DA_MUA: '/danhgia/check-mua'
+    },
     CHITIETSANPHAM: {
         LIST: (sanpham_id) => `/chitiet?sanpham_id=${sanpham_id}`,
         CREATE: '/chitiet',

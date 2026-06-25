@@ -13,6 +13,18 @@ export const danhGiaService = {
         }
     },
 
+    checkDaMua: async ({ sanpham_id }) => {
+        console.log('check-mua sanpham_id:', sanpham_id)
+        try {
+            const res = await apiConfig.get(API.DANHGIA.CHECK_DA_MUA, {
+                params: { sanpham_id }
+            });
+            return { success: true, raw: res.data };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Lỗi kiểm tra đã mua' };
+        }
+    },
+
     create: async ({ sanpham_id, sosao, binhluan }) => {
         try {
             const res = await apiConfig.post(API.DANHGIA.CREATE, { sanpham_id, sosao, binhluan });

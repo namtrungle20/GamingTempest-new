@@ -13,8 +13,10 @@ const useDanhGia = (sanpham_id) => {
     const [deleting, setDeleting] = useState(null)
     const [error, setError] = useState('')
     const [submitError, setSubmitError] = useState('')
+    const [daMua, setDaMua] = useState(false)
+    const [checkingMua, setCheckingMua] = useState(false)
 
-
+    // Lấy thông tin user hiện tại từ localStorage
     const currentUser = (() => {
         try {
             const raw = localStorage.getItem('user')
@@ -25,6 +27,7 @@ const useDanhGia = (sanpham_id) => {
     const isLoggedIn = !!currentUser
     const isAdmin = currentUser?.vaitro === 1
 
+    // Fetch danh sách đánh giá + stats
     const fetchReviews = useCallback(async () => {
         if (!sanpham_id) return
         setLoading(true)
@@ -43,7 +46,17 @@ const useDanhGia = (sanpham_id) => {
         setLoading(false)
     }, [sanpham_id])
 
+    // Check user đã mua sản phẩm chưa
+    const fetchDaMua = useCallback(async () => {
+        if (!sanpham_id || !isLoggedIn) return
+        setCheckingMua(true)
+        const result = await danhGiaService.checkDaMua({ sanpham_id })
+        setDaMua(result.raw?.da_mua || false)
+        setCheckingMua(false)
+    }, [sanpham_id, isLoggedIn])
+
     useEffect(() => { fetchReviews() }, [fetchReviews])
+    useEffect(() => { fetchDaMua() }, [fetchDaMua])
 
     const submitReview = useCallback(async ({ sosao, binhluan }) => {
         setSubmitError('')
@@ -67,38 +80,23 @@ const useDanhGia = (sanpham_id) => {
     const deleteReview = useCallback(async (danhgia_id) => {
         setDeleting(danhgia_id)
         const result = await danhGiaService.remove(danhgia_id)
-        if (result.success) {
-            await fetchReviews()
-        }
+        if (result.success) await fetchReviews()
         setDeleting(null)
         return result.success
     }, [fetchReviews])
 
-    // Kiểm tra user hiện tại đã review chưa
+    // Đã review chưa
     const daReview = isLoggedIn
         ? reviews.some(r => r.nguoidung?.id === currentUser?.nguoidung_id)
         : false
 
     return {
-        // Data
-        reviews,
-        stats,
-        // State
-        loading,
-        submitting,
-        deleting,
-        error,
-        submitError,
-        setSubmitError,
-        // Auth
-        currentUser,
-        isLoggedIn,
-        isAdmin,
-        daReview,
-        // Actions
-        fetchReviews,
-        submitReview,
-        deleteReview,
+        reviews, stats,
+        loading, submitting, deleting, checkingMua,
+        error, submitError, setSubmitError,
+        currentUser, isLoggedIn, isAdmin,
+        daReview, daMua,
+        fetchReviews, submitReview, deleteReview,
     }
 }
 

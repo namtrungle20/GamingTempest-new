@@ -1,4 +1,3 @@
-// src/hook/provider/CardProvider.jsx
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '@/hook/provider/AuthContext'
 import { cartService } from '@/services/cart.service'

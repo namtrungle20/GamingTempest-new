@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify'
 import { UI_SETTING } from '@/theme/uiSetting'
 import { chitietsanphamService } from '@/services/chitietsanpham.service'
 import { marked } from 'marked'
-import useDanhGia from '@/hook/danhgia/useDanhGia'
+import useDanhGia from '@/hook/product/useDanhGia'
 
 const WARRANTY_ITEMS = [
     { icon: <Icon.Autorenew />, title: 'Đổi trả trong 7 ngày', desc: 'Sản phẩm lỗi do nhà sản xuất được đổi trả miễn phí trong 7 ngày.' },
@@ -159,11 +159,71 @@ const ReviewItem = ({ review, currentUserId, isAdmin, onDelete, deleting }) => {
 // ── Review Section ─────────────────────────────────────────────────────────
 const ReviewSection = ({ sanpham_id }) => {
     const {
-        reviews, stats, loading, submitting, deleting,
+        reviews, stats, loading, submitting, deleting, checkingMua,
         submitError, setSubmitError,
-        currentUser, isLoggedIn, isAdmin, daReview,
+        currentUser, isLoggedIn, isAdmin, daReview, daMua,
         submitReview, deleteReview,
     } = useDanhGia(sanpham_id)
+
+    const renderForm = () => {
+        if (!isLoggedIn) return (
+            <Mui.Box sx={{
+                mb: 3, p: 2.5, textAlign: 'center',
+                border: '1px dashed', borderColor: 'divider', borderRadius: 2,
+            }}>
+                <Mui.Typography variant="body2" color="text.secondary" mb={1.5}>
+                    Đăng nhập để chia sẻ đánh giá của bạn
+                </Mui.Typography>
+                <Mui.Button
+                    variant="outlined" href="/login"
+                    startIcon={<Icon.Login />}
+                    sx={{ fontWeight: 700, textTransform: 'none' }}
+                >
+                    Đăng nhập để đánh giá
+                </Mui.Button>
+            </Mui.Box>
+        )
+
+        if (checkingMua) return (
+            <Mui.Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Mui.CircularProgress size={16} />
+                <Mui.Typography variant="body2" color="text.secondary">Đang kiểm tra...</Mui.Typography>
+            </Mui.Box>
+        )
+
+        if (!daMua) return (
+            <Mui.Box sx={{
+                mb: 3, p: 2.5, textAlign: 'center',
+                border: '1px dashed', borderColor: 'divider', borderRadius: 2,
+            }}>
+                <Icon.ShoppingBag sx={{ fontSize: 32, color: 'text.disabled', mb: 1 }} />
+                <Mui.Typography variant="body2" color="text.secondary">
+                    Bạn cần mua và nhận hàng thành công để có thể đánh giá sản phẩm này.
+                </Mui.Typography>
+            </Mui.Box>
+        )
+
+        if (daReview) return (
+            <Mui.Box sx={{
+                mb: 3, p: 2, borderRadius: 2,
+                bgcolor: 'action.hover', display: 'flex', alignItems: 'center', gap: 1,
+            }}>
+                <Icon.CheckCircle sx={{ color: 'success.main', fontSize: 20 }} />
+                <Mui.Typography variant="body2" color="text.secondary">
+                    Bạn đã đánh giá sản phẩm này rồi.
+                </Mui.Typography>
+            </Mui.Box>
+        )
+
+        return (
+            <ReviewForm
+                onSubmit={submitReview}
+                submitting={submitting}
+                submitError={submitError}
+                setSubmitError={setSubmitError}
+            />
+        )
+    }
 
     return (
         <Mui.Box>
@@ -179,43 +239,7 @@ const ReviewSection = ({ sanpham_id }) => {
                 />
             )}
 
-            {/* Form hoặc nút đăng nhập */}
-            {isLoggedIn ? (
-                daReview ? (
-                    <Mui.Box sx={{
-                        mb: 3, p: 2, borderRadius: 2,
-                        bgcolor: 'action.hover', display: 'flex', alignItems: 'center', gap: 1,
-                    }}>
-                        <Icon.CheckCircle sx={{ color: 'success.main', fontSize: 20 }} />
-                        <Mui.Typography variant="body2" color="text.secondary">
-                            Bạn đã đánh giá sản phẩm này rồi.
-                        </Mui.Typography>
-                    </Mui.Box>
-                ) : (
-                    <ReviewForm
-                        onSubmit={submitReview}
-                        submitting={submitting}
-                        submitError={submitError}
-                        setSubmitError={setSubmitError}
-                    />
-                )
-            ) : (
-                <Mui.Box sx={{
-                    mb: 3, p: 2.5, textAlign: 'center',
-                    border: '1px dashed', borderColor: 'divider', borderRadius: 2,
-                }}>
-                    <Mui.Typography variant="body2" color="text.secondary" mb={1.5}>
-                        Đăng nhập để chia sẻ đánh giá của bạn
-                    </Mui.Typography>
-                    <Mui.Button
-                        variant="outlined" href="/login"
-                        startIcon={<Icon.Login />}
-                        sx={{ fontWeight: 700, textTransform: 'none' }}
-                    >
-                        Đăng nhập để đánh giá
-                    </Mui.Button>
-                </Mui.Box>
-            )}
+            {renderForm()}
 
             {/* Danh sách review */}
             {loading ? (
@@ -295,6 +319,7 @@ const ProductTabs = ({ product }) => {
 
             <Mui.Box sx={{ p: { xs: 3, md: 4 }, minHeight: 160 }}>
 
+                {/* Tab 0 — Thông số + Mô tả + Đánh giá */}
                 {tab === 0 && (
                     <Mui.Stack spacing={3}>
                         {chiTiets.length > 0 && (
@@ -362,6 +387,7 @@ const ProductTabs = ({ product }) => {
                             )}
                         </Mui.Box>
 
+
                         <Mui.Divider />
                         <ReviewSection sanpham_id={product.id} />
                     </Mui.Stack>
@@ -390,7 +416,7 @@ const ProductTabs = ({ product }) => {
                     </Mui.Stack>
                 )}
             </Mui.Box>
-        </Mui.Paper>
+        </Mui.Paper >
     )
 }
 
