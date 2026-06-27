@@ -29,6 +29,7 @@ export default class DonHang {
         this.diachi = data.diachi
         this.sdt = data.sdt
         this.created_at = data.created_at
+        this.updated_at = data.updated_at
 
         this.nguoiDung = data.NguoiDung || null
         this.chiTiet = (data.ChiTietDonHangs || []).map(ct => new ChiTietDonHangModel(ct))
@@ -41,10 +42,7 @@ export default class DonHang {
 
     // Tổng tiền đã format VND
     get tongTienFormatted() {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        }).format(this.tongtien)
+        return fmt(this.tongtien)
     }
 
     // Label + color của trạng thái
@@ -57,11 +55,11 @@ export default class DonHang {
 
     // Ngày tạo format
     get createdAtFormatted() {
-        return new Date(this.createdAt).toLocaleString('vi-VN')
+        return fmtDate(this.created_at)
     }
 
     get updatedAtFormatted() {
-        return new Date(this.updatedAt).toLocaleString('vi-VN')
+        return fmtDate(this.updated_at)
     }
 
     // Factory từ array API response

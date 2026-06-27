@@ -24,6 +24,7 @@ export const API = {
     },
     DANHGIA: {
         LIST: '/danhgia',
+        ADMIN_LIST: '/danhgia/admin',
         CREATE: '/danhgia',
         DELETE: (id) => `/danhgia/${id}`,
         CHECK_DA_MUA: '/danhgia/check-mua'

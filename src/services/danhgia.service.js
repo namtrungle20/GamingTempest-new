@@ -13,6 +13,17 @@ export const danhGiaService = {
         }
     },
 
+    getListAll_Admin: async ({ page = 1, limit = 10, search }) => {
+        try {
+            const res = await apiConfig.get(API.DANHGIA.ADMIN_LIST, {
+                params: { page, limit, search }
+            });
+            return { success: true, raw: res.data };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Lỗi lấy đánh giá' };
+        }
+    },
+
     checkDaMua: async ({ sanpham_id }) => {
         console.log('check-mua sanpham_id:', sanpham_id)
         try {

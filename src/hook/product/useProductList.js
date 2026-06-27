@@ -25,7 +25,7 @@ const useProductList = () => {
 
     const fetchProducts = useCallback(async () => {
         setLoading(true)
-        const params = { page, ...filters }
+        const params = { page, limit: 12, ...filters }
         // bỏ key rỗng
         Object.keys(params).forEach(k => params[k] === '' && delete params[k])
 

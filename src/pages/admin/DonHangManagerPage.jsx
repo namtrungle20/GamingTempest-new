@@ -7,8 +7,6 @@ import { donHangService } from '@/services/donhang.service'
 import { TRANG_THAI_LABEL, TRANG_THAI_DON_HANG, NEXT_TRANG_THAI, KHONG_THE_HUY } from '@/constants/donhangContants'
 import DonHang from '@/models/DonHang'
 
-const fmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
-
 const DonHangPage = () => {
     const {
         orders, loading, updating,

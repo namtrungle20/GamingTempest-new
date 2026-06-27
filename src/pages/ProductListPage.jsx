@@ -90,7 +90,7 @@ const ProductListPage = () => {
         setPage, updateFilter, resetFilters,
     } = useProductList()
 
-    const pageSize = 30
+    const pageSize = 12
     const totalPages = Math.ceil(total / pageSize)
 
     return (
