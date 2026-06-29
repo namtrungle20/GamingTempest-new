@@ -272,7 +272,7 @@ const SanPhamManagePage = () => {
             {tab === 2 && <LoaiSPTab label="Loại sản phẩm" hook={loaiSanPhamHook} nameField="name" />}
 
             {/* TAB DANH MỤC */}
-            {tab === 3 && <CatalogManageTab label="Danh mục" hook={danhMucHook} nameField="name" />}
+            {tab === 3 && <CatalogManageTab label="Danh mục" hook={danhMucHook} nameField="ten" />}
 
             {tab === 4 && (
                 <Mui.Box>

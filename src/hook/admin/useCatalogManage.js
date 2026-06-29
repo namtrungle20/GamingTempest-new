@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 
-const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: null }) => {
+const useCatalogManage = (service, ModelClass, initialForm = { ten: '', image: null }) => {
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(false)
     const [total, setTotal] = useState(0)
@@ -9,7 +9,7 @@ const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: 
     const [modalOpen, setModalOpen] = useState(false)
     const [editTarget, setEditTarget] = useState(null)
     const [form, setForm] = useState(initialForm)
-    const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null, name: '' })
+    const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null, ten: '' })
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
 
     const notify = useCallback((message, severity = 'success') =>
@@ -62,16 +62,28 @@ const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: 
     }, [])
 
     const handleSubmit = useCallback(async () => {
-        const formData = new FormData()
-        Object.entries(form).forEach(([key, value]) => {
-            if (value !== null && value !== '' && value !== undefined) {
-                formData.append(key, value)
-            }
-        })
+        const hasFile = Object.values(form).some(v => v instanceof File)
 
+        let payload
+        if (hasFile) {
+            payload = new FormData()
+            Object.entries(form).forEach(([key, value]) => {
+                if (value !== null && value !== '' && value !== undefined) {
+                    payload.append(key, value)
+                }
+            })
+        } else {
+            payload = {}
+            Object.entries(form).forEach(([key, value]) => {
+                if (value !== null && value !== '' && value !== undefined) {
+                    payload[key] = value
+                }
+            })
+        }
+        console.log(payload)
         const result = editTarget
-            ? await service.update(editTarget.id, formData)
-            : await service.create(formData)
+            ? await service.update(editTarget.id, payload)
+            : await service.create(payload)
 
         if (result.success) {
             notify(editTarget ? 'Cập nhật thành công' : 'Thêm thành công')
@@ -82,10 +94,10 @@ const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: 
         }
     }, [form, editTarget, service, notify, closeModal, fetchItems])
 
-    const openDeleteDialog = useCallback((id, name) => {
-        setDeleteDialog({ open: true, id, name })
+    const openDeleteDialog = useCallback((id, ten) => {
+        setDeleteDialog({ open: true, id, ten })
     }, [])
-    const closeDeleteDialog = useCallback(() => setDeleteDialog({ open: false, id: null, name: '' }), [])
+    const closeDeleteDialog = useCallback(() => setDeleteDialog({ open: false, id: null, ten: '' }), [])
     const handleDelete = useCallback(async () => {
         const result = await service.remove(deleteDialog.id)
         if (result.success) {
@@ -104,7 +116,7 @@ const useCatalogManage = (service, ModelClass, initialForm = { name: '', image: 
         openCreate, openEdit, closeModal,
         handleFormChange, handleSubmit,
         openDeleteDialog, closeDeleteDialog, handleDelete,
-        initialForm, // để CatalogManageTab có thể biết nameField
+        initialForm
     }
 }
 

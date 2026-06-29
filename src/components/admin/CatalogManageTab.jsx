@@ -3,7 +3,7 @@ import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { UI_SETTING } from '@/theme/uiSetting'
 
-const CatalogManageTab = ({ label, hook, nameField = 'name' }) => {
+const CatalogManageTab = ({ label, hook, nameField = 'ten' }) => {
     const {
         items, loading, total, page, search,
         modalOpen, editTarget, form, deleteDialog, snackbar,

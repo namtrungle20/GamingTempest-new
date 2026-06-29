@@ -8,8 +8,6 @@ const LoaiSPTab = ({ hook }) => {
     const fileInputRef = useRef(null)
     const totalPages = Math.ceil(hook.total / 10)
 
-    console.log('danhMucs:', hook.danhMucs);
-    console.log('loadingDanhMucs:', hook.loadingDanhMucs);
     return (
         <Mui.Box>
             {/* Header */}

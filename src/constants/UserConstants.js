@@ -1,6 +1,6 @@
 export const USER_ROLE = {
+    CUSTOMER: 0,
     ADMIN: 1,
-    CUSTOMER: 2,
 }
 
 export const ROLE_LABEL = {
