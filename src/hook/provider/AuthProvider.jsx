@@ -36,6 +36,12 @@ export const AuthProvider = ({ children }) => {
         verifySession()
     }, [])
 
+    useEffect(() => {
+        if (user?.id) {
+            socket.emit('join-user', user.id)
+        }
+    }, [user?.id])
+
     const login = useCallback(async (loginKey, password) => {
         setLoading(true)
         setError(null)
@@ -105,6 +111,8 @@ export const AuthProvider = ({ children }) => {
             setLoading(false)
         }
     }, [])
+
+
 
     const logout = useCallback(async () => {
         try {
