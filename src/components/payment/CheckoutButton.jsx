@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { cartService } from '@/services/cart.service'
+import { toast } from 'sonner'
 
 /**
  * Props:
@@ -16,43 +17,43 @@ const CheckoutButton = ({ diachi, sdt, phuongThuc, onSuccess }) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [submitted, setSubmitted] = useState(false)
 
     const handleCheckout = async () => {
-        if (!diachi || !sdt) return
+        if (!diachi || !sdt || submitted) return
+        setSubmitted(true)
         setLoading(true)
         setError(null)
-
-        // Bước 1: Lấy giohang_id
-        const cartRes = await cartService.getCart()
-        if (!cartRes.success || !cartRes.raw?.data?.giohang_id) {
-            setError('Không tìm thấy giỏ hàng. Vui lòng thử lại.')
-            setLoading(false)
-            return
-        }
-        // const giohang_id = cartRes.raw.data.giohang_id
 
         // Bước 2: Checkout — backend tạo đơn hàng + payUrl (nếu MoMo)
         const checkoutRes = await cartService.checkout(diachi, sdt, Number(phuongThuc))
         setLoading(false)
 
         if (!checkoutRes.success) {
+            if (checkoutRes.message?.includes('Giỏ hàng không tồn tại')) {
+                toast.info('Đơn hàng của bạn đã được ghi nhận trước đó.')
+                navigate('/donhang')
+                return
+            }
             setError(checkoutRes.message || 'Đặt hàng thất bại')
+            setSubmitted(false)
             return
         }
 
         const { payUrl } = checkoutRes.raw?.data || {}
 
         if (phuongThuc === 1) {
-            // MoMo: redirect sang cổng thanh toán
             if (payUrl) {
+                toast.success('Đang chuyển đến cổng thanh toán MoMo...')
                 window.location.href = payUrl
             } else {
                 setError('Không lấy được link thanh toán MoMo')
+                setSubmitted(false)
             }
         } else {
-            // COD: thành công ngay
+            toast.success('Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.')
             if (onSuccess) onSuccess()
-            else navigate('/')
+            else navigate('/donhang')
         }
     }
 

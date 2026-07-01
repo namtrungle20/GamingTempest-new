@@ -3,6 +3,8 @@ import { authService } from '@/services/auth.service.js'
 import { AuthContext } from '@/hook/provider/AuthContext'
 import { signInWithGoogle, logoutFirebase } from '@/services/firebase.service'
 import User from '@/models/User'
+import socket from '@/config/socket'
+
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
@@ -120,6 +122,7 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             console.warn('Lỗi khi đăng xuất Firebase:', err)
         } finally {
+            socket.disconnect()
             localStorage.clear()
             setUser(null)
         }

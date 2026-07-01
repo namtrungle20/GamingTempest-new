@@ -7,8 +7,10 @@ import { useAuth } from '@/hook/provider/AuthContext'
 import LoginModal from '@/components/auth/LoginModal'
 import CheckoutButton from '@/components/payment/CheckoutButton'
 import useDanhGia from '@/hook/product/useDanhGia'
+import DanhGiaModal from '@/components/admin/product/DanhGiaModal'
 
 const CheckOutPage = () => {
+    const COD_MAX_AMOUNT = 5000000
     const navigate = useNavigate()
     const { user, login, loading: authLoading, error: authError } = useAuth()
     const { items, totalPrice, clearCart } = useCart()
@@ -21,9 +23,16 @@ const CheckOutPage = () => {
     const [reviewQueue, setReviewQueue] = useState([])
     const [reviewIndex, setReviewIndex] = useState(0)
     const [reviewOpen, setReviewOpen] = useState(false)
+    const codDisabled = totalPrice > COD_MAX_AMOUNT
 
     const currentReviewProduct = reviewQueue[reviewIndex] || null
     const { submitReview, submitting, submitError, setSubmitError } = useDanhGia(currentReviewProduct?.id)
+
+    useEffect(() => {
+        if (codDisabled && formData.phuongthucthanhtoan === 0) {
+            setFormData(prev => ({ ...prev, phuongthucthanhtoan: 1 }))
+        }
+    }, [codDisabled])
 
     useEffect(() => {
         if (!user && !authLoading) setLoginModalOpen(true)
@@ -76,7 +85,7 @@ const CheckOutPage = () => {
         return ok
     }
 
-    if (items.length === 0) {
+    if (items.length === 0 && !reviewOpen && reviewQueue.length === 0) {
         return (
             <Mui.Box textAlign="center" py={10}>
                 <Mui.Typography variant="h6">Giỏ hàng trống</Mui.Typography>
@@ -120,9 +129,19 @@ const CheckOutPage = () => {
                                     value={formData.phuongthucthanhtoan}
                                     onChange={handleChange}
                                 >
-                                    <Mui.FormControlLabel value={0} control={<Mui.Radio />} label="Thanh toán khi nhận hàng (COD)" />
+                                    <Mui.FormControlLabel
+                                        value={0}
+                                        control={<Mui.Radio />}
+                                        label="Thanh toán khi nhận hàng (COD)"
+                                        disabled={codDisabled}
+                                    />
                                     <Mui.FormControlLabel value={1} control={<Mui.Radio />} label="Thanh toán qua MoMo" />
                                 </Mui.RadioGroup>
+                                {codDisabled && (
+                                    <Mui.Alert severity="info" sx={{ mt: 1, py: 0.5 }}>
+                                        Đơn hàng trên {COD_MAX_AMOUNT.toLocaleString('vi-VN')}đ chỉ hỗ trợ thanh toán qua MoMo để đảm bảo an toàn giao dịch.
+                                    </Mui.Alert>
+                                )}
                             </Mui.FormControl>
 
                             <Mui.Box sx={{ mt: 3 }}>
