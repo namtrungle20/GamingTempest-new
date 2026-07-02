@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (user?.id) {
+            if (!socket.connected) socket.connect()
             socket.emit('join-user', user.id)
         }
     }, [user?.id])

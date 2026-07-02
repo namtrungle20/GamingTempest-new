@@ -7,6 +7,8 @@ export default class User {
         this.sdt = data.sdt || "";
         this.diachi = data.diachi || "";
         this.vaitro = data.vaitro; // 2 thường là User, 1 thường là Admin
+        this.hangnguoidung = data.hang_thanh_vien || "";
+        this.tongchitieu = data.tong_chi_tieu || 0;
         this.ngayvao = data.ngayvao;
         this.ngayhoatdong = data.ngayhoatdong;
         this.trangthai = data.trangthai ?? LOCK_STATUS.ACTIVE

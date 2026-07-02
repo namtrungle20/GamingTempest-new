@@ -12,6 +12,11 @@ export const API = {
         DETAIL: '/nguoidung/chi-tiet',
         UPDATE: '/nguoidung/update',
         DELETE: '/nguoidung/delete',
+        //---rank
+        RANK: '/nguoidung/rank',
+        RANK_UPDATE: '/nguoidung/rank/update',
+        RANK_CHECK: '/nguoidung/rank/check',
+        RANK_ALL_UPDATE: '/nguoidung/rank/all-update',
         CHANGE_PASSWORD: '/nguoidung/doi-mat-khau',
     },
     PRODUCTS: {

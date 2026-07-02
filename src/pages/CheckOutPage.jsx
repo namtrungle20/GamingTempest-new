@@ -1,13 +1,15 @@
 // pages/CheckOutPage.jsx
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import * as Mui from '@mui/material'
 import { useCart } from '@/hook/provider/CartProvider'
 import { useAuth } from '@/hook/provider/AuthContext'
 import LoginModal from '@/components/auth/LoginModal'
 import CheckoutButton from '@/components/payment/CheckoutButton'
 import useDanhGia from '@/hook/product/useDanhGia'
-import DanhGiaModal from '@/components/admin/product/DanhGiaModal'
+// import DanhGiaModal from '@/components/admin/product/DanhGiaModal'
+import * as Icon from '@mui/icons-material'
 
 const CheckOutPage = () => {
     const COD_MAX_AMOUNT = 5000000
@@ -26,7 +28,7 @@ const CheckOutPage = () => {
     const codDisabled = totalPrice > COD_MAX_AMOUNT
 
     const currentReviewProduct = reviewQueue[reviewIndex] || null
-    const { submitReview, submitting, submitError, setSubmitError } = useDanhGia(currentReviewProduct?.id)
+    const { submitReview } = useDanhGia(currentReviewProduct?.id)
 
     useEffect(() => {
         if (codDisabled && formData.phuongthucthanhtoan === 0) {
@@ -214,32 +216,65 @@ const CheckOutPage = () => {
                             )}
                         </Mui.Box>
                         <Mui.IconButton onClick={handleReviewClose}>
-                            <Mui.Icon>close</Mui.Icon>
+                            <Icon.Close />
                         </Mui.IconButton>
                     </Mui.DialogTitle>
+
                     <Mui.DialogContent>
-                        <Mui.Box display="flex" alignItems="center" gap={1.5} mb={2}
-                            sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1.5 }}>
+                        {/* Cảm ơn + thông tin sản phẩm */}
+                        <Mui.Box
+                            display="flex" flexDirection="column" alignItems="center"
+                            textAlign="center" py={2} gap={1.5}
+                        >
+                            <Icon.FavoriteOutlined sx={{ fontSize: 40, color: 'primary.main' }} />
+                            <Mui.Typography variant="h6" fontWeight={800}>
+                                Cảm ơn bạn đã mua hàng!
+                            </Mui.Typography>
+                            <Mui.Typography variant="body2" color="text.secondary">
+                                Hãy để lại đánh giá để giúp những khách hàng khác nhé.
+                            </Mui.Typography>
+                        </Mui.Box>
+
+                        {/* Thông tin sản phẩm — click để xem chi tiết */}
+                        <Mui.Box
+                            component={RouterLink}
+                            to={`/products/${currentReviewProduct.id}`}
+                            onClick={handleReviewClose}
+                            sx={{
+                                display: 'flex', alignItems: 'center', gap: 1.5,
+                                p: 1.5, bgcolor: 'action.hover', borderRadius: 2,
+                                textDecoration: 'none', color: 'inherit', mb: 2,
+                                border: '1px solid', borderColor: 'divider',
+                                transition: 'all 0.15s',
+                                '&:hover': { borderColor: 'primary.main', bgcolor: 'action.selected' }
+                            }}
+                        >
                             {currentReviewProduct.image && (
                                 <Mui.Avatar
                                     src={currentReviewProduct.image}
                                     variant="rounded"
-                                    sx={{ width: 48, height: 48 }}
+                                    sx={{ width: 52, height: 52 }}
                                 />
                             )}
-                            <Mui.Typography variant="body2" fontWeight={600}>
-                                {currentReviewProduct.name}
-                            </Mui.Typography>
+                            <Mui.Box flex={1}>
+                                <Mui.Typography variant="body2" fontWeight={700}>
+                                    {currentReviewProduct.name}
+                                </Mui.Typography>
+                                <Mui.Typography variant="caption" color="primary.main" fontWeight={600}>
+                                    Xem chi tiết sản phẩm →
+                                </Mui.Typography>
+                            </Mui.Box>
+                            <Icon.ChevronRight color="action" />
                         </Mui.Box>
                     </Mui.DialogContent>
-                    <DanhGiaModal
+                    {/* <DanhGiaModal
                         open={reviewOpen}
                         onClose={handleReviewClose}
                         onSubmit={handleReviewSubmit}
                         submitting={submitting}
                         submitError={submitError}
                         setSubmitError={setSubmitError}
-                    />
+                    /> */}
                 </Mui.Dialog>
             )}
         </>

@@ -5,7 +5,6 @@ export default class Product {
         this.name = data.name || ''
         this.image_url = data.HinhAnhSanPham?.[0]?.image_url || null
         this.mota = data.mota || ''
-        this.thongSo = data.thong_so || {}
         this.danhgia = data.DanhGia?.danhgia || []
         this.gia = Number(data.gia) || 0
         this.soluong = data.soluong || 0
