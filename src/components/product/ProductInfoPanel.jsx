@@ -26,7 +26,7 @@ const InfoRow = ({ icon, label, value }) => (
 
 
 
-const ProductInfoPanel = ({ product }) => {
+const ProductInfoPanel = ({ product, chiTiets = [] }) => {
     const [quantity, setQuantity] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const { addToCart, setIsCartOpen } = useCart();
@@ -35,6 +35,10 @@ const ProductInfoPanel = ({ product }) => {
         submitting, submitError, setSubmitError,
         submitReview, fetchReviews,
     } = useDanhGia(product?.id);
+
+    const baoHanh = chiTiets.find(ct =>
+        ct.name?.toLowerCase().includes('bảo hành')
+    )?.gia_tri || 'Không bảo hành'
 
     const handleAddToCart = async () => {
         const result = await addToCart(product, quantity);
@@ -151,9 +155,9 @@ const ProductInfoPanel = ({ product }) => {
                 <Mui.Stack spacing={1.5}>
                     <InfoRow icon={<Icon.Category sx={{ fontSize: 17 }} />} label="Loại" value={product.loai || '—'} />
                     <InfoRow icon={<Icon.Storefront sx={{ fontSize: 17 }} />} label="Thương hiệu" value={product.thuonghieu || '—'} />
-                    <InfoRow icon={<Icon.LocalShipping sx={{ fontSize: 17 }} />} label="Vận chuyển" value="Miễn phí toàn quốc" />
-                    <InfoRow icon={<Icon.Replay sx={{ fontSize: 17 }} />} label="Đổi trả" value="30 ngày miễn phí" />
-                    <InfoRow icon={<Icon.Security sx={{ fontSize: 17 }} />} label="Bảo hành" value="12 tháng chính hãng" />
+                    <InfoRow icon={<Icon.LocalShipping sx={{ fontSize: 17 }} />} label="Vận chuyển" value="Ưu đãi theo hạng thành viên" />
+                    {/* <InfoRow icon={<Icon.Replay sx={{ fontSize: 17 }} />} label="Đổi trả" value="30 ngày miễn phí" /> */}
+                    <InfoRow icon={<Icon.Security sx={{ fontSize: 17 }} />} label="Bảo hành" value={baoHanh} />
                 </Mui.Stack>
 
                 <Mui.Divider />

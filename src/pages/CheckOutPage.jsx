@@ -10,12 +10,17 @@ import CheckoutButton from '@/components/payment/CheckoutButton'
 import useDanhGia from '@/hook/product/useDanhGia'
 // import DanhGiaModal from '@/components/admin/product/DanhGiaModal'
 import * as Icon from '@mui/icons-material'
+import useMemberRank from '@/hook/user/useMemberRank'
+
+const PHI_SHIP_GOC = 30000
 
 const CheckOutPage = () => {
     const COD_MAX_AMOUNT = 5000000
     const navigate = useNavigate()
     const { user, login, loading: authLoading, error: authError } = useAuth()
     const { items, totalPrice, clearCart } = useCart()
+    const { hangInfo, hangLoading } = useMemberRank(!!user)
+
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [formData, setFormData] = useState({
         diachi: '',
@@ -28,7 +33,7 @@ const CheckOutPage = () => {
     const codDisabled = totalPrice > COD_MAX_AMOUNT
 
     const currentReviewProduct = reviewQueue[reviewIndex] || null
-    const { submitReview } = useDanhGia(currentReviewProduct?.id)
+    // const { submitReview } = useDanhGia(currentReviewProduct?.id)
 
     useEffect(() => {
         if (codDisabled && formData.phuongthucthanhtoan === 0) {
@@ -81,11 +86,11 @@ const CheckOutPage = () => {
         }
     }
 
-    const handleReviewSubmit = async ({ sosao, binhluan }) => {
-        const ok = await submitReview({ sosao, binhluan })
-        if (ok) handleReviewClose()
-        return ok
-    }
+    // const handleReviewSubmit = async ({ sosao, binhluan }) => {
+    //     const ok = await submitReview({ sosao, binhluan })
+    //     if (ok) handleReviewClose()
+    //     return ok
+    // }
 
     if (items.length === 0 && !reviewOpen && reviewQueue.length === 0) {
         return (
@@ -96,7 +101,10 @@ const CheckOutPage = () => {
         )
     }
 
-    const shipping = 0
+    const giam_ship = hangInfo?.giam_ship || 0
+    const shipping = hangLoading
+        ? PHI_SHIP_GOC
+        : Math.round(PHI_SHIP_GOC * (1 - giam_ship / 100))
     const finalTotal = totalPrice + shipping
 
     return (

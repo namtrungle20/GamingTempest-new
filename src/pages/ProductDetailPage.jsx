@@ -11,6 +11,7 @@ import ProductTabs from '@/components/product/ProductTabs'
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton'
 import { hinhAnhService } from '@/services/productImage.service'
 import HinhAnh from '@/models/HinhAnh'
+import { chitietsanphamService } from '@/services/chitietsanpham.service'
 
 const getYoutubeId = (url) => {
     const match = url?.match(/embed\/([^?]+)/)
@@ -26,6 +27,7 @@ const ProductDetailPage = () => {
     const [error, setError] = useState(null)
     const [mediaList, setMediaList] = useState([])
     const [mainMedia, setMainMedia] = useState(null)
+    const [chiTiets, setChiTiets] = useState([]);
 
     const goToNext = useCallback(() => {
         setMainMedia(prev => {
@@ -44,6 +46,16 @@ const ProductDetailPage = () => {
             return mediaList[prevIdx]
         })
     }, [mediaList])
+
+    useEffect(() => {
+        if (!id) return
+        let cancelled = false
+        chitietsanphamService.getAll(id).then(res => {
+            if (!cancelled && res.success) setChiTiets(res.data || [])
+        })
+        return () => { cancelled = true }
+    }, [id])
+
 
     // ✅ Auto-play ảnh — dừng khi đang là video
     useEffect(() => {
@@ -238,13 +250,13 @@ const ProductDetailPage = () => {
                         width: { xs: '100%', md: 'auto' },
                         boxSizing: 'border-box',
                     }}>
-                        <ProductInfoPanel product={product} />
+                        <ProductInfoPanel product={product} chiTiets={chiTiets} />
                     </Mui.Box>
                 </Mui.Box>
 
                 {/* Phần Tabs chi tiết ở dưới cùng */}
                 <Mui.Box sx={{ mt: 5 }}>
-                    <ProductTabs product={product} />
+                    <ProductTabs product={product} chiTiets={chiTiets} />
                 </Mui.Box>
             </Mui.Container>
         </Mui.Box>

@@ -11,14 +11,14 @@ export const HANG_CONFIG = {
         color: '#9E9E9E',
         bgColor: 'rgba(158,158,158,0.14)',
         icon: 'WorkspacePremium',
-        giamShip: 50,
+        giamShip: 5,
     },
     2: {
         label: 'Vàng',
         color: '#D4AF37',
         bgColor: 'rgba(212,175,55,0.14)',
         icon: 'EmojiEvents',
-        giamShip: 100,
+        giamShip: 50,
     },
     3: {
         label: 'Kim Cương',
