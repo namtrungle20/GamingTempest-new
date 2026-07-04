@@ -52,7 +52,7 @@ const CheckoutButton = ({ diachi, sdt, phuongThuc, onSuccess }) => {
             }
         } else {
             toast.success('Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.')
-            if (onSuccess) onSuccess()
+            if (onSuccess) onSuccess(checkoutRes.raw?.data)
             else navigate('/donhang')
         }
     }

@@ -31,10 +31,10 @@ export const CartProvider = ({ children }) => {
                     // Gộp giỏ hàng local lên server nếu có
                     const localCart = JSON.parse(localStorage.getItem('cart') || '[]')
                     if (localCart.length > 0) {
+                        localStorage.removeItem('cart')
                         for (const item of localCart) {
                             await cartService.addToCart(item.id, item.qty)
                         }
-                        localStorage.removeItem('cart') // Clear sau khi đồng bộ
 
                         // Lấy lại giỏ hàng sau khi merge
                         const updatedRes = await cartService.getCart()

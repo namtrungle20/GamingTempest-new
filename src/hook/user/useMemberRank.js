@@ -47,7 +47,7 @@ const useMemberRank = (autoFetch = true) => {
     // ✅ Lắng nghe socket — tự động refetch khi backend báo hạng thay đổi
     useEffect(() => {
         const handleRankUpdated = (data) => {
-            console.log('🟢 Received rank-updated:', data) // ✅ thêm dòng này
+            // console.log('🟢 Received rank-updated:', data) // ✅ thêm dòng này
             fetchHang()
         }
         socket.on('rank-updated', handleRankUpdated)
