@@ -17,6 +17,7 @@ export const CartProvider = ({ children }) => {
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(true)
     const updateTimeoutRef = useRef({})
+    const mergingRef = useRef(false)
 
     // Load giỏ hàng từ localStorage hoặc API tùy trạng thái đăng nhập
     useEffect(() => {
@@ -35,6 +36,7 @@ export const CartProvider = ({ children }) => {
                         for (const item of localCart) {
                             await cartService.addToCart(item.id, item.qty)
                         }
+                        mergingRef.current = false
 
                         // Lấy lại giỏ hàng sau khi merge
                         const updatedRes = await cartService.getCart()
@@ -49,7 +51,7 @@ export const CartProvider = ({ children }) => {
                                 qty: ct.soluong
                             })) || [])
                         }
-                    } else {
+                    } else if (!mergingRef.current) {
                         setItems(res.raw.data.chi_tiet_gio_hangs?.map(ct => ({
                             id: ct.sanpham_id,
                             giohang_id: res.raw.data.giohang_id,
@@ -200,7 +202,7 @@ export const CartProvider = ({ children }) => {
         const res = await cartService.getCart();
         if (res.success && res.raw.data) {
             // Cập nhật state items giống như trong useEffect
-            const newItems = res.raw.data.ChiTietGioHang?.map(ct => ({
+            const newItems = res.raw.data.chi_tiet_gio_hangs?.map(ct => ({
                 id: ct.sanpham_id,
                 giohang_id: res.raw.data.giohang_id,
                 name: ct.SanPham?.name,

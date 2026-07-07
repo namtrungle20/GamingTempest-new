@@ -5,16 +5,20 @@ import * as Icon from '@mui/icons-material'
 import useDonHangManager from '@/hook/admin/useDonHangManager'
 import { donHangService } from '@/services/donhang.service'
 import { TRANG_THAI_LABEL, TRANG_THAI_DON_HANG, NEXT_TRANG_THAI, KHONG_THE_HUY } from '@/constants/donhangContants'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs from 'dayjs'
 import DonHang from '@/models/DonHang'
 
 const DonHangPage = () => {
     const {
         orders, loading, updating,
         page, setPage,
+        search, setSearch,
         totalPages, total,
-        filterTrangthai, setFilterTrangthai,
+        filterTrangthai, setFilterTrangthai, createdAt, setCreatedAt,
         updateTrangthai, cancelOrder,
     } = useDonHangManager()
+
 
     const [selected, setSelected] = useState(null)       // DonHangModel với chiTiet
     const [loadingDetail, setLoadingDetail] = useState(false)
@@ -63,19 +67,46 @@ const DonHangPage = () => {
                     <Mui.Typography variant="h5" fontWeight={700}>Quản lý đơn hàng</Mui.Typography>
                     <Mui.Typography variant="body2" color="text.secondary">Tổng: {total} đơn hàng</Mui.Typography>
                 </Mui.Box>
-                <Mui.FormControl size="small" sx={{ minWidth: 180 }}>
-                    <Mui.InputLabel>Trạng thái</Mui.InputLabel>
-                    <Mui.Select
-                        value={filterTrangthai}
-                        label="Trạng thái"
-                        onChange={(e) => { setFilterTrangthai(e.target.value); setPage(1) }}
-                    >
-                        <Mui.MenuItem value="">Tất cả</Mui.MenuItem>
-                        {Object.entries(TRANG_THAI_LABEL).map(([val, { label }]) => (
-                            <Mui.MenuItem key={val} value={Number(val)}>{label}</Mui.MenuItem>
-                        ))}
-                    </Mui.Select>
-                </Mui.FormControl>
+                <Mui.Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                    {/* Thêm ô tìm kiếm nếu bạn muốn dùng state `search` đã sửa ở hook */}
+                    <Mui.TextField
+                        size="small"
+                        label="Tìm theo người dùng"
+                        placeholder="Tên, email hoặc SĐT..."
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                        sx={{ minWidth: 220 }}
+                    />
+
+                    <Mui.FormControl size="small" sx={{ minWidth: 180 }}>
+                        <Mui.InputLabel id="select-trang-thai-label">Trạng thái</Mui.InputLabel>
+                        <Mui.Select
+                            labelId="select-trang-thai-label"
+                            value={filterTrangthai}
+                            label="Trạng thái"
+                            onChange={(e) => { setFilterTrangthai(e.target.value); setPage(1) }}
+                        >
+                            <Mui.MenuItem value="">Tất cả</Mui.MenuItem>
+                            {Object.entries(TRANG_THAI_LABEL).map(([val, { label }]) => (
+                                <Mui.MenuItem key={val} value={Number(val)}>{label}</Mui.MenuItem>
+                            ))}
+                        </Mui.Select>
+                    </Mui.FormControl>
+
+                    {/* Ô Chọn ngày tạo */}
+                    <DatePicker
+                        label="Ngày tạo"
+                        format="DD/MM/YYYY"
+                        value={createdAt ? dayjs(createdAt) : null}
+                        onChange={(newValue) => {
+                            setCreatedAt(newValue ? newValue.format('YYYY-MM-DD') : '')
+                            setPage(1)
+                        }}
+                        slotProps={{
+                            textField: { size: 'small', sx: { minWidth: 180 } }
+                        }}
+                    />
+                </Mui.Box>
             </Mui.Box>
 
             {/* Table */}
@@ -331,7 +362,7 @@ const DonHangPage = () => {
                     {snackbar.message}
                 </Mui.Alert>
             </Mui.Snackbar>
-        </Mui.Box>
+        </Mui.Box >
     )
 }
 

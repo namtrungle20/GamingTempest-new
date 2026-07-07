@@ -8,6 +8,9 @@ import { theme } from './theme/theme.js'
 import { CssVarsProvider } from '@mui/material/styles'
 import { AuthProvider } from '../src/hook/provider/AuthProvider'
 import { CartProvider } from './hook/provider/CartProvider'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import 'dayjs/locale/vi'
 
 
 createRoot(document.getElementById('root')).render(
@@ -16,7 +19,9 @@ createRoot(document.getElementById('root')).render(
       <CssBaseline />
       <AuthProvider>
         <CartProvider>
-          <App />
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='vi'>
+            <App />
+          </LocalizationProvider>
         </CartProvider>
       </AuthProvider>
     </CssVarsProvider>

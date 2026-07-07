@@ -15,6 +15,7 @@ export const cartService = {
             const response = await apiConfig.post(API.GIOHANG.ADD, { sanpham_id, soluong });
             return { success: true, raw: response.data };
         } catch (error) {
+            console.log(error)
             return { success: false, message: error.response?.data?.message || 'Lỗi thêm vào giỏ hàng' };
         }
     },

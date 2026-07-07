@@ -178,11 +178,16 @@ const CheckOutPage = () => {
                             <Mui.Typography variant="h6" fontWeight={700} gutterBottom>Đơn hàng của bạn</Mui.Typography>
                             <Mui.Box sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
                                 {items.map(item => (
-                                    <Mui.Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                        <Mui.Typography variant="body2">{item.name} x {item.qty}</Mui.Typography>
-                                        <Mui.Typography variant="body2" fontWeight={600}>
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.qty)}
+                                    <Mui.Box
+                                        key={item.id}
+                                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}
+                                    >
+                                        <Mui.Typography variant="body2">
+                                            {item.name} x {item.qty}
                                         </Mui.Typography>
+                                        {/* <Mui.Typography variant="body2" fontWeight={600} sx={{ whiteSpace: 'nowrap', ml: 2 }}>
+                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.qty)}
+                                        </Mui.Typography> */}
                                     </Mui.Box>
                                 ))}
                             </Mui.Box>
