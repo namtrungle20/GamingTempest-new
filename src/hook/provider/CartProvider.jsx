@@ -33,15 +33,20 @@ export const CartProvider = ({ children }) => {
                     const localCart = JSON.parse(localStorage.getItem('cart') || '[]')
                     if (localCart.length > 0) {
                         localStorage.removeItem('cart')
+                        // console.log('=== BẮT ĐẦU MERGE ===', localCart)
                         for (const item of localCart) {
-                            await cartService.addToCart(item.id, item.qty)
+                            const res = await cartService.addToCart(item.id, item.qty)
+                            if (!res.success) {
+                                console.error('Thêm sản phẩm vào giỏ hàng thất bại', item.name, 'với lỗi:', res.message)
+                            }
                         }
                         mergingRef.current = false
 
                         // Lấy lại giỏ hàng sau khi merge
                         const updatedRes = await cartService.getCart()
+                        // console.log('=== KẾT QUẢ getCart SAU MERGE ===', updatedRes)
                         if (updatedRes.success && updatedRes.raw.data) {
-                            setItems(updatedRes.raw.data.chi_tiet_gio_hangs?.map(ct => ({
+                            setItems(updatedRes.raw.data.ChiTietGioHang?.map(ct => ({
                                 id: ct.sanpham_id,
                                 giohang_id: updatedRes.raw.data.giohang_id,
                                 name: ct.SanPham?.name,
@@ -52,7 +57,7 @@ export const CartProvider = ({ children }) => {
                             })) || [])
                         }
                     } else if (!mergingRef.current) {
-                        setItems(res.raw.data.chi_tiet_gio_hangs?.map(ct => ({
+                        setItems(res.raw.data.ChiTietGioHang?.map(ct => ({
                             id: ct.sanpham_id,
                             giohang_id: res.raw.data.giohang_id,
                             name: ct.SanPham?.name,
@@ -84,7 +89,7 @@ export const CartProvider = ({ children }) => {
         }
     }, [items, user, authLoading])
 
-    const addToCart = useCallback(async (product, qty = 1) => {
+    const addCart = useCallback(async (product, qty = 1) => {
         if (user) {
             const res = await cartService.addToCart(product.id, qty)
             if (res.success) {
@@ -163,9 +168,9 @@ export const CartProvider = ({ children }) => {
             toast.error('Số lượng vượt quá tồn kho')
             return { success: false }
         }
-        // 2. KHI ĐÃ ĐĂNG NHẬP: GỌI API BACKEND KÈM DEBOUNCE (Delay 400ms)
+        // 2. KHI ĐÃ ĐĂNG NHẬP: GỌI API BACKEND KÈM DEBOUNCE 
         if (user) {
-            // Xóa bộ đếm cũ nếu user đang bấm liên tục (chưa tới 400ms)
+            // Xóa bộ đếm cũ nếu user đang bấm liên tục
             if (updateTimeoutRef.current[id]) {
                 clearTimeout(updateTimeoutRef.current[id])
             }
@@ -223,7 +228,7 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={{
             items, totalItems, totalPrice,
             isCartOpen, setIsCartOpen, loading,
-            addToCart, removeFromCart, updateQty, clearCart, refreshCart
+            addCart, removeFromCart, updateQty, clearCart, refreshCart
         }}>
             {children}
         </CartContext.Provider>

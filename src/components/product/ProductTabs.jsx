@@ -157,13 +157,13 @@ const ReviewItem = ({ review, currentUserId, isAdmin, onDelete, deleting }) => {
 }
 
 // ── Review Section ─────────────────────────────────────────────────────────
-const ReviewSection = ({ sanpham_id }) => {
+const ReviewSection = ({ danhGiaState }) => {
     const {
         reviews, stats, loading, submitting, deleting, checkingMua,
         submitError, setSubmitError,
         currentUser, isLoggedIn, isAdmin, daReview, daMua,
         submitReview, deleteReview,
-    } = useDanhGia(sanpham_id)
+    } = danhGiaState
 
     const renderForm = () => {
         if (!isLoggedIn) return (
@@ -281,18 +281,18 @@ const ReviewSection = ({ sanpham_id }) => {
 }
 
 // ── ProductTabs ────────────────────────────────────────────────────────────
-const ProductTabs = ({ product }) => {
+const ProductTabs = ({ product, chiTiets, danhGiaState }) => {
     const [tab, setTab] = useState(0)
-    const [chiTiets, setChiTiets] = useState([])
+    // const [chiTiets, setChiTiets] = useState([])
 
-    useEffect(() => {
-        if (!product?.id) return
-        let cancelled = false
-        chitietsanphamService.getAll(product.id).then(res => {
-            if (!cancelled && res.success) setChiTiets(res.data || [])
-        })
-        return () => { cancelled = true }
-    }, [product?.id])
+    // useEffect(() => {
+    //     if (!product?.id) return
+    //     let cancelled = false
+    //     chitietsanphamService.getAll(product.id).then(res => {
+    //         if (!cancelled && res.success) setChiTiets(res.data || [])
+    //     })
+    //     return () => { cancelled = true }
+    // }, [product?.id])
 
     useEffect(() => { setTab(0) }, [product?.id])
 
@@ -389,7 +389,7 @@ const ProductTabs = ({ product }) => {
 
 
                         <Mui.Divider />
-                        <ReviewSection sanpham_id={product.id} />
+                        <ReviewSection danhGiaState={danhGiaState} />
                     </Mui.Stack>
                 )}
 

@@ -70,6 +70,17 @@ const OrderCard = ({ order, onViewDetail, onCancel, canCancel }) => (
 
             <Mui.Divider sx={{ my: 1 }} />
 
+            <Mui.Stack spacing={0.5} mb={1}>
+                <Mui.Stack direction="row" justifyContent="space-between">
+                    <Mui.Typography variant="caption" color="text.secondary">Tạm tính</Mui.Typography>
+                    <Mui.Typography variant="caption">{order.tienHangFormatted}</Mui.Typography>
+                </Mui.Stack>
+                <Mui.Stack direction="row" justifyContent="space-between">
+                    <Mui.Typography variant="caption" color="text.secondary">Phí vận chuyển</Mui.Typography>
+                    <Mui.Typography variant="caption">{order.phiVanChuyenFormatted}</Mui.Typography>
+                </Mui.Stack>
+            </Mui.Stack>
+
             <Mui.Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Mui.Typography variant="body2" color="text.secondary">
                     {order.createdAtFormatted}
@@ -169,6 +180,19 @@ const OrderDetailModal = ({ order, open, onClose }) => (
                 ))}
 
                 <Mui.Divider sx={{ my: 2 }} />
+
+                <Mui.Stack spacing={1} mb={1}>
+                    <Mui.Stack direction="row" justifyContent="space-between">
+                        <Mui.Typography variant="body2" color="text.secondary">Tạm tính</Mui.Typography>
+                        <Mui.Typography variant="body2">{order.tienHangFormatted}</Mui.Typography>
+                    </Mui.Stack>
+                    <Mui.Stack direction="row" justifyContent="space-between">
+                        <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
+                        <Mui.Typography variant="body2">{order.phiVanChuyenFormatted}</Mui.Typography>
+                    </Mui.Stack>
+                </Mui.Stack>
+
+                <Mui.Divider sx={{ mb: 1.5 }} />
 
                 <Mui.Stack direction="row" justifyContent="space-between">
                     <Mui.Typography variant="subtitle1" fontWeight={700}>Tổng tiền</Mui.Typography>

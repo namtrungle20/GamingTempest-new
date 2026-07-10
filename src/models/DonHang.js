@@ -30,6 +30,7 @@ export default class DonHang {
         this.sdt = data.sdt
         this.created_at = data.created_at
         this.updated_at = data.updated_at
+        this.phi_van_chuyen = Number(data.phi_van_chuyen || 0)
 
         this.nguoiDung = data.NguoiDung || null
         this.chiTiet = (data.ChiTietDonHangs || []).map(ct => new ChiTietDonHangModel(ct))
@@ -39,8 +40,18 @@ export default class DonHang {
     get shortId() {
         return this.donhang_id.slice(0, 8).toUpperCase()
     }
-
+    get phiVanChuyenFormatted() {
+        return fmt(this.phi_van_chuyen)
+    }
+    get tienHang() {
+        return this.tongtien - this.phi_van_chuyen
+    }
     // Tổng tiền đã format VND
+    get tienHangFormatted() {  // ✅ thiếu getter này — cần thêm để dòng "Tạm tính" hoạt động
+        return fmt(this.tienHang)
+    }
+
+    // Tổng tiền đã format VND — dùng đúng tongtien
     get tongTienFormatted() {
         return fmt(this.tongtien)
     }

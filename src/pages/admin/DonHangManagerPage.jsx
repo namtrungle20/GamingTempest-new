@@ -45,7 +45,11 @@ const DonHangPage = () => {
         if (res.success) {
             showSnack('Cập nhật trạng thái thành công')
             if (selected?.donhang_id === donhang_id)
-                setSelected(prev => new DonHang({ ...prev, trangthai }))
+                setSelected(prev => {
+                    const updated = Object.create(Object.getPrototypeOf(prev))
+                    Object.assign(updated, prev, { trangthai })
+                    return updated
+                })
         } else {
             showSnack(res.message, 'error')
         }
@@ -286,13 +290,23 @@ const DonHangPage = () => {
                                                 </Mui.Typography>
                                             </Mui.Box>
                                         ))}
-                                        {/* Tổng tiền */}
+                                        {/* ✅ Phí vận chuyển — sửa donHang → selected */}
+                                        <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', px: 1.5, pt: 1.5 }}>
+                                            <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
+                                            <Mui.Typography variant="body2" fontWeight={600}>
+                                                {selected.phiVanChuyenFormatted}
+                                            </Mui.Typography>
+                                        </Mui.Box>
+
+                                        {/* ✅ CHỈ 1 dòng Tổng cộng duy nhất — xoá dòng lặp phía dưới */}
                                         <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', p: 1.5, bgcolor: 'action.hover' }}>
                                             <Mui.Typography variant="subtitle2" fontWeight={700}>Tổng cộng</Mui.Typography>
                                             <Mui.Typography variant="subtitle2" fontWeight={700} color="primary.main">
                                                 {selected.tongTienFormatted}
                                             </Mui.Typography>
                                         </Mui.Box>
+
+
                                     </Mui.Paper>
 
                                     {/* Chuyển trạng thái */}

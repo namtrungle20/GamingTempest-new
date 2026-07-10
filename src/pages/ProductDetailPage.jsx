@@ -12,6 +12,7 @@ import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton'
 import { hinhAnhService } from '@/services/productImage.service'
 import HinhAnh from '@/models/HinhAnh'
 import { chitietsanphamService } from '@/services/chitietsanpham.service'
+import useDanhGia from '@/hook/product/useDanhGia'
 
 const getYoutubeId = (url) => {
     const match = url?.match(/embed\/([^?]+)/)
@@ -28,6 +29,8 @@ const ProductDetailPage = () => {
     const [mediaList, setMediaList] = useState([])
     const [mainMedia, setMainMedia] = useState(null)
     const [chiTiets, setChiTiets] = useState([]);
+
+    const danhGiaState = useDanhGia(id)
 
     const goToNext = useCallback(() => {
         setMainMedia(prev => {
@@ -250,14 +253,15 @@ const ProductDetailPage = () => {
                         width: { xs: '100%', md: 'auto' },
                         boxSizing: 'border-box',
                     }}>
-                        <ProductInfoPanel product={product} chiTiets={chiTiets} />
+                        <ProductInfoPanel product={product} chiTiets={chiTiets} danhGiaState={danhGiaState} />
                     </Mui.Box>
                 </Mui.Box>
 
                 {/* Phần Tabs chi tiết ở dưới cùng */}
                 <Mui.Box sx={{ mt: 5 }}>
-                    <ProductTabs product={product} chiTiets={chiTiets} />
+                    <ProductTabs product={product} chiTiets={chiTiets} danhGiaState={danhGiaState} />
                 </Mui.Box>
+
             </Mui.Container>
         </Mui.Box>
     )

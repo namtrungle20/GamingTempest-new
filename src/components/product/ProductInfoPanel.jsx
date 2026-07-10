@@ -26,22 +26,22 @@ const InfoRow = ({ icon, label, value }) => (
 
 
 
-const ProductInfoPanel = ({ product, chiTiets = [] }) => {
+const ProductInfoPanel = ({ product, chiTiets = [], danhGiaState }) => {
     const [quantity, setQuantity] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
-    const { addToCart, setIsCartOpen } = useCart();
+    const { addCart, setIsCartOpen } = useCart();
     const {
         stats, daMua, daReview, checkingMua,
         submitting, submitError, setSubmitError,
         submitReview, fetchReviews,
-    } = useDanhGia(product?.id);
+    } = danhGiaState;
 
     const baoHanh = chiTiets.find(ct =>
         ct.name?.toLowerCase().includes('bảo hành')
     )?.gia_tri || 'Không bảo hành'
 
     const handleAddToCart = async () => {
-        const result = await addToCart(product, quantity);
+        const result = await addCart(product, quantity);
         if (result && result.success === false) {
             alert(result.message || 'Không thể thêm vào giỏ hàng');
         } else {
