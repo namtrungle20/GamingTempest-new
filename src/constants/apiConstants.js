@@ -48,6 +48,7 @@ export const API = {
         DETAIL: (id) => `/donhang/${id}`,
         UPDATE: (id) => `/donhang/${id}`,
         DELETE: (id) => `/donhang/${id}`,
+        THONGKE: '/donhang/thongke/dashboard',
     },
     BRANDS: {
         LIST: '/thuonghieu',

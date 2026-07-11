@@ -10,6 +10,8 @@ const DanhGiaManagerPage = () => {
     const [deleting, setDeleting] = useState(null)
     const [search, setSearch] = useState('')
     const [filterSao, setFilterSao] = useState(0) // 0 = tất cả
+    const [tuNgay, setTuNgay] = useState('')
+    const [denNgay, setDenNgay] = useState('')
     const [page, setPage] = useState(1)
     const [total, setTotal] = useState(0)
     const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null, name: '' })
@@ -18,19 +20,37 @@ const DanhGiaManagerPage = () => {
     const fetchReviews = useCallback(async () => {
         setLoading(true)
         try {
-            const params = { page, limit: PAGE_SIZE }
-            if (filterSao > 0) params.sosao = filterSao
-            if (search.trim()) params.search = search.trim()
-            const res = await danhGiaService.getListAll_Admin({ page, limit: PAGE_SIZE, sosao: filterSao || undefined, search })
+            const res = await danhGiaService.getListAll_Admin({
+                page,
+                limit: PAGE_SIZE,
+                sosao: filterSao > 0 ? filterSao : undefined, // ← chỉ gửi khi chọn sao cụ thể
+                search: search.trim() || undefined,
+                tuNgay: tuNgay || undefined,
+                denNgay: denNgay || undefined,
+            })
             setReviews(res.raw?.data || [])
             setTotal(res.raw?.total || 0)
         } catch {
             setReviews([])
         }
         setLoading(false)
-    }, [page, filterSao, search])
+    }, [page, filterSao, search, tuNgay, denNgay])
 
     useEffect(() => { fetchReviews() }, [fetchReviews])
+
+    const handleSearchChange = (val) => { setSearch(val); setPage(1) }
+    const handleFilterSaoChange = (_, val) => { if (val !== null) { setFilterSao(val); setPage(1) } }
+    const handleTuNgayChange = (val) => { setTuNgay(val); setPage(1) }
+    const handleDenNgayChange = (val) => { setDenNgay(val); setPage(1) }
+
+    const handleResetFilter = () => {
+        setSearch('')
+        setFilterSao(0)
+        setTuNgay('')
+        setDenNgay('')
+        setPage(1)
+    }
+
 
     const handleDelete = async () => {
         setDeleting(deleteDialog.id)
@@ -43,6 +63,7 @@ const DanhGiaManagerPage = () => {
     }
 
     const totalPages = Math.ceil(total / PAGE_SIZE)
+    const hasFilter = filterSao > 0 || search.trim() || tuNgay || denNgay
 
     const StarChip = ({ value }) => (
         <Mui.Box display="flex" alignItems="center" gap={0.5}>
@@ -60,26 +81,73 @@ const DanhGiaManagerPage = () => {
 
             {/* Filter */}
             <Mui.Paper elevation={0} sx={{ p: 2, mb: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-                <Mui.Box display="flex" gap={2} flexWrap="wrap">
-                    <Mui.TextField
-                        size="small" placeholder="Tìm sản phẩm hoặc người dùng..."
-                        value={search}
-                        onChange={e => { setSearch(e.target.value); setPage(1) }}
-                        sx={{ flex: 1, minWidth: 200 }}
-                        InputProps={{ startAdornment: <Mui.InputAdornment position="start"><Icon.Search fontSize="small" /></Mui.InputAdornment> }}
-                    />
-                    <Mui.ToggleButtonGroup
-                        value={filterSao} exclusive size="small"
-                        onChange={(_, v) => { if (v !== null) { setFilterSao(v); setPage(1) } }}
-                    >
-                        <Mui.ToggleButton value={0}>Tất cả</Mui.ToggleButton>
-                        {[5, 4, 3, 2, 1].map(s => (
-                            <Mui.ToggleButton key={s} value={s}>
-                                {s} <Icon.Star sx={{ fontSize: 14, ml: 0.3, color: 'warning.main' }} />
-                            </Mui.ToggleButton>
-                        ))}
-                    </Mui.ToggleButtonGroup>
-                </Mui.Box>
+                <Mui.Stack spacing={2}>
+                    {/* Row 1: Search + Reset */}
+                    <Mui.Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
+                        <Mui.TextField
+                            size="small" placeholder="Tìm sản phẩm hoặc người dùng..."
+                            value={search}
+                            onChange={e => handleSearchChange(e.target.value)}
+                            sx={{ flex: 1, minWidth: 200 }}
+                            InputProps={{
+                                startAdornment: (
+                                    <Mui.InputAdornment position="start">
+                                        <Icon.Search fontSize="small" />
+                                    </Mui.InputAdornment>
+                                )
+                            }}
+                        />
+                        {hasFilter && (
+                            <Mui.Button
+                                size="small" variant="outlined" color="inherit"
+                                startIcon={<Icon.FilterAltOff fontSize="small" />}
+                                onClick={handleResetFilter}
+                                sx={{ fontWeight: 700, textTransform: 'none', whiteSpace: 'nowrap' }}
+                            >
+                                Xoá bộ lọc
+                            </Mui.Button>
+                        )}
+                    </Mui.Box>
+
+                    {/* Row 2: Filter sao + Khoảng ngày */}
+                    <Mui.Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
+                        {/* Filter số sao */}
+                        <Mui.ToggleButtonGroup
+                            value={filterSao} exclusive size="small"
+                            onChange={handleFilterSaoChange}
+                        >
+                            <Mui.ToggleButton value={0}>Tất cả</Mui.ToggleButton>
+                            {[5, 4, 3, 2, 1].map(s => (
+                                <Mui.ToggleButton key={s} value={s}>
+                                    {s} <Icon.Star sx={{ fontSize: 14, ml: 0.3, color: 'warning.main' }} />
+                                </Mui.ToggleButton>
+                            ))}
+                        </Mui.ToggleButtonGroup>
+
+                        <Mui.Divider orientation="vertical" flexItem />
+
+                        {/* Filter ngày */}
+                        <Mui.Box display="flex" gap={1} alignItems="center">
+                            <Mui.TextField
+                                size="small" type="date" label="Từ ngày"
+                                value={tuNgay}
+                                onChange={e => handleTuNgayChange(e.target.value)}
+                                InputLabelProps={{ shrink: true }}
+                                inputProps={{ max: denNgay || undefined }}
+                                sx={{ width: 160 }}
+                            />
+                            <Mui.Typography variant="body2" color="text.disabled">—</Mui.Typography>
+                            <Mui.TextField
+                                size="small" type="date" label="Đến ngày"  // ← sửa label
+                                value={denNgay}   // ← sửa value
+                                onChange={e => handleDenNgayChange(e.target.value)}  // ← sửa handler
+                                InputLabelProps={{ shrink: true }}
+                                inputProps={{ min: tuNgay || undefined }}  // ← sửa min thay vì max
+                                sx={{ width: 160 }}
+                            />
+                        </Mui.Box>
+                    </Mui.Box>
+                </Mui.Stack>
             </Mui.Paper>
 
             {/* Table */}
@@ -119,7 +187,7 @@ const DanhGiaManagerPage = () => {
                                                 {r.NguoiDung?.name?.[0]}
                                             </Mui.Avatar>
                                             <Mui.Typography variant="body2" fontWeight={600} noWrap sx={{ maxWidth: 120 }}>
-                                                {r.NguoiDung?.name || "?"}
+                                                {r.NguoiDung?.name || '?'}
                                             </Mui.Typography>
                                         </Mui.Box>
                                     </Mui.TableCell>
@@ -145,7 +213,7 @@ const DanhGiaManagerPage = () => {
                                     <Mui.TableCell align="right">
                                         <Mui.IconButton
                                             size="small" color="error"
-                                            onClick={() => setDeleteDialog({ open: true, id: r.danhgia_id, name: r.nguoidung?.name })}
+                                            onClick={() => setDeleteDialog({ open: true, id: r.danhgia_id, name: r.NguoiDung?.name })}
                                         >
                                             <Icon.DeleteOutlined fontSize="small" />
                                         </Mui.IconButton>

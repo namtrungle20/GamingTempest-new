@@ -7,7 +7,21 @@ import { useNavigate } from 'react-router-dom';
 const ProductCard = ({ product, flexible = false }) => {
     const navigate = useNavigate();
     const coverUrl = useProductCoverImage(product.id)
-    const { addToCart, setIsCartOpen } = useCart();
+    const { addCart, setIsCartOpen } = useCart();
+
+    const handleBuyNow = async (e) => {
+        e.stopPropagation();
+        const normalizedProduct = {
+            ...product,
+            price: typeof product.price === 'number' ? product.price : Number(product.gia),
+        };
+        const res = await addCart(normalizedProduct, 1);
+        if (res?.success === false) {
+            alert(res.message || 'Không thể mua sản phẩm này');
+            return;
+        }
+        navigate('/checkout');
+    };
 
     return (
         <Mui.Card
@@ -89,15 +103,7 @@ const ProductCard = ({ product, flexible = false }) => {
                     variant="contained"
                     size="small"
                     disableElevation
-                    onClick={async (e) => {
-                        e.stopPropagation();
-                        const res = await addToCart(product, 1);
-                        if (res?.success === false) {
-                            alert(res.message);
-                        } else {
-                            setIsCartOpen(true);
-                        }
-                    }}
+                    onClick={handleBuyNow}
                     sx={{
                         mt: 1.5,
                         borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,

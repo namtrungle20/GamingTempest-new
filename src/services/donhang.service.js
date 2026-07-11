@@ -42,5 +42,13 @@ export const donHangService = {
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Lỗi xóa đơn hàng' }
         }
+    },
+    getThongKe: async (params = {}) => {
+        try {
+            const response = await apiConfig.get(API.ORDERS.THONGKE, { params })
+            return { success: true, raw: response.data }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Lỗi lấy thống kê dashboard' }
+        }
     }
 }

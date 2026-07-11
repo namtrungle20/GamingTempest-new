@@ -190,7 +190,7 @@ const AdminLayout = () => {
                 >
                     <Mui.Toolbar sx={{ justifyContent: 'space-between' }}>
                         <Mui.IconButton
-                            sx={{ display: { md: 'none' } }}
+                            sx={{ display: { md: 'none' }, color: 'text.primary' }}
                             onClick={() => setMobileOpen(true)}
                         >
                             <Icon.MenuOutlined />
@@ -202,10 +202,10 @@ const AdminLayout = () => {
                         </Mui.Typography>
 
                         <Mui.Stack direction="row" spacing={1} alignItems="center">
-                            <Mui.IconButton onClick={() => setMode(mode === 'light' ? 'dark' : 'light')} color="inherit">
+                            <Mui.IconButton onClick={() => setMode(mode === 'light' ? 'dark' : 'light')} color="inherit" sx={{ color: 'text.primary' }}>
                                 {mode === 'dark' ? <Icon.LightModeOutlined /> : <Icon.DarkModeOutlined />}
                             </Mui.IconButton>
-                            <Mui.IconButton component={Link} to="/" color="inherit">
+                            <Mui.IconButton component={Link} to="/" color="inherit" sx={{ color: 'text.primary' }}>
                                 <Mui.Tooltip title="Về trang chủ">
                                     <Icon.HomeOutlined />
                                 </Mui.Tooltip>
@@ -214,8 +214,8 @@ const AdminLayout = () => {
                     </Mui.Toolbar>
                 </Mui.AppBar>
 
-                {/* Page Content */}
-                <Mui.Box sx={{ flex: 1, p: { xs: 2, md: 3 } }}>
+                {/* Page Content: Đảm bảo width chiếm 100% không gian và phân bổ padding chuẩn */}
+                <Mui.Box sx={{ flex: 1, width: '100%', p: { xs: 2.5, md: 4 }, display: 'flex', flexDirection: 'column' }}>
                     <Outlet />
                 </Mui.Box>
             </Mui.Box>

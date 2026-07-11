@@ -11,6 +11,15 @@ export const useCart = () => {
     return ctx
 }
 
+const resolvePrice = (product) => {
+    if (typeof product.price === 'number' && !Number.isNaN(product.price)) return product.price
+    if (product.gia != null) {
+        const parsed = Number(product.gia)
+        if (!Number.isNaN(parsed)) return parsed
+    }
+    return 0
+}
+
 export const CartProvider = ({ children }) => {
     const { user, loading: authLoading } = useAuth()
     const [isCartOpen, setIsCartOpen] = useState(false)
@@ -90,6 +99,7 @@ export const CartProvider = ({ children }) => {
     }, [items, user, authLoading])
 
     const addCart = useCallback(async (product, qty = 1) => {
+        const price = resolvePrice(product)
         if (user) {
             const res = await cartService.addToCart(product.id, qty)
             if (res.success) {
@@ -102,7 +112,7 @@ export const CartProvider = ({ children }) => {
                     return [...prev, {
                         id: product.id,
                         name: product.name,
-                        price: product.gia,
+                        price,
                         image: product.coverUrl || product.imageUrl || product.image || null,
                         soluong: product.soluong,
                         qty

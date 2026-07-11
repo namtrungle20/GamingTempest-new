@@ -5,6 +5,7 @@ import { UI_SETTING } from '@/theme/uiSetting';
 import { useCart } from '@/hook/provider/CartProvider';
 import useDanhGia from '@/hook/product/useDanhGia';
 import DanhGiaModal from '@/components/admin/product/DanhGiaModal';
+import { useNavigate } from 'react-router-dom';
 
 
 const InfoRow = ({ icon, label, value }) => (
@@ -30,6 +31,7 @@ const ProductInfoPanel = ({ product, chiTiets = [], danhGiaState }) => {
     const [quantity, setQuantity] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const { addCart, setIsCartOpen } = useCart();
+    const navigate = useNavigate();
     const {
         stats, daMua, daReview, checkingMua,
         submitting, submitError, setSubmitError,
@@ -47,6 +49,15 @@ const ProductInfoPanel = ({ product, chiTiets = [], danhGiaState }) => {
         } else {
             setIsCartOpen(true);
         }
+    };
+
+    const handleBuyNow = async () => {
+        const result = await addCart(product, quantity);
+        if (result && result.success === false) {
+            alert(result.message || 'Không thể mua sản phẩm này');
+            return;
+        }
+        navigate('/checkout');
     };
 
     const handleSubmitReview = async ({ sosao, binhluan }) => {
@@ -220,6 +231,8 @@ const ProductInfoPanel = ({ product, chiTiets = [], danhGiaState }) => {
                     </Mui.Button>
                     <Mui.Button
                         variant="outlined" size="large" fullWidth
+                        onClick={handleBuyNow}
+                        disabled={!product.inStock}
                         sx={{
                             py: 1.6, fontWeight: 700,
                             borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS,

@@ -13,10 +13,17 @@ export const danhGiaService = {
         }
     },
 
-    getListAll_Admin: async ({ page = 1, limit = 10, search }) => {
+    getListAll_Admin: async ({ page = 1, limit = 10, search, sosao, tuNgay, denNgay }) => {
         try {
             const res = await apiConfig.get(API.DANHGIA.ADMIN_LIST, {
-                params: { page, limit, search }
+                params: {
+                    page,
+                    limit,
+                    search: search || undefined,
+                    sosao: sosao || undefined,
+                    tuNgay: tuNgay || undefined,
+                    denNgay: denNgay || undefined,
+                }
             });
             return { success: true, raw: res.data };
         } catch (error) {
