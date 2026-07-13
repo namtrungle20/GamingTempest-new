@@ -20,27 +20,22 @@ export default defineConfig({
   },
 
   build: {
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 800,
     target: 'esnext',
 
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            // ✅ Chỉ tách icons riêng — đây là bộ file rất lớn nhưng độc lập,
+            // không có circular dependency nên tách an toàn.
             if (id.includes('@mui/icons-material')) return 'vendor-mui-icons'
-            if (id.includes('@mui/material') ||
-              id.includes('@mui/system') ||
-              id.includes('@mui/base')) return 'vendor-mui'
-            if (id.includes('@emotion')) return 'vendor-emotion'
 
-            // ✅ Gộp chung react + react-dom + scheduler + react-is
-            // Không tách riêng — tránh lỗi thứ tự khởi tạo (unstable_now)
-            if (id.includes('react-dom') ||
-              id.includes('/react/') ||
-              id.includes('react-is') ||
-              id.includes('scheduler')) return 'vendor-react'
-
-            return 'vendor-misc'
+            // ✅ Gộp CHUNG toàn bộ react + react-dom + emotion + mui core
+            // vì các package này phụ thuộc chéo lẫn nhau rất chặt —
+            // tách riêng dễ gây lỗi "Cannot access X before initialization"
+            // khi Rollup sắp thứ tự load module không đúng.
+            return 'vendor-core'
           }
         }
       }
