@@ -66,3 +66,23 @@ export const authService = {
         }
     },
 };
+
+export const authResetService = {
+    quenMatKhau: async ({ sdt, email }) => {
+        try {
+            const res = await apiConfig.post(API.AUTH.QUEN_MAT_KHAU, { sdt, email })
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }
+        }
+    },
+
+    datLaiMatKhau: async (token, matKhauMoi) => {
+        try {
+            const res = await apiConfig.post(API.AUTH.DAT_LAI_MAT_KHAU, { token, matKhauMoi })
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }
+        }
+    },
+}

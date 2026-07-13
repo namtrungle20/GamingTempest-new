@@ -20,6 +20,8 @@ const MyOrdersPage = lazy(() => import('@/pages/MyOrdersPage'))
 const PaymentResultPage = lazy(() => import('@/pages/PaymentResultPage'))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 const DanhGiaManagerPage = lazy(() => import('@/pages/admin/DanhGiaManager'))
+const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage'))
 
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
@@ -42,6 +44,8 @@ function App() {
           <Route path='/checkout' element={<Page component={CheckoutPage} />} />
           <Route path="/thanhtoan/return" element={<Page component={PaymentReturn} />} />
           <Route path='/payment/result' element={<Page component={PaymentResultPage} />} />
+          <Route path="/forgot-password" element={<Page component={ForgotPasswordPage} />} />
+          <Route path="/reset-password" element={<Page component={ResetPasswordPage} />} />
         </Route>
 
         <Route path='/admin' element={

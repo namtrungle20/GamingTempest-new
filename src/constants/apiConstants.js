@@ -5,7 +5,9 @@ export const API = {
         REGISTER: '/auth/dangky',
         REFRESH: '/auth/refresh',
         LOGOUT: '/auth/logout',
-        GOOGLE: '/auth/google'
+        GOOGLE: '/auth/google',
+        QUEN_MAT_KHAU: '/auth/quenmatkhau',
+        DAT_LAI_MAT_KHAU: '/auth/datlaimatkhau'
     },
     USERS: {
         LIST: '/nguoidung/danh-sach',

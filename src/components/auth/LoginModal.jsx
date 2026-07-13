@@ -81,7 +81,7 @@ const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
           />
 
           <Mui.Box textAlign="right">
-            <Mui.Link href="#" variant="caption" color="primary" sx={{ fontWeight: 700, textDecoration: 'none' }}>
+            <Mui.Link href="/forgot-password" variant="caption" color="primary" sx={{ fontWeight: 700, textDecoration: 'none' }}>
               Quên mật khẩu?
             </Mui.Link>
           </Mui.Box>
@@ -104,7 +104,7 @@ const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
 
           <Mui.Stack direction="row" spacing={2}>
             <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Google />} onClick={handleGoogleLogin} >Google</Mui.Button>
-            <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Facebook />}>Facebook</Mui.Button>
+            {/* <Mui.Button fullWidth variant="outlined" startIcon={<Icon.Facebook />}>Facebook</Mui.Button> */}
           </Mui.Stack>
 
           <Mui.Typography variant="body2" textAlign="center" mt={2}>
