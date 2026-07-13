@@ -21,11 +21,8 @@ export default defineConfig({
 
   build: {
     chunkSizeWarningLimit: 500,
-
-    // ✅ Giúp browser parse JS song song trên nhiều thread
     target: 'esnext',
 
-    // ✅ Tách react và react-dom riêng — react nhỏ load trước, react-dom load sau
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -36,9 +33,10 @@ export default defineConfig({
               id.includes('@mui/base')) return 'vendor-mui'
             if (id.includes('@emotion')) return 'vendor-emotion'
 
-            // ✅ Tách react và react-dom riêng
-            if (id.includes('react-dom')) return 'vendor-react-dom'
-            if (id.includes('react/') ||
+            // ✅ Gộp chung react + react-dom + scheduler + react-is
+            // Không tách riêng — tránh lỗi thứ tự khởi tạo (unstable_now)
+            if (id.includes('react-dom') ||
+              id.includes('/react/') ||
               id.includes('react-is') ||
               id.includes('scheduler')) return 'vendor-react'
 
