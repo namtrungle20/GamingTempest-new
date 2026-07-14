@@ -7,7 +7,7 @@ import { useAuth } from '@/hook/provider/AuthContext'
 const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
   const { register, loading, error } = useAuth();
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  // const [email, setEmail] = useState('');
   const [sdt, setSdt] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,7 +16,7 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
 
   const handleSubmit = async () => {
     if (password !== confirmPassword) return;
-    const result = await register(email, name, sdt, password);
+    const result = await register(name, sdt, password);
     if (result.success) {
       handleClose();
       onSwitchLogin();
@@ -60,21 +60,23 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
             onChange={(e) => setName(e.target.value)}
           />
 
-          <Mui.TextField
+          {/* <Mui.TextField
             fullWidth
             label="Email (Nếu có)"
             value={email}
-            onChange={(e) => setName(e.target.value)}
-          />
-
+            onChange={(e) => setEmail(e.target.value)}
+          /> */}
 
           <Mui.TextField
             fullWidth
             label="Số điện thoại"
             value={sdt}
-            onChange={(e) => setSdt(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9+]/g, '')
+              setSdt(value)
+            }}
+            inputProps={{ maxLength: 12 }}
           />
-
           <Mui.TextField
             fullWidth
             label="Mật khẩu"
@@ -117,7 +119,7 @@ const RegisterModal = ({ open, handleClose, onSwitchLogin }) => {
             variant="contained"
             size="large"
             onClick={handleSubmit}
-            disabled={loading || !email || !sdt || !password || password !== confirmPassword}
+            disabled={loading || !sdt || !password || password !== confirmPassword}
             sx={{ fontWeight: 700, py: 1.5, mt: 1, borderRadius: UI_SETTING.SHAPE.BUTTON_RADIUS }}
           >
             {loading ? <Mui.CircularProgress size={24} color="inherit" /> : 'ĐĂNG KÝ NGAY'}

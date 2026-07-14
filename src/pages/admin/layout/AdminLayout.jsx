@@ -205,11 +205,11 @@ const AdminLayout = () => {
                             <Mui.IconButton onClick={() => setMode(mode === 'light' ? 'dark' : 'light')} color="inherit" sx={{ color: 'text.primary' }}>
                                 {mode === 'dark' ? <Icon.LightModeOutlined /> : <Icon.DarkModeOutlined />}
                             </Mui.IconButton>
-                            <Mui.IconButton component={Link} to="/" color="inherit" sx={{ color: 'text.primary' }}>
+                            {/* <Mui.IconButton component={Link} to="/" color="inherit" sx={{ color: 'text.primary' }}>
                                 <Mui.Tooltip title="Về trang chủ">
                                     <Icon.HomeOutlined />
                                 </Mui.Tooltip>
-                            </Mui.IconButton>
+                            </Mui.IconButton> */}
                         </Mui.Stack>
                     </Mui.Toolbar>
                 </Mui.AppBar>

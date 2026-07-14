@@ -24,6 +24,9 @@ export default class User {
     get displayName() {
         return this.email ? this.email.split('@')[0] : "User";
     }
+    get sdtHopLe() {
+        return /^(0|\+84)(3|5|7|8|9)[0-9]{8}$/.test(this.sdt)
+    }
     get imageUrl() {
         if (!this.image) return null
         if (this.image.startsWith('http')) return this.image
