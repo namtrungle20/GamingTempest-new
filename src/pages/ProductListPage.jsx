@@ -3,6 +3,7 @@ import * as Icon from '@mui/icons-material'
 import useProductList from '@/hook/product/useProductList'
 import { UI_SETTING } from '@/theme/uiSetting'
 import ProductGrid from '@/components/sections/ProductGrid';
+import { useState } from 'react';
 
 const SORT_OPTIONS = [
     { label: 'Mới nhất', sort_by: 'createdAt', sort_order: 'DESC' },
@@ -12,7 +13,7 @@ const SORT_OPTIONS = [
     { label: 'Tên A-Z', sort_by: 'name', sort_order: 'ASC' },
 ]
 
-const FilterPanel = ({ filters, brands, categories, updateFilter, resetFilters }) => (
+const FilterPanel = ({ filters, brands, categories, updateFilter, resetFilters, searchInput }) => (
     <Mui.Stack spacing={3}>
         <Mui.Box display="flex" justifyContent="space-between" alignItems="center">
             <Mui.Typography variant="subtitle1" fontWeight={900}>Bộ lọc</Mui.Typography>
@@ -88,7 +89,9 @@ const ProductListPage = () => {
         products, brands, categories,
         loading, total, page, filters,
         setPage, updateFilter, resetFilters,
+        searchInput, setSearchInput
     } = useProductList()
+    const [searchError, setSearchError] = useState('')
 
     const pageSize = 12
     const totalPages = Math.ceil(total / pageSize)
@@ -107,8 +110,18 @@ const ProductListPage = () => {
                     <Mui.Box display="flex" gap={2} flexWrap="wrap">
                         <Mui.TextField
                             size="small" placeholder="Tìm kiếm sản phẩm..."
-                            value={filters.search}
-                            onChange={(e) => updateFilter('search', e.target.value)}
+                            value={searchInput}
+                            onChange={(e) => {
+                                const val = e.target.value
+                                setSearchInput(val)
+                                if (val.trim().length === 1) {
+                                    setSearchError('Nhập ít nhất 2 ký tự để tìm kiếm')
+                                } else {
+                                    setSearchError('')
+                                }
+                            }}
+                            error={!!searchError}
+                            helperText={searchError}
                             sx={{ flex: 1, minWidth: 200 }}
                             InputProps={{
                                 startAdornment: (
@@ -155,6 +168,7 @@ const ProductListPage = () => {
                         <FilterPanel
                             filters={filters} brands={brands} categories={categories}
                             updateFilter={updateFilter} resetFilters={resetFilters}
+                            searchInput={searchInput}
                         />
                     </Mui.Paper>
 

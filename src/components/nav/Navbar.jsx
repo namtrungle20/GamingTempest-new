@@ -199,9 +199,9 @@ const MegaMenu = ({ navItems, loading, activeMenu, setActiveMenu }) => {
                                 {navItems.map(dm => (
                                     <Mui.MenuItem
                                         key={dm.key}
+                                        component={Link}
+                                        to={`/products?loai_id=${dm.key}`}
                                         onMouseEnter={() => setActiveCategory(dm.key)}
-                                        // component={Link}
-                                        // to={`/danh-muc/${dm.key}`}
                                         onClick={() => setActiveMenu(null)}
                                         sx={{
                                             fontSize: '0.875rem',
