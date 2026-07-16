@@ -58,6 +58,7 @@ function App() {
           <Route path='users' element={<Page component={UserManagePage} />} />
           <Route path='products' element={<Page component={SanPhamManagePage} />} />
           <Route path='danhgia' element={<Page component={DanhGiaManagerPage} />} />
+          <Route path='*' element={<Page component={NotFoundPage} />} />
         </Route>
 
         <Route path='*' element={<Page component={NotFoundPage} />} />

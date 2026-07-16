@@ -21,6 +21,7 @@ const Section = ({ children }) => (
     </Mui.Container>
 )
 
+
 const ProductSkeleton = () => (
     <Mui.Box sx={{ display: 'flex', gap: 2, overflow: 'hidden' }}>
         {[...Array(5)].map((_, i) => (

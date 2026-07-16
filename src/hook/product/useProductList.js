@@ -26,6 +26,7 @@ const useProductList = () => {
         sort_order: 'DESC',
     })
 
+    const isUrlChange = useRef(false)
     useEffect(() => {
         const loai = searchParams.get('loai') || ''
         const thuonghieu = searchParams.get('thuonghieu') || ''
@@ -37,18 +38,21 @@ const useProductList = () => {
             thuonghieu_id: thuonghieu,
             search,
         }))
-        setSearchInput(search)
+        if (search) setSearchInput(search)
         setPage(1)
     }, [searchParams])
 
+
     const debounceRef = useRef(null)
     useEffect(() => {
+        if (isUrlChange.current) {
+            isUrlChange.current = false
+            return
+        }
         clearTimeout(debounceRef.current)
         debounceRef.current = setTimeout(() => {
             const trimmed = searchInput.trim()
-            console.log('🔵 debounce fired:', trimmed, 'length:', trimmed.length)
             if (trimmed.length >= 2 || trimmed.length === 0) {
-                console.log('🔵 updating filter search:', trimmed)
                 setFilters(prev => ({ ...prev, search: trimmed }))
                 setPage(1)
             }

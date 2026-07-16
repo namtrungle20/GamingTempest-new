@@ -4,6 +4,7 @@ import { AuthContext } from '@/hook/provider/AuthContext'
 import { signInWithGoogle, logoutFirebase } from '@/services/firebase.service'
 import User from '@/models/User'
 import socket from '@/config/socket'
+import { USER_ROLE } from '@/constants/UserConstants'
 
 
 export const AuthProvider = ({ children }) => {
@@ -59,9 +60,17 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(nguoidung))
             if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
 
-            setUser(new User(nguoidung))
-            return { success: true }
+            const userInstance = new User(nguoidung)
+            console.log('nguoidung từ API:', nguoidung)
+            console.log('userInstance.role:', userInstance.vaitro, typeof userInstance.vaitro)
+            console.log('USER_ROLE.ADMIN:', USER_ROLE.ADMIN, typeof USER_ROLE.ADMIN)
+
+            setUser(userInstance)
+
+            const redirectTo = userInstance.vaitro === USER_ROLE.ADMIN ? '/admin' : '/'
+            return { success: true, redirectTo }
         } catch (err) {
+            // console.error('LOGIN ERROR:', err)
             const errorMessage = err.response?.data?.message || 'Không thể kết nối đến máy chủ';
             setError(errorMessage);
             return { success: false, message: errorMessage }

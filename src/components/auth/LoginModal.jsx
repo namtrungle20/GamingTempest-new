@@ -3,16 +3,19 @@ import * as Mui from '@mui/material';
 import * as Icon from '@mui/icons-material';
 import { UI_SETTING } from '../../theme/uiSetting';
 import { useAuth } from '@/hook/provider/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
   const { login, loading, error, loginWithGoogle } = useAuth();
   const [loginKey, setLoginKey] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     const result = await login(loginKey, password);
     if (result.success) {
+      navigate(result.redirectTo || '/');
       handleClose();
     }
   };
