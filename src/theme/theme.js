@@ -7,7 +7,7 @@ export const theme = extendTheme({
             palette: {
                 primary: { main: '#ff8906' },
                 background: { default: '#ffffff', paper: '#f5f5f7' },
-                text: { primary: '#0f0e17', secondary: '#a7a9be' }
+                text: { primary: '#0f0e17', secondary: '#6b6d80' }
             }
         },
         dark: {

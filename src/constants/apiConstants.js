@@ -85,4 +85,9 @@ export const API = {
         RETURN: '/thanhtoan/return',
         // DETAIL: (id) => `/thanhtoan/${id}`,
     },
+    CHAT: {
+        MESS: '/chat',
+        ADMIN_HOITHOAI: '/chat/admin/hoithoai',
+        HOITHOAI: (id) => `/chat/${id}`,
+    }
 }

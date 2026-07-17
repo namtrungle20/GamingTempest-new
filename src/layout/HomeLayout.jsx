@@ -2,6 +2,7 @@ import * as Mui from '@mui/material'
 import { Outlet } from 'react-router-dom'
 import Navbar from '@/components/nav/Navbar'
 import CartDrawer from '@/components/cart/CartDrawer'
+import ChatWidget from '@/components/chat/ChatWidget'
 
 const HomeLayout = () => {
     return (
@@ -15,6 +16,7 @@ const HomeLayout = () => {
                 CONSOLE.GS © 2026
             </Mui.Box>
             <CartDrawer />
+            <ChatWidget />
         </Mui.Box>
     )
 }
