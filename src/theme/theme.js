@@ -20,8 +20,8 @@ export const theme = extendTheme({
     },
     typography: {
         fontFamily: "'Inter', sans-serif",
-        h1: { color: '#f0e6d6' },
-        body1: { color: '#a7a9be' }
+        // h1: { color: '#f0e6d6' },
+        // body1: { color: '#a7a9be' }
     },
     // Sửa lỗi spacing: MUI mặc định là 8px (số 2 = 16px)
     spacing: 8,

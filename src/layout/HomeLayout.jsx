@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import Navbar from '@/components/nav/Navbar'
 import CartDrawer from '@/components/cart/CartDrawer'
 import ChatWidget from '@/components/chat/ChatWidget'
+import Footer from '@/components/sections/Footer'
 
 const HomeLayout = () => {
     return (
@@ -12,9 +13,7 @@ const HomeLayout = () => {
                 <Outlet />
             </Mui.Box>
 
-            <Mui.Box component="footer" sx={{ py: 4, textAlign: 'center', borderTop: '1px solid', borderColor: 'divider' }}>
-                CONSOLE.GS © 2026
-            </Mui.Box>
+            <Footer />
             <CartDrawer />
             <ChatWidget />
         </Mui.Box>

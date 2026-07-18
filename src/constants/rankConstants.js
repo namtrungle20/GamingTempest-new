@@ -5,6 +5,7 @@ export const HANG_CONFIG = {
         bgColor: 'rgba(184,115,51,0.12)',
         icon: 'MilitaryTech',
         giamShip: 0,
+        dieuKien: 0,
     },
     1: {
         label: 'Bạc',
@@ -12,6 +13,7 @@ export const HANG_CONFIG = {
         bgColor: 'rgba(158,158,158,0.14)',
         icon: 'WorkspacePremium',
         giamShip: 5,
+        dieuKien: 5_000_000,
     },
     2: {
         label: 'Vàng',
@@ -19,6 +21,7 @@ export const HANG_CONFIG = {
         bgColor: 'rgba(212,175,55,0.14)',
         icon: 'EmojiEvents',
         giamShip: 50,
+        dieuKien: 20_000_000,
     },
     3: {
         label: 'Kim Cương',
@@ -26,6 +29,7 @@ export const HANG_CONFIG = {
         bgColor: 'rgba(79,195,247,0.14)',
         icon: 'Diamond',
         giamShip: 100,
+        dieuKien: 50_000_000,
     },
 };
 

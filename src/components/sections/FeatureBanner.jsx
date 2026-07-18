@@ -23,7 +23,7 @@ const FEATURES = [
         desc: 'Liên hệ Zalo/Hotline, phản hồi nhanh',
         color: 'info.main',
         // tạm thời trỏ ra kênh liên hệ ngoài, chưa có chat box nội bộ
-        link: 'https://zalo.me/YOUR_ZALO_ID',
+        link: import.meta.env.VITE_ZALO_ID,
         external: true,
     },
     {

@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hook/provider/AuthContext';
+import { USER_ROLE } from '@/constants/UserConstants';
 
 const AdminRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -7,7 +8,7 @@ const AdminRoute = ({ children }) => {
     if (loading) {
         return <div>Loading...</div>; // hoặc spinner
     }
-    if (!user.isAdmin) return <Navigate to="/" replace />;
+    if (user?.vaitro !== USER_ROLE.ADMIN) return <Navigate to="/" replace />
     return children;
 };
 

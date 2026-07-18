@@ -3,6 +3,7 @@ import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { useAuth } from '@/hook/provider/AuthProvider'
 import useChat from '@/hook/chat/useChat'
+import { USER_ROLE } from '@/constants/UserConstants'
 
 const getGuestId = () => {
     let id = localStorage.getItem('guestId')
@@ -11,6 +12,28 @@ const getGuestId = () => {
         localStorage.setItem('guestId', id)
     }
     return id
+}
+
+const URL_REGEX = /(https?:\/\/[^\s]+)/g
+
+// Tách chuỗi thành mảng: text thường + link — render link thành thẻ <a> bấm được
+const renderTextWithLinks = (text) => {
+    const parts = text.split(URL_REGEX)
+    return parts.map((part, i) =>
+        URL_REGEX.test(part) ? (
+            <Mui.Link
+                key={i}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ color: 'inherit', textDecorationColor: 'inherit', wordBreak: 'break-all' }}
+            >
+                {part}
+            </Mui.Link>
+        ) : (
+            <span key={i}>{part}</span>
+        )
+    )
 }
 
 const ChatWidget = () => {
@@ -35,6 +58,9 @@ const ChatWidget = () => {
         setInput('')
         await sendMessage(text)
     }
+    // console.log('user:', user, 'role:', user?.role, 'ADMIN:', USER_ROLE.ADMIN)
+
+    if (user?.vaitro === USER_ROLE.ADMIN) return null
 
     return (
         <>
@@ -68,7 +94,9 @@ const ChatWidget = () => {
                                 px: 1.5, py: 0.8, borderRadius: 2, maxWidth: '75%',
                                 boxShadow: m.isCustomer ? 'none' : 1,
                             }}>
-                                <Mui.Typography variant="body2">{m.noidung}</Mui.Typography>
+                                <Mui.Typography variant="body2" color={m.isCustomer ? 'primary.contrastText' : 'text.primary'} sx={{ wordBreak: 'break-word' }}>
+                                    {renderTextWithLinks(m.noidung)}
+                                </Mui.Typography>
                             </Mui.Box>
                         ))}
                         <div ref={bottomRef} />

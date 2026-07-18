@@ -5,6 +5,7 @@ import { signInWithGoogle, logoutFirebase } from '@/services/firebase.service'
 import User from '@/models/User'
 import socket from '@/config/socket'
 import { USER_ROLE } from '@/constants/UserConstants'
+import chatService from '@/services/chat.service'
 
 
 export const AuthProvider = ({ children }) => {
@@ -14,7 +15,6 @@ export const AuthProvider = ({ children }) => {
 
     // ✅ verify token với backend khi app load
     useEffect(() => {
-
         const verifySession = async () => {
             const token = localStorage.getItem('accessToken')
             if (!token) {
@@ -40,10 +40,17 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        if (user?.id) {
-            if (!socket.connected) socket.connect()
-            socket.emit('join-user', user.id)
+        if (!user?.id) return
+
+        const guestId = localStorage.getItem('guestId')
+        if (guestId && user.vaitro !== USER_ROLE.ADMIN) {
+            chatService.mergeGuest(guestId)
+                .then(() => localStorage.removeItem('guestId'))
+                .catch((err) => console.warn('Merge guest chat thất bại:', err))
         }
+
+        if (!socket.connected) socket.connect()
+        socket.emit('join-user', user.id)
     }, [user?.id])
 
     const login = useCallback(async (loginKey, password) => {
@@ -61,9 +68,9 @@ export const AuthProvider = ({ children }) => {
             if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
 
             const userInstance = new User(nguoidung)
-            console.log('nguoidung từ API:', nguoidung)
-            console.log('userInstance.role:', userInstance.vaitro, typeof userInstance.vaitro)
-            console.log('USER_ROLE.ADMIN:', USER_ROLE.ADMIN, typeof USER_ROLE.ADMIN)
+            // console.log('nguoidung từ API:', nguoidung)
+            // console.log('userInstance.role:', userInstance.vaitro, typeof userInstance.vaitro)
+            // console.log('USER_ROLE.ADMIN:', USER_ROLE.ADMIN, typeof USER_ROLE.ADMIN)
 
             setUser(userInstance)
 
@@ -138,8 +145,16 @@ export const AuthProvider = ({ children }) => {
         }
     }, [])
 
+    const updateUser = useCallback((newData) => {
+        setUser(prev => {
+            const merged = new User({ ...prev, ...newData })
+            localStorage.setItem('user', JSON.stringify(merged))
+            return merged
+        })
+    }, [])
+
     return (
-        <AuthContext.Provider value={{ user, login, loginWithGoogle, register, logout, loading, error }}>
+        <AuthContext.Provider value={{ user, login, loginWithGoogle, register, logout, loading, error, updateUser }}>
             {children}
         </AuthContext.Provider>
     )

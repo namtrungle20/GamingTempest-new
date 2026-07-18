@@ -89,5 +89,7 @@ export const API = {
         MESS: '/chat',
         ADMIN_HOITHOAI: '/chat/admin/hoithoai',
         HOITHOAI: (id) => `/chat/${id}`,
+        DELETE: (id) => `/chat/${id}`,
+        MERGE_GUEST: '/chat/merge-guest',
     }
 }

@@ -269,8 +269,8 @@ const Navbar = () => {
         {
             label: 'Dịch vụ', key: 'service',
             items: [
-                { label: 'Sửa chữa', to: '/services/repair' },
-                { label: 'Thu cũ đổi mới', to: '/services/trade-in' },
+                { label: 'Chính sách bảo hành', to: '/policy/warranty' },
+                { label: 'Chính sách đổi trả', to: '/policy/exchange' },
             ]
         },
         { label: 'Tin tức', key: 'news', to: '/news' },
@@ -357,7 +357,7 @@ const Navbar = () => {
                             <>
                                 <Mui.IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ p: 0.5, ml: 0.5 }}>
                                     <Mui.Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700 }}>
-                                        {user.displayName[0].toUpperCase()}
+                                        {(user.name || 'User')[0].toUpperCase()}
                                     </Mui.Avatar>
                                 </Mui.IconButton>
                                 <Mui.Menu
@@ -376,10 +376,10 @@ const Navbar = () => {
                                         sx={{ py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}
                                     >
                                         <Mui.Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700, mr: 1.5 }}>
-                                            {user.displayName[0].toUpperCase()}
+                                            {(user.name || 'User')[0].toUpperCase()}
                                         </Mui.Avatar>
                                         <Mui.Box>
-                                            <Mui.Typography variant="body2" fontWeight={700}>{user.displayName}</Mui.Typography>
+                                            <Mui.Typography variant="body2" fontWeight={700}>{user.name}</Mui.Typography>
                                             <Mui.Typography variant="caption" color="text.secondary">{user.email || user.sdt}</Mui.Typography>
                                         </Mui.Box>
                                     </Mui.MenuItem>

@@ -32,7 +32,11 @@ const useChat = (nguoidungId, mode = 'user', isGuest = false) => {
             const msg = new TinNhan(raw)
             const msgId = isGuest ? msg.guestId : msg.nguoidungId
             if (msgId === currentIdRef.current) {
-                setMessages(prev => [...prev, msg])
+                setMessages(prev => {
+                    // Chặn trùng lặp: nếu id này đã có trong danh sách, bỏ qua
+                    if (prev.some(m => m.id === msg.id)) return prev
+                    return [...prev, msg]
+                })
             }
         }
         socket.on('chat:receive', handleReceive)
@@ -46,8 +50,18 @@ const useChat = (nguoidungId, mode = 'user', isGuest = false) => {
             return
         }
         setLoading(true)
-        chatService.getLichSuChat(nguoidungId)
-            .then(data => setMessages(data.map(d => new TinNhan(d))))
+        chatService.getLichSuChat(nguoidungId, isGuest)
+            .then(data => {
+                const loaded = data.map(d => new TinNhan(d))
+                setMessages(prev => {
+                    // Gộp lịch sử vừa load với tin realtime đã nhận trước đó (nếu có), khử trùng theo id
+                    const merged = [...loaded]
+                    prev.forEach(m => {
+                        if (!merged.some(x => x.id === m.id)) merged.push(m)
+                    })
+                    return merged.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                })
+            })
             .catch(() => setMessages([]))
             .finally(() => setLoading(false))
     }, [nguoidungId])
@@ -64,7 +78,7 @@ const useChat = (nguoidungId, mode = 'user', isGuest = false) => {
                 guestId: isGuest ? nguoidungId : null,
                 isAdmin: mode === 'admin'
             })
-            setMessages(prev => [...prev, new TinNhan(data)])
+            // setMessages(prev => [...prev, new TinNhan(data)])
         } finally {
             setSending(false)
         }

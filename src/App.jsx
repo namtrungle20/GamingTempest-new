@@ -4,6 +4,7 @@ import HomeLayout from '@/layout/HomeLayout'
 import AdminRoute from '@/components/common/AdminRoute'
 import AdminLayout from '@/pages/admin/layout/AdminLayout'
 import PageLoader from '@/pages/loader/PageLoader'
+import { Toaster } from 'sonner'
 
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
@@ -23,6 +24,9 @@ const DanhGiaManagerPage = lazy(() => import('@/pages/admin/DanhGiaManager'))
 const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage'))
 const ChatManagerPage = lazy(() => import('@/pages/admin/ChatManagerPage'))
+const RankPolicyPage = lazy(() => import('@/pages/policy/PolicyRank'))
+const WarrantyPolicyPage = lazy(() => import('@/pages/policy/PolicyWarranty'))
+const ExchangePolicyPage = lazy(() => import('@/pages/policy/PolicyExchange'))
 
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
@@ -47,7 +51,11 @@ function App() {
           <Route path='/payment/result' element={<Page component={PaymentResultPage} />} />
           <Route path="/forgot-password" element={<Page component={ForgotPasswordPage} />} />
           <Route path="/reset-password" element={<Page component={ResetPasswordPage} />} />
+          <Route path='/policy/rank' element={<Page component={RankPolicyPage} />} />
+          <Route path='/policy/warranty' element={<Page component={WarrantyPolicyPage} />} />
+          <Route path='/policy/exchange' element={<Page component={ExchangePolicyPage} />} />
         </Route>
+
 
         <Route path='/admin' element={
           <AdminRoute>
@@ -65,6 +73,7 @@ function App() {
 
         <Route path='*' element={<Page component={NotFoundPage} />} />
       </Routes>
+      <Toaster position="top-right" richColors />
     </BrowserRouter>
   )
 }

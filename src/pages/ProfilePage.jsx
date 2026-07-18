@@ -11,8 +11,13 @@ import { InfoTab, SettingsTab } from '@/components/profile/ProfileTabs'
 
 const ProfilePage = () => {
     const { user, form, saving, handleChange, handleSave } = useProfile()
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
     const { totalSpent, orderCount, loading: statsLoading } = useMemberStats()
     const [tab, setTab] = useState(0)
+
+    const showSuccess = (message) => setSnackbar({ open: true, message, severity: 'success' })
+    const showError = (message) => setSnackbar({ open: true, message, severity: 'error' })
+
 
     return (
         <Mui.Container maxWidth="sm" sx={{ py: 4 }}>
@@ -106,6 +111,22 @@ const ProfilePage = () => {
                 )}
 
             </motion.div>
+
+            <Mui.Snackbar
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Mui.Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Mui.Alert>
+            </Mui.Snackbar>
+
         </Mui.Container>
     )
 }

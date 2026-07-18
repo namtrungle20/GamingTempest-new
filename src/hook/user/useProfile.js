@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { NguoiDungService } from '@/services/user.service'
 
 const useProfile = () => {
-    const { user } = useAuth()
+    const { user, updateUser } = useAuth()
     const [form, setForm] = useState({ name: '', email: '', sdt: '', diachi: '' })
     const [saving, setSaving] = useState(false)
 
@@ -34,6 +34,7 @@ const useProfile = () => {
                 diachi: form.diachi || undefined,
             })
             if (result.success) {
+                updateUser(result.raw.data)
                 toast.success('Cập nhật thành công')
             } else {
                 toast.error(result.message)

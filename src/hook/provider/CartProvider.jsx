@@ -28,6 +28,14 @@ export const CartProvider = ({ children }) => {
     const updateTimeoutRef = useRef({})
     const mergingRef = useRef(false)
 
+    const confirmedQtyRef = useRef({})
+
+    const syncConfirmedQty = useCallback((list) => {
+        const map = {}
+        list.forEach(i => { map[i.id] = i.qty })
+        confirmedQtyRef.current = map
+    }, [])
+
     // Load giỏ hàng từ localStorage hoặc API tùy trạng thái đăng nhập
     useEffect(() => {
         if (authLoading) return;
@@ -42,7 +50,6 @@ export const CartProvider = ({ children }) => {
                     const localCart = JSON.parse(localStorage.getItem('cart') || '[]')
                     if (localCart.length > 0) {
                         localStorage.removeItem('cart')
-                        // console.log('=== BẮT ĐẦU MERGE ===', localCart)
                         for (const item of localCart) {
                             const res = await cartService.addToCart(item.id, item.qty)
                             if (!res.success) {
@@ -53,9 +60,8 @@ export const CartProvider = ({ children }) => {
 
                         // Lấy lại giỏ hàng sau khi merge
                         const updatedRes = await cartService.getCart()
-                        // console.log('=== KẾT QUẢ getCart SAU MERGE ===', updatedRes)
                         if (updatedRes.success && updatedRes.raw.data) {
-                            setItems(updatedRes.raw.data.ChiTietGioHang?.map(ct => ({
+                            const newItems = updatedRes.raw.data.ChiTietGioHang?.map(ct => ({
                                 id: ct.sanpham_id,
                                 giohang_id: updatedRes.raw.data.giohang_id,
                                 name: ct.SanPham?.name,
@@ -63,10 +69,12 @@ export const CartProvider = ({ children }) => {
                                 image: ct.SanPham?.HinhAnhSanPhams?.[0]?.image_url || ct.SanPham?.image || null,
                                 soluong: ct.SanPham?.soluongton || ct.SanPham?.soluong || 100,
                                 qty: ct.soluong
-                            })) || [])
+                            })) || []
+                            setItems(newItems)
+                            syncConfirmedQty(newItems)
                         }
                     } else if (!mergingRef.current) {
-                        setItems(res.raw.data.ChiTietGioHang?.map(ct => ({
+                        const newItems = res.raw.data.ChiTietGioHang?.map(ct => ({
                             id: ct.sanpham_id,
                             giohang_id: res.raw.data.giohang_id,
                             name: ct.SanPham?.name,
@@ -74,7 +82,9 @@ export const CartProvider = ({ children }) => {
                             image: ct.SanPham?.HinhAnhSanPhams?.[0]?.image_url || ct.SanPham?.image || null,
                             soluong: ct.SanPham?.soluongton || ct.SanPham?.soluong || 100,
                             qty: ct.soluong
-                        })) || [])
+                        })) || []
+                        setItems(newItems)
+                        syncConfirmedQty(newItems)
                     }
                 }
             } else {
@@ -82,6 +92,7 @@ export const CartProvider = ({ children }) => {
                 try {
                     const local = JSON.parse(localStorage.getItem('cart')) || []
                     setItems(local)
+                    syncConfirmedQty(local)
                 } catch {
                     setItems([])
                 }
@@ -89,7 +100,7 @@ export const CartProvider = ({ children }) => {
             setLoading(false)
         }
         fetchCart()
-    }, [user, authLoading])
+    }, [user, authLoading, syncConfirmedQty])
 
     // Lắng nghe thay đổi của items để lưu localStorage nếu CHƯA đăng nhập
     useEffect(() => {
@@ -106,38 +117,42 @@ export const CartProvider = ({ children }) => {
                 // Cập nhật state local để UI phản hồi nhanh
                 setItems(prev => {
                     const exist = prev.find(i => i.id === product.id)
-                    if (exist) {
-                        return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + qty } : i)
-                    }
-                    return [...prev, {
-                        id: product.id,
-                        name: product.name,
-                        price,
-                        image: product.coverUrl || product.imageUrl || product.image || null,
-                        soluong: product.soluong,
-                        qty
-                    }]
+                    const next = exist
+                        ? prev.map(i => i.id === product.id ? { ...i, qty: i.qty + qty } : i)
+                        : [...prev, {
+                            id: product.id,
+                            name: product.name,
+                            price,
+                            image: product.coverUrl || product.imageUrl || product.image || null,
+                            soluong: product.soluong,
+                            qty
+                        }]
+                    syncConfirmedQty(next)
+                    return next
                 })
+            } else {
+                toast.error(res.message || 'Lỗi thêm vào giỏ hàng')
             }
             return res
         } else {
             setItems(prev => {
                 const exist = prev.find(i => i.id === product.id)
-                if (exist) {
-                    return prev.map(i =>
+                const next = exist
+                    ? prev.map(i =>
                         i.id === product.id
                             ? { ...i, qty: Math.min(i.qty + qty, product.soluong || 100) }
                             : i
                     )
-                }
-                return [...prev, {
-                    id: product.id,
-                    name: product.name,
-                    price: product.gia,
-                    image: product.imageUrl || product.image || null,
-                    soluong: product.soluong,
-                    qty,
-                }]
+                    : [...prev, {
+                        id: product.id,
+                        name: product.name,
+                        price: product.gia,
+                        image: product.imageUrl || product.image || null,
+                        soluong: product.soluong,
+                        qty,
+                    }]
+                syncConfirmedQty(next)
+                return next
             })
             return { success: true }
         }
@@ -148,19 +163,19 @@ export const CartProvider = ({ children }) => {
             const res = await cartService.removeProduct(id)
             if (res.success) {
                 setItems(prev => prev.filter(i => i.id !== id))
+                delete confirmedQtyRef.current[id]
             }
         } else {
             setItems(prev => prev.filter(i => i.id !== id))
+            delete confirmedQtyRef.current[id]
         }
     }, [user])
 
     const updateQty = useCallback((id, qty) => {
         if (qty <= 0) return removeFromCart(id)
         let isExceeded = false
-        let oldItems = []
-        // 1. OPTIMISTIC UPDATE: Cập nhật UI ngay lập tức để tạo độ mượt
+
         setItems(prev => {
-            oldItems = prev // Lưu lại trạng thái cũ phòng khi API lỗi
             return prev.map(i => {
                 if (i.id === id) {
                     const limit = i.soluong || 100
@@ -188,12 +203,20 @@ export const CartProvider = ({ children }) => {
             updateTimeoutRef.current[id] = setTimeout(async () => {
                 const res = await cartService.updateQuantity(id, qty)
 
-                // Nếu Backend báo lỗi (ví dụ: kho vừa hết hàng), Rollback về số cũ
-                if (!res.success) {
-                    setItems(oldItems)
+                if (res.success) {
+                    // Server đã xác nhận số lượng này -> cập nhật mốc "sự thật" để rollback đúng lần sau
+                    confirmedQtyRef.current[id] = qty
+                } else {
+                    // Rollback về số lượng ĐÃ XÁC NHẬN với server gần nhất,
+                    // không dùng state tạm ngay trước click cuối (tránh chỉ lùi 1 số khi bấm nhanh)
+                    const qtyDaXacNhan = confirmedQtyRef.current[id]
+                    setItems(prev => prev.map(i => i.id === id ? { ...i, qty: qtyDaXacNhan } : i))
                     toast.error(res.message || 'Lỗi đồng bộ giỏ hàng')
                 }
             }, 400)
+        } else {
+            // Khách chưa đăng nhập: không có server để xác nhận, coi state hiện tại là "đã xác nhận"
+            confirmedQtyRef.current[id] = qty
         }
         return { success: true }
     }, [user, removeFromCart])
@@ -205,8 +228,10 @@ export const CartProvider = ({ children }) => {
                 await cartService.removeProduct(item.id)
             }
             setItems([])
+            confirmedQtyRef.current = {}
         } else {
             setItems([])
+            confirmedQtyRef.current = {}
             localStorage.removeItem('cart')
         }
     }, [user, items])
@@ -216,7 +241,6 @@ export const CartProvider = ({ children }) => {
         setLoading(true);
         const res = await cartService.getCart();
         if (res.success && res.raw.data) {
-            // Cập nhật state items giống như trong useEffect
             const newItems = res.raw.data.chi_tiet_gio_hangs?.map(ct => ({
                 id: ct.sanpham_id,
                 giohang_id: res.raw.data.giohang_id,
@@ -227,12 +251,14 @@ export const CartProvider = ({ children }) => {
                 qty: ct.soluong
             })) || [];
             setItems(newItems);
+            syncConfirmedQty(newItems)
         }
         setLoading(false);
-    }, [user]);
+    }, [user, syncConfirmedQty]);
 
     const totalItems = items.length
     const totalPrice = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+
 
     return (
         <CartContext.Provider value={{

@@ -13,6 +13,9 @@ const CartDrawer = () => {
     const { items, totalPrice, totalItems, updateQty, removeFromCart, loading, isCartOpen, setIsCartOpen } = useCart()
     const [loginModalOpen, setLoginModalOpen] = useState(false)
 
+    const GIOI_HAN_MOMO = 50000000
+    const vuotGioiHan = totalPrice > GIOI_HAN_MOMO
+
     const handleCheckout = () => {
         if (!user) {
             setLoginModalOpen(true)
@@ -79,19 +82,30 @@ const CartDrawer = () => {
                     <Mui.Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
                         <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                             <Mui.Typography variant="subtitle1" fontWeight={600}>Tổng cộng:</Mui.Typography>
-                            <Mui.Typography variant="h6" color="primary.main" fontWeight={700}>
+                            <Mui.Typography
+                                variant="h6"
+                                color={vuotGioiHan ? 'error.main' : 'primary.main'}
+                                fontWeight={700}
+                            >
                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}
                             </Mui.Typography>
                         </Mui.Box>
-                        <Mui.Button
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            sx={{ fontWeight: 700, borderRadius: 2, textTransform: 'none', py: 1.5 }}
-                            onClick={handleCheckout}
-                        >
-                            Tiến hành thanh toán
-                        </Mui.Button>
+
+                        {vuotGioiHan ? (
+                            <Mui.Alert severity="warning" sx={{ borderRadius: 2 }}>
+                                Giỏ hàng vượt quá {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(GIOI_HAN_MOMO)} — vui lòng giảm bớt sản phẩm để tiếp tục thanh toán.
+                            </Mui.Alert>
+                        ) : (
+                            <Mui.Button
+                                variant="contained"
+                                fullWidth
+                                size="large"
+                                sx={{ fontWeight: 700, borderRadius: 2, textTransform: 'none', py: 1.5 }}
+                                onClick={handleCheckout}
+                            >
+                                Tiến hành thanh toán
+                            </Mui.Button>
+                        )}
                     </Mui.Box>
                 )}
             </Mui.Drawer>

@@ -14,7 +14,8 @@ const NAV_ITEMS = [
     { label: 'Người dùng', icon: <Icon.PeopleOutlined />, path: '/admin/users' },
     { label: 'Sản phẩm', icon: <Icon.Inventory2Outlined />, path: '/admin/products' },
     { label: 'Đơn hàng', icon: <Icon.ShoppingCartOutlined />, path: '/admin/orders' },
-    { label: 'Đánh Giá', icon: <Icon.Star />, path: '/admin/danhgia' }
+    { label: 'Đánh Giá', icon: <Icon.Star />, path: '/admin/danhgia' },
+    { label: 'Hỗ Trợ Khách Hàng', icon: <Icon.ChatBubbleOutline />, path: '/admin/chat' }
 ];
 
 const AdminLayout = () => {
