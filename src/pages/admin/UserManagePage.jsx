@@ -5,6 +5,7 @@ import useUserManager from '@/hook/admin/useUserManager'
 import EditUserModal from '@/components/admin/user/EditUserModal'
 import ConfirmDeleteDialog from '@/components/admin/user/ConfirmDeleteDialog'
 import { ROLE_LABEL, ROLE_COLOR, LOCK_LABEL, LOCK_COLOR, LOCK_STATUS, ROLE_OPTIONS, LOCK_OPTIONS } from '@/constants/UserConstants'
+import { getHangConfig } from '@/constants/rankConstants'
 
 // ══════════════════════════════════════════════════════════
 // SUB-COMPONENTS
@@ -45,13 +46,33 @@ const UserTableRow = memo(({ user, onEdit, onDelete }) => (
                 sx={{ fontWeight: 700, fontSize: '0.7rem' }}
             />
         </Mui.TableCell>
+        <Mui.TableCell>
+            {user.hangnguoidung !== undefined && user.hangnguoidung !== null ? (
+                (() => {
+                    const config = getHangConfig(user.hangnguoidung)
+                    const RankIcon = Icon[config.icon] ?? Icon.MilitaryTech
+                    return (
+                        <Mui.Chip
+                            icon={<RankIcon sx={{ fontSize: '1rem !important', color: `${config.color} !important` }} />}
+                            label={config.label}
+                            size="small"
+                            sx={{ fontWeight: 700, fontSize: '0.7rem', bgcolor: config.bgColor, color: config.color }}
+                        />
+                    )
+                })()
+            ) : (
+                <Mui.Typography variant="caption" color="text.disabled">—</Mui.Typography>
+            )}
+        </Mui.TableCell>
         <Mui.TableCell align="right">
             <Mui.IconButton size="small" onClick={() => onEdit(user)} color="primary">
                 <Icon.Edit fontSize="small" />
             </Mui.IconButton>
-            <Mui.IconButton size="small" onClick={() => onDelete(user.id)} color="error">
-                <Icon.Delete fontSize="small" />
-            </Mui.IconButton>
+            {!user.isDeleted && (
+                <Mui.IconButton size="small" onClick={() => onDelete(user.id)} color="error">
+                    <Icon.Delete fontSize="small" />
+                </Mui.IconButton>
+            )}
         </Mui.TableCell>
     </Mui.TableRow>
 ))
@@ -61,6 +82,7 @@ const TableSkeleton = memo(({ rows = 5 }) => (
         {[...Array(rows)].map((_, i) => (
             <Mui.TableRow key={i}>
                 <Mui.TableCell><Mui.Skeleton height={40} /></Mui.TableCell>
+                <Mui.TableCell><Mui.Skeleton width={80} /></Mui.TableCell>
                 <Mui.TableCell><Mui.Skeleton width={80} /></Mui.TableCell>
                 <Mui.TableCell><Mui.Skeleton width={80} /></Mui.TableCell>
                 <Mui.TableCell align="right"><Mui.Skeleton width={80} /></Mui.TableCell>
@@ -216,6 +238,7 @@ const UserManagePage = () => {
                                 <Mui.TableCell sx={{ fontWeight: 700, bgcolor: 'background.default' }}>Người dùng</Mui.TableCell>
                                 <Mui.TableCell sx={{ fontWeight: 700, bgcolor: 'background.default' }}>Vai trò</Mui.TableCell>
                                 <Mui.TableCell sx={{ fontWeight: 700, bgcolor: 'background.default' }}>Trạng thái</Mui.TableCell>
+                                <Mui.TableCell sx={{ fontWeight: 700, bgcolor: 'background.default' }}>Hạng</Mui.TableCell>
                                 <Mui.TableCell align="right" sx={{ fontWeight: 700, bgcolor: 'background.default' }}>Thao tác</Mui.TableCell>
                             </Mui.TableRow>
                         </Mui.TableHead>

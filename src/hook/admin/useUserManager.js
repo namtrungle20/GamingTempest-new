@@ -94,7 +94,7 @@ const useUserManager = () => {
     // ══════════════════════════════════════════════════════════
     const handleUpdateUser = useCallback(async (userData) => {
         try {
-            await apiConfig.put(API.USERS.UPDATE, userData)
+            await apiConfig.put(API.USERS.UPDATE(userData.id), userData)
             notify('Cập nhật người dùng thành công')
             setEditModalOpen(false)
             setEditingUser(null)
@@ -114,7 +114,7 @@ const useUserManager = () => {
 
     const handleConfirmDelete = useCallback(async () => {
         try {
-            await apiConfig.delete(API.USERS.DELETE, { data: { id: deleteUserId } })
+            await apiConfig.delete(API.USERS.DELETE(deleteUserId))
             notify('Xóa người dùng thành công')
             if (users.length === 1 && page > 1) {
                 setPage(prev => prev - 1)

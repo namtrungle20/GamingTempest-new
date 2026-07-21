@@ -77,16 +77,26 @@ const OrderCard = ({ order, onViewDetail, onCancel, canCancel }) => (
                 </Mui.Stack>
                 <Mui.Stack direction="row" justifyContent="space-between">
                     <Mui.Typography variant="caption" color="text.secondary">Phí vận chuyển</Mui.Typography>
-                    <Mui.Typography variant="caption">{order.phiVanChuyenFormatted}</Mui.Typography>
+                    <Mui.Typography variant="caption">- {order.phiVanChuyenFormatted}</Mui.Typography>
+                </Mui.Stack>
+                <Mui.Stack direction="row" justifyContent="space-between">
+                    <Mui.Typography variant="caption" color="text.secondary">Giảm giá</Mui.Typography>
+                    <Mui.Typography variant="caption">- {order.giamGiaFormatted}</Mui.Typography>
                 </Mui.Stack>
             </Mui.Stack>
 
             <Mui.Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Mui.Typography variant="body2" color="text.secondary">
-                    {order.createdAtFormatted}
+                    Tổng tiền:
                 </Mui.Typography>
                 <Mui.Typography variant="subtitle1" fontWeight={700} color="primary.main">
                     {order.tongTienFormatted}
+                </Mui.Typography>
+            </Mui.Stack>
+
+            <Mui.Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Mui.Typography variant="body2" color="text.secondary">
+                    {order.createdAtFormatted}
                 </Mui.Typography>
             </Mui.Stack>
         </Mui.CardContent>
@@ -129,6 +139,9 @@ const OrderDetailModal = ({ order, open, onClose }) => (
                 </Mui.Stack>
 
                 <Mui.Stack spacing={1} mb={2}>
+                    <Mui.Typography variant='boyd2'
+
+                    />
                     <Mui.Typography variant="body2">
                         <b>Địa chỉ:</b> {order.diachi}
                     </Mui.Typography>
@@ -188,7 +201,11 @@ const OrderDetailModal = ({ order, open, onClose }) => (
                     </Mui.Stack>
                     <Mui.Stack direction="row" justifyContent="space-between">
                         <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
-                        <Mui.Typography variant="body2">{order.phiVanChuyenFormatted}</Mui.Typography>
+                        <Mui.Typography variant="body2">- {order.phiVanChuyenFormatted}</Mui.Typography>
+                    </Mui.Stack>
+                    <Mui.Stack direction="row" justifyContent="space-between">
+                        <Mui.Typography variant="body2" color="text.secondary">Giảm giá</Mui.Typography>
+                        <Mui.Typography variant="body2">- {order.giamGiaFormatted}</Mui.Typography>
                     </Mui.Stack>
                 </Mui.Stack>
 

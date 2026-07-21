@@ -3,11 +3,11 @@ export default class User {
     constructor(data = {}) {
         this.id = data.nguoidung_id; // Khớp với Postman
         this.name = data.name;
-        this.email = data.email || "";
+        this.email = data.email ?? null;
         this.sdt = data.sdt || "";
         this.diachi = data.diachi || "";
         this.vaitro = data.vaitro; // 2 thường là User, 1 thường là Admin
-        this.hangnguoidung = data.hang_thanh_vien || "";
+        this.hangnguoidung = data.hang_thanh_vien ?? "";
         this.tongchitieu = data.tong_chi_tieu || 0;
         this.ngayvao = data.ngayvao;
         this.ngayhoatdong = data.ngayhoatdong;
@@ -32,4 +32,5 @@ export default class User {
         if (this.image.startsWith('http')) return this.image
         return `${import.meta.env.VITE_BACKEND_BASE_URL}/uploads/${this.image}`
     }
+    get isDeleted() { return this.trangthai === LOCK_STATUS.DELETE }
 }

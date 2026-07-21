@@ -24,6 +24,7 @@ const DanhGiaManagerPage = lazy(() => import('@/pages/admin/DanhGiaManager'))
 const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage'))
 const ChatManagerPage = lazy(() => import('@/pages/admin/ChatManagerPage'))
+const UuDaiManagerPage = lazy(() => import('@/pages/admin/UuDaiManagerPage'))
 const RankPolicyPage = lazy(() => import('@/pages/policy/PolicyRank'))
 const WarrantyPolicyPage = lazy(() => import('@/pages/policy/PolicyWarranty'))
 const ExchangePolicyPage = lazy(() => import('@/pages/policy/PolicyExchange'))
@@ -68,6 +69,7 @@ function App() {
           <Route path='products' element={<Page component={SanPhamManagePage} />} />
           <Route path='danhgia' element={<Page component={DanhGiaManagerPage} />} />
           <Route path="chat" element={<Page component={ChatManagerPage} />} />
+          <Route path='uu-dai' element={<Page component={UuDaiManagerPage} />} />
           <Route path='*' element={<Page component={NotFoundPage} />} />
         </Route>
 

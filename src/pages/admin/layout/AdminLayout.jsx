@@ -15,7 +15,8 @@ const NAV_ITEMS = [
     { label: 'Sản phẩm', icon: <Icon.Inventory2Outlined />, path: '/admin/products' },
     { label: 'Đơn hàng', icon: <Icon.ShoppingCartOutlined />, path: '/admin/orders' },
     { label: 'Đánh Giá', icon: <Icon.Star />, path: '/admin/danhgia' },
-    { label: 'Hỗ Trợ Khách Hàng', icon: <Icon.ChatBubbleOutline />, path: '/admin/chat' }
+    { label: 'Hỗ Trợ Khách Hàng', icon: <Icon.ChatBubbleOutline />, path: '/admin/chat' },
+    { label: 'Ưu Đãi', icon: <Icon.MonetizationOnOutlined />, path: '/admin/uu-dai' },
 ];
 
 const AdminLayout = () => {

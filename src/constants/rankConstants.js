@@ -41,3 +41,11 @@ export const formatTienNgan = (soTien) => {
     if (soTien >= 1_000) return `${(soTien / 1_000).toLocaleString('vi-VN')}k`
     return soTien.toLocaleString('vi-VN')
 }
+
+export const MAX_HANG = Math.max(...Object.keys(HANG_CONFIG).map(Number))
+
+// Trả về config của hạng kế tiếp, hoặc null nếu đã ở hạng cao nhất
+export const getNextHangConfig = (hang) => {
+    const next = Number(hang) + 1
+    return HANG_CONFIG[next] ?? null
+}

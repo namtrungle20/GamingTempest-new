@@ -67,7 +67,7 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
 
                 {/* Form */}
                 <Mui.Stack spacing={2.5}>
-                    <Mui.TextField
+                    {/* <Mui.TextField
                         fullWidth
                         label="Email"
                         value={formData.email}
@@ -81,7 +81,7 @@ const EditUserModal = ({ open, user, onClose, onSave }) => {
                         value={formData.sdt}
                         onChange={(e) => handleChange('sdt', e.target.value)}
                         variant="outlined"
-                    />
+                    /> */}
 
                     <Mui.FormControl fullWidth>
                         <Mui.InputLabel>Vai trò</Mui.InputLabel>

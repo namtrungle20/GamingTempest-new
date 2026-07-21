@@ -12,8 +12,8 @@ export const API = {
     USERS: {
         LIST: '/nguoidung/danh-sach',
         DETAIL: '/nguoidung/chi-tiet',
-        UPDATE: '/nguoidung/update',
-        DELETE: '/nguoidung/delete',
+        UPDATE: (id) => `/nguoidung/update/${id}`,
+        DELETE: (id) => `/nguoidung/delete/${id}`,
         //---rank
         RANK: '/nguoidung/rank',
         RANK_UPDATE: '/nguoidung/rank/update',
@@ -91,5 +91,10 @@ export const API = {
         HOITHOAI: (id) => `/chat/${id}`,
         DELETE: (id) => `/chat/${id}`,
         MERGE_GUEST: '/chat/merge-guest',
-    }
+    },
+    UUDAI: {
+        LIST: '/uudai',
+        LIST_ME: '/uudai/me',
+        UPDATE: (hang) => `/uudai/${hang}`,
+    },
 }

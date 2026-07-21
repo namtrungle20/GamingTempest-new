@@ -75,8 +75,8 @@ const DonHangPage = () => {
                     {/* Thêm ô tìm kiếm nếu bạn muốn dùng state `search` đã sửa ở hook */}
                     <Mui.TextField
                         size="small"
-                        label="Tìm theo người dùng"
-                        placeholder="Tên, email hoặc SĐT..."
+                        label="Tìm theo sđt/email"
+                        placeholder="Tìm kiếm..."
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setPage(1) }}
                         sx={{ minWidth: 220 }}
@@ -290,11 +290,16 @@ const DonHangPage = () => {
                                                 </Mui.Typography>
                                             </Mui.Box>
                                         ))}
-                                        {/* ✅ Phí vận chuyển — sửa donHang → selected */}
+                                        <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', px: 1.5, pt: 1.5 }}>
+                                            <Mui.Typography variant="body2" color="text.secondary">Giảm giá</Mui.Typography>
+                                            <Mui.Typography variant="body2" fontWeight={600}>
+                                                -{selected.giamGiaFormatted}
+                                            </Mui.Typography>
+                                        </Mui.Box>
                                         <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', px: 1.5, pt: 1.5 }}>
                                             <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
                                             <Mui.Typography variant="body2" fontWeight={600}>
-                                                {selected.phiVanChuyenFormatted}
+                                                -{selected.phiVanChuyenFormatted}
                                             </Mui.Typography>
                                         </Mui.Box>
 

@@ -27,6 +27,7 @@ export default class DonHang {
         this.tongtien = Number(data.tongtien)
         this.trangthai = data.trangthai
         this.diachi = data.diachi
+        this.giam_gia = Number(data.giam_gia || 0)
         this.sdt = data.sdt
         this.created_at = data.created_at
         this.updated_at = data.updated_at
@@ -43,8 +44,11 @@ export default class DonHang {
     get phiVanChuyenFormatted() {
         return fmt(this.phi_van_chuyen)
     }
+    get giamGiaFormatted() {
+        return fmt(this.giam_gia)
+    }
     get tienHang() {
-        return this.tongtien - this.phi_van_chuyen
+        return this.tongtien - this.phi_van_chuyen + (this.giam_gia || 0)
     }
     // Tổng tiền đã format VND
     get tienHangFormatted() {  // ✅ thiếu getter này — cần thêm để dòng "Tạm tính" hoạt động

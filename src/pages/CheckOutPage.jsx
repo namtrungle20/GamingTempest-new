@@ -12,8 +12,11 @@ import CheckoutButton from '@/components/payment/CheckoutButton'
 // import DanhGiaModal from '@/components/admin/product/DanhGiaModal'
 import * as Icon from '@mui/icons-material'
 import useMemberRank from '@/hook/user/useMemberRank'
+import useUuDaiGiam from '@/hook/user/useUuDaiGiam'
+
 
 const PHI_SHIP_GOC = 30000
+const formatVND = (v) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v)
 
 const CheckOutPage = () => {
     const COD_MAX_AMOUNT = 5000000
@@ -21,6 +24,7 @@ const CheckOutPage = () => {
     const { user, login, loading: authLoading, error: authError } = useAuth()
     const { items, totalPrice, clearCart } = useCart()
     const { giam_ship, label, loading: hangLoading } = useMemberRank(!!user)
+    const { phanTramGiam, loading: giamGiaLoading } = useUuDaiGiam(!!user)
 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [formData, setFormData] = useState({
@@ -31,10 +35,14 @@ const CheckOutPage = () => {
     const [reviewQueue, setReviewQueue] = useState([])
     const [reviewIndex, setReviewIndex] = useState(0)
     const [reviewOpen, setReviewOpen] = useState(false)
-    const codDisabled = totalPrice > COD_MAX_AMOUNT
 
+    // Số tiền giảm giá theo % hạng thành viên (áp trên tạm tính, KHÔNG gồm ship)
+    // Dùng Math.round để khớp chính xác với cách backend tính trong thanhToan()
+    const soTienGiamGia = giamGiaLoading ? 0 : Math.round(totalPrice * (phanTramGiam / 100))
+    const tienSauGiamGia = totalPrice - soTienGiamGia
+
+    const codDisabled = tienSauGiamGia + (hangLoading ? PHI_SHIP_GOC : Math.round(PHI_SHIP_GOC * (1 - giam_ship / 100))) > COD_MAX_AMOUNT
     const currentReviewProduct = reviewQueue[reviewIndex] || null
-    // const { submitReview } = useDanhGia(currentReviewProduct?.id)
 
     useEffect(() => {
         if (codDisabled && formData.phuongthucthanhtoan === 0) {
@@ -111,8 +119,8 @@ const CheckOutPage = () => {
     const shipping = hangLoading
         ? PHI_SHIP_GOC
         : Math.round(PHI_SHIP_GOC * (1 - giam_ship / 100))
-    const soTienDuocGiam = PHI_SHIP_GOC - shipping
-    const finalTotal = totalPrice + shipping
+    const soTienDuocGiamShip = PHI_SHIP_GOC - shipping
+    const finalTotal = tienSauGiamGia + shipping
 
     return (
         <>
@@ -156,7 +164,7 @@ const CheckOutPage = () => {
                                 </Mui.RadioGroup>
                                 {codDisabled && (
                                     <Mui.Alert severity="info" sx={{ mt: 1, py: 0.5 }}>
-                                        Đơn hàng trên {COD_MAX_AMOUNT.toLocaleString('vi-VN')}đ chỉ hỗ trợ thanh toán qua MoMo để đảm bảo an toàn giao dịch.
+                                        Đơn hàng trên {formatVND(COD_MAX_AMOUNT)} chỉ hỗ trợ thanh toán qua MoMo để đảm bảo an toàn giao dịch.
                                     </Mui.Alert>
                                 )}
                             </Mui.FormControl>
@@ -185,9 +193,6 @@ const CheckOutPage = () => {
                                         <Mui.Typography variant="body2">
                                             {item.name} x {item.qty}
                                         </Mui.Typography>
-                                        {/* <Mui.Typography variant="body2" fontWeight={600} sx={{ whiteSpace: 'nowrap', ml: 2 }}>
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.qty)}
-                                        </Mui.Typography> */}
                                     </Mui.Box>
                                 ))}
                             </Mui.Box>
@@ -195,33 +200,56 @@ const CheckOutPage = () => {
                             <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                                 <Mui.Typography variant="subtitle1" fontWeight={700}>Tạm tính:</Mui.Typography>
                                 <Mui.Typography variant="subtitle1" fontWeight={600}>
-                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}
+                                    {formatVND(totalPrice)}
                                 </Mui.Typography>
                             </Mui.Box>
-                            <Mui.Box sx={{ mt: 1 }}>
-                                <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Mui.Typography variant="body2">Phí vận chuyển:</Mui.Typography>
-                                    <Mui.Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        {soTienDuocGiam > 0 && (
-                                            <Mui.Typography
-                                                variant="body2"
-                                                sx={{ textDecoration: 'line-through', color: 'text.disabled' }}
-                                            >
-                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(PHI_SHIP_GOC)}
-                                            </Mui.Typography>
-                                        )}
-                                        <Mui.Typography variant="body2" fontWeight={600}>
-                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(shipping)}
+
+                            {/* Giảm giá % theo hạng thành viên trên tổng đơn */}
+                            {soTienGiamGia > 0 && !giamGiaLoading && (
+                                <Mui.Box sx={{ mt: 1 }}>
+                                    <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Mui.Typography variant="body2">Giảm giá đơn hàng:</Mui.Typography>
+                                        <Mui.Typography variant="body2" fontWeight={600} color="success.main">
+                                            -{formatVND(soTienGiamGia)}
                                         </Mui.Typography>
                                     </Mui.Box>
-                                </Mui.Box>
-
-                                {soTienDuocGiam > 0 && !hangLoading && (
                                     <Mui.Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
                                         <Mui.Chip
                                             size="small"
                                             icon={<Icon.LocalOffer sx={{ fontSize: '13px !important' }} />}
-                                            label={`Giảm ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(soTienDuocGiam)} nhờ hạng ${label}`}
+                                            label={`Giảm ${phanTramGiam}% nhờ hạng ${label}`}
+                                            color="success"
+                                            variant="outlined"
+                                            sx={{ height: 22, fontSize: '0.7rem', fontWeight: 600 }}
+                                        />
+                                    </Mui.Box>
+                                </Mui.Box>
+                            )}
+
+                            <Mui.Box sx={{ mt: 1 }}>
+                                <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Mui.Typography variant="body2">Phí vận chuyển:</Mui.Typography>
+                                    <Mui.Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        {soTienDuocGiamShip > 0 && (
+                                            <Mui.Typography
+                                                variant="body2"
+                                                sx={{ textDecoration: 'line-through', color: 'text.disabled' }}
+                                            >
+                                                {formatVND(PHI_SHIP_GOC)}
+                                            </Mui.Typography>
+                                        )}
+                                        <Mui.Typography variant="body2" fontWeight={600}>
+                                            {formatVND(shipping)}
+                                        </Mui.Typography>
+                                    </Mui.Box>
+                                </Mui.Box>
+
+                                {soTienDuocGiamShip > 0 && !hangLoading && (
+                                    <Mui.Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
+                                        <Mui.Chip
+                                            size="small"
+                                            icon={<Icon.LocalShipping sx={{ fontSize: '13px !important' }} />}
+                                            label={`Giảm ${formatVND(soTienDuocGiamShip)} phí ship nhờ hạng ${label}`}
                                             color="success"
                                             variant="outlined"
                                             sx={{ height: 22, fontSize: '0.7rem', fontWeight: 600 }}
@@ -233,7 +261,7 @@ const CheckOutPage = () => {
                             <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Mui.Typography variant="subtitle1" fontWeight={700}>Tổng cộng:</Mui.Typography>
                                 <Mui.Typography variant="subtitle1" color="primary.main" fontWeight={800}>
-                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalTotal)}
+                                    {formatVND(finalTotal)}
                                 </Mui.Typography>
                             </Mui.Box>
                         </Mui.Paper>
