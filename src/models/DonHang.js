@@ -1,4 +1,4 @@
-import { TRANG_THAI_LABEL } from '@/constants/donhangContants'
+import { TRANG_THAI_LABEL, LY_DO_HUY_LABEL, HUY_BOI_LABEL } from '@/constants/donhangContants'
 
 const fmt = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
 const fmtDate = (d) => new Date(d).toLocaleString('vi-VN')
@@ -29,6 +29,9 @@ export default class DonHang {
         this.diachi = data.diachi
         this.giam_gia = Number(data.giam_gia || 0)
         this.sdt = data.sdt
+        this.ly_do_huy = data.ly_do_huy
+        this.ghi_chu_huy = data.ghi_chu_huy
+        this.huy_boi = data.huy_boi
         this.created_at = data.created_at
         this.updated_at = data.updated_at
         this.phi_van_chuyen = Number(data.phi_van_chuyen || 0)
@@ -75,6 +78,15 @@ export default class DonHang {
 
     get updatedAtFormatted() {
         return fmtDate(this.updated_at)
+    }
+
+    get lyDoHuyLabel() {
+        return this.ly_do_huy != null ? (LY_DO_HUY_LABEL[this.ly_do_huy] ?? 'Không rõ') : null
+    }
+
+    // Label bên hủy đơn (khách hàng / admin / hệ thống)
+    get huyBoiLabel() {
+        return this.huy_boi != null ? (HUY_BOI_LABEL[this.huy_boi] ?? 'Không rõ') : null
     }
 
     // Factory từ array API response

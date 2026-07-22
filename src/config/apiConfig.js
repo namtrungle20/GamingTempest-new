@@ -32,6 +32,9 @@ apiConfig.interceptors.request.use((config) => {
 apiConfig.interceptors.response.use(
     (response) => response,
     async (error) => {
+        if (axios.isCancel(error) || error.code === 'ERR_CANCELED' || error.name === 'CanceledError') {
+            return Promise.reject(error)
+        }
         const status = error.response?.status
         const url = error.config?.url ?? ''
         const originalRequest = error.config
@@ -95,6 +98,7 @@ apiConfig.interceptors.response.use(
 
         const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra với máy chủ'
         if (status !== 401 && !(status === 404 && isAuthMe)) {
+            console.warn('[API Error]', url, status, errorMessage)
             toast.error(errorMessage)
         }
 

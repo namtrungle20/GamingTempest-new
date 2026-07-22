@@ -2,8 +2,9 @@ import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 import useDonHang from '@/hook/donhang/useDonHang'
-import { TRANG_THAI_LABEL, TRANG_THAI_DON_HANG } from '@/constants/donhangContants'
+import { TRANG_THAI_LABEL, TRANG_THAI_DON_HANG, LY_DO_HUY_LABEL } from '@/constants/donhangContants'
 import { UI_SETTING } from '@/theme/uiSetting'
+import { useState } from 'react'
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -222,20 +223,66 @@ const OrderDetailModal = ({ order, open, onClose }) => (
     </Mui.Modal>
 )
 
-const ConfirmCancelDialog = ({ open, onClose, onConfirm, loading }) => (
-    <Mui.Dialog open={open} onClose={onClose}>
-        <Mui.DialogTitle>Xác nhận hủy đơn</Mui.DialogTitle>
-        <Mui.DialogContent>
-            <Mui.Typography>Bạn có chắc muốn hủy đơn hàng này không?</Mui.Typography>
-        </Mui.DialogContent>
-        <Mui.DialogActions>
-            <Mui.Button onClick={onClose} disabled={loading}>Không</Mui.Button>
-            <Mui.Button onClick={onConfirm} color="error" variant="contained" disabled={loading}>
-                {loading ? <Mui.CircularProgress size={20} /> : 'Hủy đơn'}
-            </Mui.Button>
-        </Mui.DialogActions>
-    </Mui.Dialog>
-)
+const ConfirmCancelDialog = ({ open, onClose, onConfirm, loading }) => {
+    const [lyDoHuy, setLyDoHuy] = useState('')
+    const [ghiChuHuy, setGhiChuHuy] = useState('')
+
+    const laLyDoKhac = Number(lyDoHuy) === 5 // KHAC = 5, theo LyDoHuyDonHang backend
+
+    const handleClose = () => {
+        setLyDoHuy('')
+        setGhiChuHuy('')
+        onClose()
+    }
+
+    const handleConfirm = () => {
+        onConfirm({ ly_do_huy: lyDoHuy === '' ? undefined : Number(lyDoHuy), ghi_chu_huy: ghiChuHuy || undefined })
+    }
+
+    return (
+        <Mui.Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+            <Mui.DialogTitle>Xác nhận hủy đơn</Mui.DialogTitle>
+            <Mui.DialogContent>
+                <Mui.Typography sx={{ mb: 2 }}>
+                    Bạn có chắc muốn hủy đơn hàng này không?
+                </Mui.Typography>
+
+                <Mui.FormControl fullWidth size="small" sx={{ mb: laLyDoKhac ? 2 : 0 }}>
+                    <Mui.InputLabel id="ly-do-huy-label">Lý do hủy (không bắt buộc)</Mui.InputLabel>
+                    <Mui.Select
+                        labelId="ly-do-huy-label"
+                        label="Lý do hủy (không bắt buộc)"
+                        value={lyDoHuy}
+                        onChange={(e) => setLyDoHuy(e.target.value)}
+                    >
+                        <Mui.MenuItem value="">-- Không chọn --</Mui.MenuItem>
+                        {Object.entries(LY_DO_HUY_LABEL).map(([val, label]) => (
+                            <Mui.MenuItem key={val} value={val}>{label}</Mui.MenuItem>
+                        ))}
+                    </Mui.Select>
+                </Mui.FormControl>
+
+                {laLyDoKhac && (
+                    <Mui.TextField
+                        fullWidth
+                        multiline
+                        rows={2}
+                        size="small"
+                        label="Nhập lý do cụ thể"
+                        value={ghiChuHuy}
+                        onChange={(e) => setGhiChuHuy(e.target.value)}
+                    />
+                )}
+            </Mui.DialogContent>
+            <Mui.DialogActions>
+                <Mui.Button onClick={handleClose} disabled={loading}>Không</Mui.Button>
+                <Mui.Button onClick={handleConfirm} color="error" variant="contained" disabled={loading}>
+                    {loading ? <Mui.CircularProgress size={20} /> : 'Hủy đơn'}
+                </Mui.Button>
+            </Mui.DialogActions>
+        </Mui.Dialog>
+    )
+}
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 

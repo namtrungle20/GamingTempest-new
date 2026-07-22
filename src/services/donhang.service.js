@@ -35,9 +35,9 @@ export const donHangService = {
             return { success: false, message: error.response?.data?.message || 'Lỗi cập nhật đơn hàng' }
         }
     },
-    remove: async (id) => {
+    remove: async (id, payload = {}) => {
         try {
-            const response = await apiConfig.delete(API.ORDERS.DELETE(id))
+            const response = await apiConfig.delete(API.ORDERS.DELETE(id), { data: payload, params: payload })
             return { success: true, raw: response.data }
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Lỗi xóa đơn hàng' }

@@ -50,13 +50,11 @@ const useDonHang = () => {
     const closeCancelConfirm = () =>
         setConfirmCancel({ open: false, id: null })
 
-    const cancelOrder = async () => {
+    const cancelOrder = async ({ ly_do_huy, ghi_chu_huy } = {}) => {
         if (!confirmCancel.id) return
         setCancelling(true)
         try {
-            const res = await donHangService.update(confirmCancel.id, {
-                trangthai: TRANG_THAI_DON_HANG.DA_HUY
-            })
+            const res = await donHangService.remove(confirmCancel.id, { ly_do_huy, ghi_chu_huy })
             if (res.success) {
                 setOrders(prev => prev.map(o =>
                     o.donhang_id === confirmCancel.id

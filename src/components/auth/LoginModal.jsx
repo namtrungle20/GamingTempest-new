@@ -75,7 +75,12 @@ const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
             InputProps={{
               endAdornment: (
                 <Mui.InputAdornment position="end">
-                  <Mui.IconButton onClick={() => setShowPassword(!showPassword)}>
+                  <Mui.IconButton
+                    type="button"
+                    onClick={() => setShowPassword((show) => !show)}
+                    onMouseDown={(e) => e.preventDefault()}
+                    edge="end"
+                  >
                     {showPassword ? <Icon.Visibility /> : <Icon.VisibilityOff />}
                   </Mui.IconButton>
                 </Mui.InputAdornment>

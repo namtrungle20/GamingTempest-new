@@ -6,7 +6,6 @@ import AdminLayout from '@/pages/admin/layout/AdminLayout'
 import PageLoader from '@/pages/loader/PageLoader'
 import { Toaster } from 'sonner'
 
-
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const NotFoundPage = lazy(() => import('@/pages/error/NotFoundPage'))
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashBoard'))
@@ -28,7 +27,6 @@ const UuDaiManagerPage = lazy(() => import('@/pages/admin/UuDaiManagerPage'))
 const RankPolicyPage = lazy(() => import('@/pages/policy/PolicyRank'))
 const WarrantyPolicyPage = lazy(() => import('@/pages/policy/PolicyWarranty'))
 const ExchangePolicyPage = lazy(() => import('@/pages/policy/PolicyExchange'))
-
 
 // ✅ Wrapper tái sử dụng — tránh lặp Suspense + fallback
 const Page = ({ component: Component }) => (
@@ -56,7 +54,6 @@ function App() {
           <Route path='/policy/warranty' element={<Page component={WarrantyPolicyPage} />} />
           <Route path='/policy/exchange' element={<Page component={ExchangePolicyPage} />} />
         </Route>
-
 
         <Route path='/admin' element={
           <AdminRoute>
