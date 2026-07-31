@@ -28,6 +28,7 @@ const CheckOutPage = () => {
 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [formData, setFormData] = useState({
+        // name: '',
         diachi: '',
         sdt: '',
         phuongthucthanhtoan: 0 // 0: COD, 1: MoMo
@@ -59,6 +60,7 @@ const CheckOutPage = () => {
         if (user) {
             setFormData(prev => ({
                 ...prev,
+                name: user.name || '',
                 sdt: user.sdt || user.phone || '',
                 diachi: user.diachi || user.address || ''
             }))
@@ -132,6 +134,11 @@ const CheckOutPage = () => {
                         <Mui.Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                             <Mui.Typography variant="h6" fontWeight={700} gutterBottom>Thông tin nhận hàng</Mui.Typography>
 
+                            {/* <Mui.TextField
+                                fullWidth label="Họ tên" name="name"
+                                value={formData.name} onChange={handleChange}
+                                required margin="normal"
+                            /> */}
                             <Mui.TextField
                                 fullWidth label="Địa chỉ" name="diachi"
                                 value={formData.diachi} onChange={handleChange}

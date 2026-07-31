@@ -140,9 +140,9 @@ const OrderDetailModal = ({ order, open, onClose }) => (
                 </Mui.Stack>
 
                 <Mui.Stack spacing={1} mb={2}>
-                    <Mui.Typography variant='boyd2'
-
-                    />
+                    <Mui.Typography variant="body2">
+                        <b>Tên khách hàng:</b> {order.name}
+                    </Mui.Typography>
                     <Mui.Typography variant="body2">
                         <b>Địa chỉ:</b> {order.diachi}
                     </Mui.Typography>

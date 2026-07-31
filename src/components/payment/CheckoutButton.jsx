@@ -46,6 +46,7 @@ const CheckoutButton = ({ diachi, sdt, phuongThuc, onSuccess }) => {
             if (payUrl) {
                 toast.success('Đang chuyển đến cổng thanh toán MoMo...')
                 window.location.href = payUrl
+
             } else {
                 setError('Không lấy được link thanh toán MoMo')
                 setSubmitted(false)
