@@ -3,6 +3,10 @@ export const API = {
         LIST: '/auth/me',
         LOGIN: '/auth/dangnhap',
         REGISTER: '/auth/dangky',
+
+        VERIFY_OTP: '/otp/xac-thuc-email',
+        RESEND_OTP: '/otp/gui-lai-otp',
+
         REFRESH: '/auth/refresh',
         LOGOUT: '/auth/logout',
         GOOGLE: '/auth/google',
@@ -20,6 +24,9 @@ export const API = {
         RANK_CHECK: '/nguoidung/rank/check',
         RANK_ALL_UPDATE: '/nguoidung/rank/all-update',
         CHANGE_PASSWORD: '/nguoidung/doi-mat-khau',
+        //---email
+        CHANGE_EMAIL_REQUEST: '/nguoidung/doi-email/yeu-cau',
+        CHANGE_EMAIL_VERIFY: '/nguoidung/doi-email/xac-thuc',
     },
     PRODUCTS: {
         LIST: '/sanpham',

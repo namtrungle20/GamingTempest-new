@@ -14,11 +14,10 @@ const ForgotPasswordPage = () => {
 
     const handleSubmit = async (e) => {
         e?.preventDefault()
-        if (!sdt.trim()) { setError('Vui lòng nhập số điện thoại'); return }
         if (!email.trim()) { setError('Vui lòng nhập email'); return }
         setLoading(true)
         setError('')
-        const result = await authResetService.quenMatKhau({ sdt: sdt.trim(), email: email.trim() })
+        const result = await authResetService.quenMatKhau({ email: email.trim() })
         setLoading(false)
         if (result.success) {
             setSubmitted(true)
@@ -35,7 +34,7 @@ const ForgotPasswordPage = () => {
                 </Mui.Box>
                 <Mui.Typography variant="h6" fontWeight={800} mb={1}>Kiểm tra email của bạn</Mui.Typography>
                 <Mui.Typography variant="body2" color="text.secondary" mb={3}>
-                    Nếu số điện thoại <strong>{sdt}</strong> tồn tại trong hệ thống, chúng tôi đã gửi link đặt lại mật khẩu tới email <strong>{email}</strong>.
+                    Nếu email <strong>{email}</strong> tồn tại trong hệ thống, chúng tôi đã gửi link đặt lại mật khẩu tới email <strong>{email}</strong>.
                 </Mui.Typography>
                 <Mui.Typography variant="caption" color="text.disabled" display="block" mb={2}>
                     Không thấy email? Kiểm tra thư mục Spam.
@@ -62,11 +61,11 @@ const ForgotPasswordPage = () => {
                 </Mui.Box>
 
                 <Mui.Typography variant="body2" color="text.secondary" mb={3}>
-                    Nhập số điện thoại đã đăng ký và email nhận link đặt lại mật khẩu.
+                    Nhập email để nhận link đặt lại mật khẩu.
                 </Mui.Typography>
 
                 <Mui.Stack spacing={2} component="form" onSubmit={handleSubmit}>
-                    <Mui.TextField
+                    {/* <Mui.TextField
                         fullWidth size="small" label="Số điện thoại" type="tel"
                         value={sdt}
                         onChange={e => { setSdt(e.target.value); setError('') }}
@@ -79,7 +78,7 @@ const ForgotPasswordPage = () => {
                                 </Mui.InputAdornment>
                             )
                         }}
-                    />
+                    /> */}
                     <Mui.TextField
                         fullWidth size="small" label="Email" type="email"
                         value={email}

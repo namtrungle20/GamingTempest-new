@@ -3,10 +3,10 @@ import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import useProfile from '@/hook/user/useProfile'
-import useMemberStats from '@/hook/user/useMemberStats'
-import MemberCard from '@/components/card/MemberCard'
-import { InfoTab, SettingsTab } from '@/components/profile/ProfileTabs'
+import useProfile from '../hook/user/useProfile'
+import useMemberStats from '../hook/user/useMemberStats'
+import MemberCard from '../components/card/MemberCard'
+import { InfoTab, SettingsTab } from '../components/profile/ProfileTabs'
 
 
 const ProfilePage = () => {

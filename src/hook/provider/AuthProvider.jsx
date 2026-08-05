@@ -6,6 +6,7 @@ import User from '@/models/User'
 import socket from '@/config/socket'
 import { USER_ROLE } from '@/constants/UserConstants'
 import chatService from '@/services/chat.service'
+import { NguoiDungService } from '@/services/user.service'
 
 
 export const AuthProvider = ({ children }) => {
@@ -86,19 +87,102 @@ export const AuthProvider = ({ children }) => {
         }
     }, [])
 
-    const register = async (name, sdt, password) => {
+    const register = async (name, email, password) => {
         setLoading(true)
         setError(null)
         try {
-            const result = await authService.register({ name, sdt, password })
+            const result = await authService.register({ name, email, password })
+            // console.log('REGISTER RESULT:', result)
+            // console.log('RAW RESULT:', JSON.stringify(result))
             if (!result.success) {
                 setError(result.message)
-                return { success: false }
+                return { success: false, message: result.message }
+            }
+            const { nguoidung_id } = result.data.data
+            return { success: true, nguoidungId: nguoidung_id }
+        } catch (err) {
+            // console.log('REGISTER CATCH ERROR:', err)
+            const errorMessage = err.response?.data?.message || 'Đã có lỗi xảy ra'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const verifyOtp = async (nguoidungId, otp) => {
+        setLoading(true)
+        setError(null)
+        try {
+            const result = await authService.verifyOtp({ nguoidung_id: nguoidungId, otp })
+            if (!result.success) {
+                setError(result.message)
+                return { success: false, message: result.message }
             }
             return { success: true }
-        } catch {
-            setError('Đã có lỗi xảy ra')
-            return { success: false }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Xác thực OTP thất bại'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const resendOtp = async (nguoidungId) => {
+        setLoading(true)
+        setError(null)
+        try {
+            const result = await authService.resendOtp({ nguoidung_id: nguoidungId })
+            if (!result.success) {
+                setError(result.message)
+                return { success: false, message: result.message }
+            }
+            return { success: true }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Gửi lại OTP thất bại'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const requestChangeEmail = async (emailMoi) => {
+        setLoading(true)
+        setError(null)
+        try {
+            const result = await NguoiDungService.requestChangeEmail(emailMoi)
+            if (!result.success) {
+                setError(result.message)
+                return { success: false, message: result.message }
+            }
+            return { success: true }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Gửi yêu cầu đổi email thất bại'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const verifyChangeEmail = async (otp) => {
+        setLoading(true)
+        setError(null)
+        try {
+            const result = await NguoiDungService.verifyChangeEmail(otp)
+            if (!result.success) {
+                setError(result.message)
+                return { success: false, message: result.message }
+            }
+            const emailMoi = result.raw.data.email
+            updateUser({ email: emailMoi })
+            return { success: true, email: emailMoi }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Xác thực đổi email thất bại'
+            setError(errorMessage)
+            return { success: false, message: errorMessage }
         } finally {
             setLoading(false)
         }
@@ -131,8 +215,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, [])
 
-
-
     const logout = useCallback(async () => {
         try {
             await logoutFirebase() // Đăng xuất khỏi Firebase (nếu có)
@@ -154,7 +236,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, loginWithGoogle, register, logout, loading, error, updateUser }}>
+        <AuthContext.Provider value={{ user, login, loginWithGoogle, register, resendOtp, verifyOtp, requestChangeEmail, verifyChangeEmail, logout, loading, error, updateUser }}>
             {children}
         </AuthContext.Provider>
     )

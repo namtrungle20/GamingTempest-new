@@ -6,10 +6,11 @@ export const authService = {
     login: async (loginKey, password) => {
         if (!loginKey) return { success: false, message: "Thiếu tên đăng nhập" };
 
-        const isSdt = /^[+\d]+$/.test(String(loginKey).trim());
+        // const isSdt = /^[+\d]+$/.test(String(loginKey).trim());
+        const isEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(String(loginKey).trim());
         const payload = {
             password,
-            [isSdt ? 'sdt' : 'name']: loginKey.trim()
+            [isEmail ? 'email' : 'name']: loginKey.trim()
         };
         try {
             const response = await apiConfig.post(API.AUTH.LOGIN, payload);
@@ -33,6 +34,46 @@ export const authService = {
                 success: false,
                 message: error.response?.data?.message || "Đăng ký thất bại"
             };
+        }
+    },
+    verifyOtp: async ({ nguoidung_id, otp }) => {
+        try {
+            const response = await apiConfig.post(API.AUTH.VERIFY_OTP, {
+                nguoidung_id,
+                otp,
+            })
+
+            return {
+                success: true,
+                data: response.data,
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    'Mã OTP không chính xác',
+            }
+        }
+    },
+
+    resendOtp: async ({ nguoidung_id }) => {
+        try {
+            const response = await apiConfig.post(API.AUTH.RESEND_OTP, {
+                nguoidung_id,
+            })
+
+            return {
+                success: true,
+                data: response.data,
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    'Không thể gửi lại mã OTP',
+            }
         }
     },
     getMe: async () => {
@@ -68,9 +109,9 @@ export const authService = {
 };
 
 export const authResetService = {
-    quenMatKhau: async ({ sdt, email }) => {
+    quenMatKhau: async ({ email }) => {
         try {
-            const res = await apiConfig.post(API.AUTH.QUEN_MAT_KHAU, { sdt, email })
+            const res = await apiConfig.post(API.AUTH.QUEN_MAT_KHAU, { email })
             return { success: true, message: res.data.message }
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }

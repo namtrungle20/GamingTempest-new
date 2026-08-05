@@ -1,7 +1,7 @@
 import * as Mui from '@mui/material'
 import * as Icon from '@mui/icons-material'
-import * as MuiStyles from '@mui/material/styles'
 import useChangePassword from '@/hook/user/useSetting'
+import ChangeEmailCard from '@/components/card/ChangeEmailCard'
 
 // ── InfoTab ───────────────────────────────────────────────────────────────────
 
@@ -19,7 +19,7 @@ export const InfoTab = ({ form, saving, handleChange, handleSave }) => (
                 )
             }}
         />
-        <Mui.TextField
+        {/* <Mui.TextField
             fullWidth label="Email"
             value={form.email}
             onChange={handleChange('email')}
@@ -30,7 +30,7 @@ export const InfoTab = ({ form, saving, handleChange, handleSave }) => (
                     </Mui.InputAdornment>
                 )
             }}
-        />
+        /> */}
         <Mui.TextField
             fullWidth label="Số điện thoại"
             value={form.sdt}
@@ -102,6 +102,7 @@ export const SettingsTab = () => {
 
     return (
         <Mui.Stack spacing={3}>
+            <ChangeEmailCard />
             {/* Đổi mật khẩu */}
             <Mui.Paper variant="outlined" sx={{ borderRadius: 2, p: 2.5 }}>
                 <Mui.Typography variant="subtitle2" fontWeight={700} mb={2}>
@@ -134,30 +135,6 @@ export const SettingsTab = () => {
                     </Mui.Button>
                 </Mui.Stack>
             </Mui.Paper>
-
-
-            {/* <Mui.Paper variant="outlined" sx={{ borderRadius: 2, p: 2.5 }}>
-                <Mui.Typography variant="subtitle2" fontWeight={700} mb={2}>Giao diện</Mui.Typography>
-                <Mui.Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Mui.Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        {mode === 'dark'
-                            ? <Icon.DarkModeOutlined fontSize="small" color="primary" />
-                            : <Icon.LightModeOutlined fontSize="small" color="primary" />
-                        }
-                        <Mui.Box>
-                            <Mui.Typography variant="body2" fontWeight={600}>Chế độ tối</Mui.Typography>
-                            <Mui.Typography variant="caption" color="text.secondary">
-                                {mode === 'dark' ? 'Đang bật' : 'Đang tắt'}
-                            </Mui.Typography>
-                        </Mui.Box>
-                    </Mui.Box>
-                    <Mui.Switch
-                        checked={mode === 'dark'}
-                        onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-                        color="primary"
-                    />
-                </Mui.Box>
-            </Mui.Paper> */}
         </Mui.Stack>
     )
 }

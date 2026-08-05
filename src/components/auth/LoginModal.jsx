@@ -58,8 +58,8 @@ const LoginModal = ({ open, handleClose, onSwitchRegister }) => {
           <Mui.TextField
             fullWidth
             name='loginKey'
-            label="Số điện thoại"
-            placeholder="+84"
+            label="Email"
+            placeholder="@"
             value={loginKey}
             onChange={(e) => setLoginKey(e.target.value)}
           />
