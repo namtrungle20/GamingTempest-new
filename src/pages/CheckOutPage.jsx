@@ -28,7 +28,7 @@ const CheckOutPage = () => {
 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [formData, setFormData] = useState({
-        // name: '',
+        name: '',
         diachi: '',
         sdt: '',
         phuongthucthanhtoan: 0 // 0: COD, 1: MoMo
@@ -69,7 +69,7 @@ const CheckOutPage = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target
-        if (name === 'sdt' && user && (user.sdt || user.phone)) return
+        // if (name === 'sdt' && user && (user.sdt || user.phone)) return
         setFormData(prev => ({
             ...prev,
             [name]: name === 'phuongthucthanhtoan' ? Number(value) : value
@@ -134,11 +134,11 @@ const CheckOutPage = () => {
                         <Mui.Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                             <Mui.Typography variant="h6" fontWeight={700} gutterBottom>Thông tin nhận hàng</Mui.Typography>
 
-                            {/* <Mui.TextField
+                            <Mui.TextField
                                 fullWidth label="Họ tên" name="name"
                                 value={formData.name} onChange={handleChange}
                                 required margin="normal"
-                            /> */}
+                            />
                             <Mui.TextField
                                 fullWidth label="Địa chỉ" name="diachi"
                                 value={formData.diachi} onChange={handleChange}
@@ -148,8 +148,8 @@ const CheckOutPage = () => {
                                 fullWidth label="Số điện thoại" name="sdt"
                                 value={formData.sdt} onChange={handleChange}
                                 required margin="normal"
-                                disabled={!!user && !!(user.sdt || user.phone)}
-                                helperText={user && (user.sdt || user.phone) ? 'Số điện thoại được lấy từ tài khoản, không thể thay đổi' : ''}
+                            // disabled={!!user && !!(user.sdt || user.phone)}
+                            // helperText={user && (user.sdt || user.phone) ? 'Số điện thoại được lấy từ tài khoản, không thể thay đổi' : ''}
                             />
 
                             <Mui.Typography variant="subtitle1" fontWeight={700} sx={{ mt: 2, mb: 1 }}>
@@ -178,6 +178,7 @@ const CheckOutPage = () => {
 
                             <Mui.Box sx={{ mt: 3 }}>
                                 <CheckoutButton
+                                    name={formData.name}
                                     diachi={formData.diachi}
                                     sdt={formData.sdt}
                                     phuongThuc={formData.phuongthucthanhtoan}

@@ -276,6 +276,12 @@ const Navbar = () => {
         { label: 'Tin tức', key: 'news', to: '/news' },
     ]
 
+    useEffect(() => {
+        const handler = () => setOpenLogin(true)
+        window.addEventListener('open-login-modal', handler)
+        return () => window.removeEventListener('open-login-modal', handler)
+    }, [])
+
     const handleSwitchToRegister = () => {
         setOpenLogin(false)
         setTimeout(() => setOpenRegister(true), 200)

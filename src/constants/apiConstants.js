@@ -11,7 +11,10 @@ export const API = {
         LOGOUT: '/auth/logout',
         GOOGLE: '/auth/google',
         QUEN_MAT_KHAU: '/auth/quenmatkhau',
-        DAT_LAI_MAT_KHAU: '/auth/datlaimatkhau'
+        DAT_LAI_MAT_KHAU: '/auth/datlaimatkhau',
+        //---quen mat khau
+        FORGOT_PASSWORD_REQUEST: '/auth/quenmatkhau/yeu-cau',
+        FORGOT_PASSWORD_VERIFY: '/auth/quenmatkhau/xac-thuc',
     },
     USERS: {
         LIST: '/nguoidung/danh-sach',
@@ -27,6 +30,7 @@ export const API = {
         //---email
         CHANGE_EMAIL_REQUEST: '/nguoidung/doi-email/yeu-cau',
         CHANGE_EMAIL_VERIFY: '/nguoidung/doi-email/xac-thuc',
+
     },
     PRODUCTS: {
         LIST: '/sanpham',

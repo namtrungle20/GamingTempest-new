@@ -126,4 +126,21 @@ export const authResetService = {
             return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }
         }
     },
+    quenMatKhauYeuCau: async (email) => {
+        try {
+            const res = await apiConfig.post(API.AUTH.FORGOT_PASSWORD_REQUEST, { email })
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }
+        }
+    },
+
+    quenMatKhauXacThuc: async (email, otp, mat_khau_moi) => {
+        try {
+            const res = await apiConfig.post(API.AUTH.FORGOT_PASSWORD_VERIFY, { email, otp, mat_khau_moi })
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Có lỗi xảy ra' }
+        }
+    },
 }

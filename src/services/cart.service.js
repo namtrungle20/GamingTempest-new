@@ -35,9 +35,9 @@ export const cartService = {
             return { success: false, message: error.response?.data?.message || 'Lỗi xóa sản phẩm' };
         }
     },
-    checkout: async (diachi, sdt, phuongthucthanhtoan = 0) => {
+    checkout: async (diachi, sdt, name, phuongthucthanhtoan = 0) => {
         try {
-            const response = await apiConfig.post(API.GIOHANG.CHECKOUT, { diachi, sdt, phuongthucthanhtoan });
+            const response = await apiConfig.post(API.GIOHANG.CHECKOUT, { diachi, sdt, name, phuongthucthanhtoan });
             return { success: true, raw: response.data };
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Lỗi thanh toán' };

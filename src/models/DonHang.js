@@ -22,7 +22,7 @@ export default class DonHang {
     constructor(data) {
         this.donhang_id = data.donhang_id
         this.nguoidung_id = data.nguoidung_id
-        // this.name = data.name
+        this.name = data.name
         this.tongtien = Number(data.tongtien)
         this.trangthai = data.trangthai
         this.diachi = data.diachi

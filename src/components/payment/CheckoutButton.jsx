@@ -13,20 +13,20 @@ import { toast } from 'sonner'
  *  - phuongThuc: number (0: COD, 1: MoMo)
  *  - onSuccess: () => void — callback khi COD thành công
  */
-const CheckoutButton = ({ diachi, sdt, phuongThuc, onSuccess }) => {
+const CheckoutButton = ({ diachi, sdt, name, phuongThuc, onSuccess }) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [submitted, setSubmitted] = useState(false)
 
     const handleCheckout = async () => {
-        if (!diachi || !sdt || submitted) return
+        if (!name || !diachi || !sdt || submitted) return
         setSubmitted(true)
         setLoading(true)
         setError(null)
 
         // Bước 2: Checkout — backend tạo đơn hàng + payUrl (nếu MoMo)
-        const checkoutRes = await cartService.checkout(diachi, sdt, Number(phuongThuc))
+        const checkoutRes = await cartService.checkout(diachi, sdt, name, Number(phuongThuc))
         setLoading(false)
 
         if (!checkoutRes.success) {
