@@ -344,7 +344,7 @@ const DonHangPage = () => {
                                         <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', px: 1.5, pt: 1.5 }}>
                                             <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
                                             <Mui.Typography variant="body2" fontWeight={600}>
-                                                -{selected.phiVanChuyenFormatted}
+                                                {selected.phiVanChuyenFormatted}
                                             </Mui.Typography>
                                         </Mui.Box>
 

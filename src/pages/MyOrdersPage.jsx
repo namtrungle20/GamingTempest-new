@@ -78,7 +78,7 @@ const OrderCard = ({ order, onViewDetail, onCancel, canCancel }) => (
                 </Mui.Stack>
                 <Mui.Stack direction="row" justifyContent="space-between">
                     <Mui.Typography variant="caption" color="text.secondary">Phí vận chuyển</Mui.Typography>
-                    <Mui.Typography variant="caption">- {order.phiVanChuyenFormatted}</Mui.Typography>
+                    <Mui.Typography variant="caption">{order.phiVanChuyenFormatted}</Mui.Typography>
                 </Mui.Stack>
                 <Mui.Stack direction="row" justifyContent="space-between">
                     <Mui.Typography variant="caption" color="text.secondary">Giảm giá</Mui.Typography>
@@ -202,7 +202,7 @@ const OrderDetailModal = ({ order, open, onClose }) => (
                     </Mui.Stack>
                     <Mui.Stack direction="row" justifyContent="space-between">
                         <Mui.Typography variant="body2" color="text.secondary">Phí vận chuyển</Mui.Typography>
-                        <Mui.Typography variant="body2">- {order.phiVanChuyenFormatted}</Mui.Typography>
+                        <Mui.Typography variant="body2">{order.phiVanChuyenFormatted}</Mui.Typography>
                     </Mui.Stack>
                     <Mui.Stack direction="row" justifyContent="space-between">
                         <Mui.Typography variant="body2" color="text.secondary">Giảm giá</Mui.Typography>

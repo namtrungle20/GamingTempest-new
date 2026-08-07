@@ -218,7 +218,7 @@ const CheckOutPage = () => {
                                     <Mui.Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <Mui.Typography variant="body2">Giảm giá đơn hàng:</Mui.Typography>
                                         <Mui.Typography variant="body2" fontWeight={600} color="success.main">
-                                            -{formatVND(soTienGiamGia)}
+                                            - {formatVND(soTienGiamGia)}
                                         </Mui.Typography>
                                     </Mui.Box>
                                     <Mui.Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
